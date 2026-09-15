@@ -254,6 +254,35 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
 .vazio-geral{text-align:center;padding:34px 16px;color:var(--ink-3);font-size:12.5px}
 .carregando{text-align:center;padding:26px;color:var(--ink-3);font-size:12px}
 
+/* ---------- ações rápidas no card ---------- */
+.kcard .kc-acoes{display:flex;gap:6px;margin-top:8px}
+.kc-btn{border:1px solid var(--line);background:var(--card);color:var(--ink-2);
+  border-radius:7px;padding:5px 8px;font-size:11px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:4px;min-height:28px}
+.kc-btn:hover{border-color:var(--wine-soft);color:var(--wine)}
+.kc-btn.liberar{flex:1}
+.kc-btn.liberar.meu{background:var(--wine);border-color:var(--wine);color:var(--wine-txt)}
+.kc-btn.liberar.meu:hover{background:var(--wine-deep);border-color:var(--wine-deep);color:var(--wine-txt)}
+.kc-btn.volta{flex:0 0 32px;padding:5px}
+.kc-btn.fim{flex:1;border-style:dashed;cursor:default;color:var(--ink-3)}
+.kc-btn.fim:hover{border-color:var(--line);color:var(--ink-3)}
+
+/* ---------- barra fixa do funil no celular ---------- */
+.barra-movel{display:none}
+.barra-movel.on{
+  align-items:center;gap:8px;padding:7px 10px;margin:-14px -12px 12px;
+  background:linear-gradient(100deg,var(--wine-deep) 0%,var(--wine) 62%,var(--wine-deep) 100%);
+  color:#fff;position:sticky;top:34px;z-index:60;box-shadow:var(--shadow)}
+.barra-movel .bm-tit{flex:1;min-width:0;font-size:13px;font-weight:700;line-height:1.15}
+.barra-movel .bm-tit > div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#bmBuscaRow{display:none}
+.barra-movel .bm-sub{font-size:9.5px;opacity:.75;font-weight:600;
+  letter-spacing:.07em;text-transform:uppercase}
+.barra-movel button{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);
+  color:#fff;border-radius:8px;min-width:32px;height:30px;padding:0 9px;font-size:14px;
+  font-weight:700;cursor:pointer;display:grid;place-items:center}
+.barra-movel button.pri{background:#fff;color:var(--wine-deep);border-color:#fff}
+
 /* ---------- reposicionamento de funis ---------- */
 .funil-card.mov{opacity:.4}
 .funil-card.alvo{outline:2px dashed var(--wine-soft);outline-offset:3px}
@@ -329,11 +358,47 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
   .card-split{flex-direction:column;max-height:none}
   .pane-esq{border-right:0;border-bottom:1px solid var(--line)}
 }
-@media (max-width:640px){
-  .wrap{padding:14px 12px 50px}
-  .app-header{padding:13px 12px 0}
-  .col{flex:0 0 264px;width:264px}
-  .modal{padding:14px 8px}
+/* ===================== CELULAR: funil na vertical ===================== */
+@media (max-width:760px){
+  .wrap{padding:14px 12px 46px}
+  .app-header{padding:10px 12px 0}
+  .app-header h1{font-size:16px}
+  .app-header .sub{font-size:9.5px}
+  .nav button{padding:7px 12px}
+  .modal{padding:10px 6px}
+  .modal-corpo{padding:14px}
+
+  /* o cabeçalho grande do kanban dá lugar à barra fixa */
+  #blocoKanban > .cab{display:none}
+  #blocoKanban{border:0;background:transparent;box-shadow:none;margin-bottom:0}
+  #blocoKanban > .corpo{padding:0}
+  #avisoFonte{display:none}
+  #bmBuscaRow.on{display:block}
+  .barra-movel.on{display:flex}
+  .escondido-movel{display:none!important}
+
+  /* uma coluna por largura de tela, rolando para baixo */
+  .kanban{flex-direction:column;overflow-x:visible;gap:14px;padding-bottom:6px}
+  .col{flex:1 1 auto;width:100%;max-width:100%}
+  .col-body{max-height:none;overflow:visible;padding:10px 10px 12px}
+  .kcard{padding:11px 12px}
+  .kcard .tit{font-size:13.5px}
+  .kc-btn{min-height:34px;font-size:12px}
+  .col-acoes > button{padding:7px 8px}
+
+  /* menu de funis mais compacto */
+  .funis-grid{grid-template-columns:1fr 1fr;gap:9px}
+  .funil-card{padding:11px 11px 10px 13px}
+  .funil-card .nome{font-size:13px}
+  .funil-card .desc{display:none}
+  .funil-card .nums{margin-top:7px;padding-top:7px;gap:10px}
+  .bloco > .cab{padding:10px 12px}
+  .bloco > .corpo{padding:12px}
+  .busca,#buscaCard{width:100%}
+}
+@media (max-width:420px){
+  .funis-grid{grid-template-columns:1fr}
+  .tl-acoes select{min-width:100%}
 }
 @media print{.no-print,.nav,.regras-btn{display:none!important}}
 </style>
@@ -360,7 +425,23 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
   <!-- ============================ PÁGINA PRINCIPAL ============================ -->
   <section id="viewFunis">
 
-    <div class="bloco">
+    <!-- barra fixa do funil, só no celular -->
+    <div class="barra-movel no-print" id="barraMovel">
+      <button onclick="voltarAosFunis()" title="Voltar para os funis">&#8592;</button>
+      <div class="bm-tit">
+        <div id="bmTitulo">Funil</div>
+        <div class="bm-sub" id="bmSub"></div>
+      </div>
+      <button id="bmBuscaBtn" onclick="toggleBuscaMovel()" title="Buscar">&#9906;</button>
+      <button id="bmSync" onclick="sincronizar(false)" title="Sincronizar">&#8635;</button>
+      <button class="pri" id="bmNovo" onclick="novoCard()" title="Novo card">+</button>
+    </div>
+    <div id="bmBuscaRow">
+      <input id="buscaMovel" class="busca" type="text" placeholder="Buscar card…"
+             oninput="buscar(this.value)" style="width:100%;margin-bottom:12px">
+    </div>
+
+    <div class="bloco" id="blocoFunis">
       <div class="cab">
         <h2>Funis cadastrados</h2>
         <span class="dica" id="dicaFunis"></span>
@@ -379,7 +460,7 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
         <h2 id="kanbanNome">Funil</h2>
         <span class="dica" id="kanbanDesc"></span>
         <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <input id="buscaCard" class="busca" type="text" placeholder="Buscar card…" oninput="renderKanban()">
+          <input id="buscaCard" class="busca" type="text" placeholder="Buscar card…" oninput="buscar(this.value)">
           <button class="btn sm" id="btnSincronizar" hidden onclick="sincronizar(false)">Sincronizar</button>
           <button class="btn sm" onclick="rodarRegrasManual()">Rodar condicionais</button>
           <button class="btn sm pri" id="btnNovoCard" onclick="novoCard()">Novo card</button>
@@ -784,6 +865,7 @@ var S = {
   filtroAberto: {},       // etapas com o filtro aberto
   filtros: {},            // filtro em uso por etapa (comeca no padrao do ADM)
   sincronizando: false,
+  busca: '',
   edit: { funil:null, etapa:null, campo:null, regra:null, card:null }
 };
 
@@ -1229,7 +1311,7 @@ function etapaInicial(){
 
 function renderKanban(){
   var f = S.funil;
-  if(!f){ $('blocoKanban').hidden = true; return; }
+  if(!f){ $('blocoKanban').hidden = true; atualizarBarraMovel(); return; }
   $('blocoKanban').hidden = false;
   $('kanbanNome').textContent = f.nome;
   $('kanbanDesc').textContent = f.descricao || '';
@@ -1243,15 +1325,56 @@ function renderKanban(){
       '. Cada gravação lá atualiza os campos do card e reavalia as condicionais.</div>'
     : '';
 
+  atualizarBarraMovel();
+
   var box = $('kanban');
   if(!S.etapas.length){
     box.innerHTML = '<div class="vazio-geral">Este funil ainda não tem etapas.' +
       (eAdmin() ? ' Cadastre em <strong>Administração › Funis e etapas</strong>.' : '') + '</div>';
     return;
   }
-  var termo = normal($('buscaCard').value);
+  var termo = normal(S.busca);
   box.innerHTML = S.etapas.map(function(e){ return colunaHTML(e, termo); }).join('');
   ligarKanban();
+}
+
+/* ---- barra fixa do celular e busca única para as duas caixas ---- */
+function buscar(v){
+  S.busca = v || '';
+  ['buscaCard','buscaMovel'].forEach(function(id){
+    var el = $(id);
+    if(el && el.value !== S.busca) el.value = S.busca;
+  });
+  renderKanban();
+}
+function toggleBuscaMovel(){
+  var row = $('bmBuscaRow');
+  row.classList.toggle('on');
+  if(row.classList.contains('on')) $('buscaMovel').focus();
+}
+function voltarAosFunis(){
+  var bloco = $('blocoFunis');
+  if(!bloco) return;
+  bloco.classList.toggle('escondido-movel');
+  if(!bloco.classList.contains('escondido-movel')){
+    bloco.scrollIntoView({ behavior:'smooth', block:'start' });
+  } else {
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+}
+function atualizarBarraMovel(){
+  var barra = $('barraMovel');
+  if(!barra) return;
+  var f = S.funil;
+  barra.classList.toggle('on', !!f);
+  var bloco = $('blocoFunis');
+  if(bloco) bloco.classList.toggle('escondido-movel', !!f);
+  if(!f) return;
+  $('bmTitulo').textContent = f.nome;
+  var ativos = S.cards.length;
+  $('bmSub').textContent = S.etapas.length + ' etapas · ' + ativos + (ativos === 1 ? ' card' : ' cards');
+  $('bmSync').style.display = (f.fonte !== 'manual' && podeEditar()) ? '' : 'none';
+  $('bmNovo').style.display = (podeEditar() && S.etapas.length) ? '' : 'none';
 }
 
 function cardsDaEtapa(etapa, termo){
@@ -1419,11 +1542,69 @@ function cardHTML(c){
       '<span class="' + (atrasado ? 'alerta' : '') + '">' + d + 'd</span>' +
       (num(c.valor) ? '<span class="val">' + esc(moeda(c.valor)) + '</span>' : '') +
     '</div>' +
+    acoesCardHTML(c, e) +
   '</div>';
+}
+
+/* botões de liberação rápida da etapa, direto no card */
+function vizinhas(etapaId){
+  var i = -1;
+  S.etapas.forEach(function(e, k){ if(e.id === etapaId) i = k; });
+  return { anterior: i > 0 ? S.etapas[i-1] : null,
+           proxima: (i >= 0 && i < S.etapas.length - 1) ? S.etapas[i+1] : null };
+}
+function souResponsavel(card, etapa){
+  var eu = normal(euSou());
+  if(!eu) return false;
+  return normal(card.responsavel_nome) === eu || (etapa && normal(etapa.responsavel_nome) === eu);
+}
+function acoesCardHTML(c, etapa){
+  if(!podeEditar()) return '';
+  var v = vizinhas(c.etapa_id);
+  var meu = souResponsavel(c, etapa) ? ' meu' : '';
+  var botoes = '';
+  if(v.anterior){
+    botoes += '<button class="kc-btn volta" data-volta="' + esc(c.id) + '" ' +
+      'title="Devolver para ' + esc(v.anterior.nome) + '">&#8592;</button>';
+  }
+  if(v.proxima){
+    botoes += '<button class="kc-btn liberar' + meu + '" data-liberar="' + esc(c.id) + '" ' +
+      'title="Liberar para ' + esc(v.proxima.nome) +
+      (etapa && etapa.responsavel_nome ? ' · responsável: ' + esc(etapa.responsavel_nome) : '') + '">' +
+      'Liberar &rarr; ' + esc(v.proxima.nome.length > 16 ? v.proxima.nome.slice(0,15) + '…' : v.proxima.nome) +
+      '</button>';
+  } else {
+    botoes += '<button class="kc-btn fim" disabled>' +
+      (etapa && etapa.tipo === 'perda' ? 'encerrado' : 'etapa final') + '</button>';
+  }
+  return '<div class="kc-acoes">' + botoes + '</div>';
+}
+
+function liberarCard(id, dir){
+  var card = S.cards.filter(function(c){ return c.id === id; })[0];
+  if(!card || !podeEditar()) return;
+  var v = vizinhas(card.etapa_id);
+  var alvo = dir > 0 ? v.proxima : v.anterior;
+  if(!alvo) return;
+  moverCard(card, alvo.id, 'manual', null).then(function(){
+    renderKanban();
+    toast((dir > 0 ? 'Liberado para ' : 'Devolvido para ') + alvo.nome);
+  });
 }
 
 function ligarKanban(){
   var box = $('kanban');
+
+  Array.prototype.forEach.call(box.querySelectorAll('[data-liberar]'), function(b){
+    b.addEventListener('click', function(ev){
+      ev.stopPropagation(); liberarCard(b.dataset.liberar, 1);
+    });
+  });
+  Array.prototype.forEach.call(box.querySelectorAll('[data-volta]'), function(b){
+    b.addEventListener('click', function(ev){
+      ev.stopPropagation(); liberarCard(b.dataset.volta, -1);
+    });
+  });
 
   Array.prototype.forEach.call(box.querySelectorAll('[data-regras]'), function(b){
     b.addEventListener('click', function(){
@@ -2660,6 +2841,10 @@ window.admTrocarFunil = admTrocarFunil;
 window.carregarTudo = carregarTudo;
 window.carregarContas = carregarContas;
 window.renderKanban = renderKanban;
+window.buscar = buscar;
+window.toggleBuscaMovel = toggleBuscaMovel;
+window.voltarAosFunis = voltarAosFunis;
+window.liberarCard = liberarCard;
 window.rodarRegrasManual = rodarRegrasManual;
 window.sincronizar = sincronizar;
 window.novoCard = novoCard;
