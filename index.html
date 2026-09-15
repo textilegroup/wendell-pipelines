@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Funis · Wendell Global Interlining</title>
+
+<!-- Central de Acesso: sessao, permissao e barra de identificacao -->
+<script src="https://textilegroup.github.io/wendell-users/guard.js" data-app="funis"></script>
+
+<style>
+:root{
+  --wine:#7C1B29; --wine-deep:#5E1220; --wine-soft:#A5303F; --wine-txt:#FFFFFF;
+  --bg:#F2F2F0; --card:#FFFFFF; --sunk:#F7F5F3;
+  --ink:#26252A; --ink-2:#5A555C; --ink-3:#8B858E;
+  --line:#E3E0DD; --line-2:#EFECE9;
+  --s1:#9E2438; --s2:#B8801F; --s3:#1E6FB8; --s4:#4E7A1E;
+  --pos:#2C6B4F; --neg:#A33A2A; --chip:#F6F4F1;
+  --shadow:0 1px 2px rgba(38,37,42,.06),0 1px 8px rgba(38,37,42,.04);
+  --shadow-2:0 1px 2px rgba(38,37,42,.06),0 10px 30px rgba(38,37,42,.12);
+  --r:12px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --wine:#8C2334; --wine-deep:#4C0E19; --wine-soft:#C4536A; --wine-txt:#FFFFFF;
+    --bg:#141316; --card:#1E1C21; --sunk:#26232A;
+    --ink:#F0EDEA; --ink-2:#B4ADB5; --ink-3:#847D88;
+    --line:#332F38; --line-2:#2A272F;
+    --s1:#C4536A; --s2:#B8842C; --s3:#5B92E0; --s4:#6E9430;
+    --pos:#5FA37E; --neg:#D97A62; --chip:#2A272F;
+    --shadow:0 1px 2px rgba(0,0,0,.4); --shadow-2:0 10px 30px rgba(0,0,0,.5);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Archivo","Helvetica Neue",Arial,sans-serif;
+  font-size:13px; line-height:1.45; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;font-weight:700;line-height:1.2}
+button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
+[hidden]{display:none!important}
+
+/* ---------- cabecalho ---------- */
+.app-header{
+  background:linear-gradient(100deg,var(--wine-deep) 0%,var(--wine) 62%,var(--wine-deep) 100%);
+  color:#fff; padding:16px 20px 0;
+}
+.app-header .top{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;
+  max-width:1680px;margin:0 auto}
+.app-header h1{font-size:18px;letter-spacing:-.01em}
+.app-header .sub{font-size:10.5px;opacity:.78;margin-top:2px;
+  letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.app-header .spacer{flex:1}
+.nav{display:flex;gap:4px;max-width:1680px;margin:14px auto 0;flex-wrap:wrap}
+.nav button{
+  background:transparent;border:0;border-bottom:2px solid transparent;color:#fff;
+  opacity:.68;cursor:pointer;padding:8px 14px;font-size:11.5px;font-weight:700;
+  letter-spacing:.07em;text-transform:uppercase;
+}
+.nav button:hover{opacity:.9}
+.nav button.on{opacity:1;border-bottom-color:#fff}
+
+.wrap{max-width:1680px;margin:0 auto;padding:18px 20px 60px}
+
+/* ---------- blocos ---------- */
+.bloco{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.bloco > .cab{border-top:3px solid var(--wine);padding:12px 16px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line-2)}
+.bloco > .cab h2{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--wine)}
+.bloco > .cab .dica{font-size:11.5px;color:var(--ink-3)}
+.bloco > .corpo{padding:16px}
+
+/* ---------- botoes ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);
+  border-radius:8px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;
+  transition:background .12s,border-color .12s}
+.btn:hover{background:var(--chip)}
+.btn.pri{background:var(--wine);border-color:var(--wine);color:var(--wine-txt)}
+.btn.pri:hover{background:var(--wine-deep);border-color:var(--wine-deep)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--neg);border-color:var(--line)}
+.btn.danger:hover{background:rgba(163,58,42,.08)}
+.btn.sm{padding:4px 9px;font-size:11px;border-radius:7px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ---------- formularios ---------- */
+.campo{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.campo > label{font-size:10.5px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-3)}
+.campo input[type=text],.campo input[type=number],.campo input[type=date],
+.campo input[type=email],.campo input[type=tel],.campo select,.campo textarea{
+  width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
+  background:var(--card);color:var(--ink)}
+.campo textarea{min-height:76px;resize:vertical}
+.campo input:focus,.campo select:focus,.campo textarea:focus{
+  outline:none;border-color:var(--wine-soft);box-shadow:0 0 0 3px rgba(124,27,41,.10)}
+.campo .ajuda{font-size:11px;color:var(--ink-3)}
+.linha{display:flex;gap:12px;flex-wrap:wrap}
+.linha > *{flex:1;min-width:160px}
+.check{display:flex;align-items:center;gap:8px;font-size:12.5px}
+.check input{width:15px;height:15px;accent-color:var(--wine)}
+
+/* ---------- menu de funis (cards) ---------- */
+.funis-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.funil-card{position:relative;text-align:left;background:var(--card);
+  border:1px solid var(--line);border-radius:var(--r);padding:14px 14px 12px 16px;
+  cursor:pointer;box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s,border-color .12s}
+.funil-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-2)}
+.funil-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  border-radius:var(--r) 0 0 var(--r);background:var(--cor,var(--wine))}
+.funil-card.on{border-color:var(--cor,var(--wine));box-shadow:var(--shadow-2)}
+.funil-card .nome{font-size:14px;font-weight:700;margin-bottom:2px}
+.funil-card .desc{font-size:11.5px;color:var(--ink-2);min-height:16px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.funil-card .nums{display:flex;gap:14px;margin-top:10px;padding-top:9px;
+  border-top:1px solid var(--line-2)}
+.funil-card .num b{display:block;font-family:"Archivo Narrow","Archivo",sans-serif;
+  font-size:17px;line-height:1;color:var(--cor,var(--wine))}
+.funil-card .num span{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600}
+.funil-card .tag-off{position:absolute;top:10px;right:10px;font-size:9px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+  border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+
+/* ---------- kanban ---------- */
+.kanban-topo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.kanban-topo .titulo{font-size:15px;font-weight:700}
+.kanban-topo .busca{min-width:180px;padding:7px 10px;border:1px solid var(--line);
+  border-radius:8px;background:var(--card);color:var(--ink)}
+.kanban{display:flex;gap:12px;overflow-x:auto;align-items:flex-start;
+  padding-bottom:14px;scroll-snap-type:x proximity}
+.col{flex:0 0 288px;width:288px;background:var(--sunk);border:1px solid var(--line);
+  border-radius:var(--r);scroll-snap-align:start;overflow:hidden}
+.col.drop{border-color:var(--wine-soft);box-shadow:0 0 0 3px rgba(124,27,41,.10)}
+.col-head{border-top:3px solid var(--cor,var(--wine));padding:10px 12px 8px;
+  background:var(--card);border-bottom:1px solid var(--line-2)}
+.col-head .l1{display:flex;align-items:center;gap:8px}
+.col-head .nome{font-size:12.5px;font-weight:700;flex:1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.col-head .qtd{font-family:"Archivo Narrow","Archivo",sans-serif;font-size:12px;
+  font-weight:700;color:var(--cor,var(--wine));background:var(--chip);
+  border-radius:20px;padding:1px 8px}
+.col-head .l2{display:flex;align-items:center;gap:6px;margin-top:5px;
+  font-size:10.5px;color:var(--ink-3)}
+.col-head .resp{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--ink-2)}
+.col-head .ini{width:17px;height:17px;border-radius:50%;background:var(--cor,var(--wine));
+  color:#fff;display:grid;place-items:center;font-size:8.5px;font-weight:700}
+.col-head .soma{margin-left:auto;font-family:"Archivo Narrow","Archivo",sans-serif;font-weight:700;color:var(--ink-2)}
+.regras-btn{width:100%;margin-top:8px;display:flex;align-items:center;gap:6px;
+  background:var(--chip);border:1px solid var(--line-2);border-radius:7px;
+  padding:5px 8px;font-size:10.5px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink-2);cursor:pointer}
+.regras-btn:hover{border-color:var(--wine-soft);color:var(--wine)}
+.regras-btn .seta{margin-left:auto;transition:transform .15s}
+.regras-btn.aberto .seta{transform:rotate(180deg)}
+.regras-box{padding:10px 12px;background:var(--card);border-bottom:1px solid var(--line-2);
+  font-size:11.5px;color:var(--ink-2);white-space:pre-wrap}
+.regras-box h5{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 4px}
+.regras-box .auto{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line)}
+.regras-box .auto ul{margin:0;padding-left:16px}
+.regras-box .auto li{margin-bottom:4px}
+.regras-box .vazio{color:var(--ink-3);font-style:italic}
+.col-body{padding:10px;display:flex;flex-direction:column;gap:9px;min-height:74px;
+  max-height:min(62vh,660px);overflow-y:auto}
+.col-body .vazio{font-size:11.5px;color:var(--ink-3);text-align:center;padding:14px 4px;
+  border:1px dashed var(--line);border-radius:9px}
+
+.kcard{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--cor,var(--wine));
+  border-radius:9px;padding:9px 10px;cursor:pointer;box-shadow:var(--shadow)}
+.kcard:hover{border-color:var(--wine-soft)}
+.kcard.arrastando{opacity:.45}
+.kcard .tit{font-size:12.5px;font-weight:700;margin-bottom:3px}
+.kcard .chips{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0 2px}
+.kcard .chip{background:var(--chip);border:1px solid var(--line-2);border-radius:5px;
+  padding:1px 6px;font-size:10.5px;color:var(--ink-2)}
+.kcard .chip b{color:var(--ink-3);font-weight:700}
+.kcard .pe{display:flex;align-items:center;gap:8px;margin-top:7px;padding-top:6px;
+  border-top:1px solid var(--line-2);font-size:10.5px;color:var(--ink-3)}
+.kcard .pe .val{margin-left:auto;font-family:"Archivo Narrow","Archivo",sans-serif;
+  font-weight:700;color:var(--ink-2)}
+.kcard .alerta{color:var(--neg);font-weight:700}
+
+/* ---------- tabelas adm ---------- */
+.tab{width:100%;border-collapse:collapse;font-size:12px}
+.tab th{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
+  text-align:left;padding:7px 8px;border-bottom:1px solid var(--line)}
+.tab td{padding:7px 8px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.tab tr:hover td{background:var(--sunk)}
+.tab td.acoes{text-align:right;white-space:nowrap}
+.tab .num{text-align:right;font-family:"Archivo Narrow","Archivo",sans-serif}
+.pill{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;border-radius:5px;padding:1px 6px;border:1px solid var(--line)}
+.pill.on{color:var(--pos);border-color:rgba(44,107,79,.35);background:rgba(44,107,79,.08)}
+.pill.off{color:var(--ink-3)}
+.pill.inicio{color:var(--s3);border-color:rgba(30,111,184,.35)}
+.pill.ganho{color:var(--pos);border-color:rgba(44,107,79,.35)}
+.pill.perda{color:var(--neg);border-color:rgba(163,58,42,.35)}
+
+/* ---------- abas adm ---------- */
+.subnav{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}
+.subnav button{background:var(--card);border:1px solid var(--line);border-radius:999px;
+  padding:6px 14px;font-size:11.5px;font-weight:700;cursor:pointer;color:var(--ink-2)}
+.subnav button.on{background:var(--wine);border-color:var(--wine);color:var(--wine-txt)}
+
+/* ---------- modais ---------- */
+.modal{position:fixed;inset:0;background:rgba(20,19,22,.55);z-index:9000;
+  display:none;align-items:flex-start;justify-content:center;padding:28px 14px;overflow-y:auto}
+.modal.on{display:flex}
+.modal-box{width:100%;max-width:620px;background:var(--card);border-radius:14px;
+  box-shadow:var(--shadow-2);overflow:hidden;margin:auto}
+.modal-box.lg{max-width:860px}
+.modal-cab{padding:13px 18px;color:#fff;display:flex;align-items:center;gap:10px;
+  background:linear-gradient(100deg,var(--wine-deep) 0%,var(--wine) 62%,var(--wine-deep) 100%)}
+.modal-cab h3{font-size:14px;flex:1}
+.modal-cab .x{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);
+  color:#fff;border-radius:7px;width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1}
+.modal-corpo{padding:18px;max-height:calc(100vh - 190px);overflow-y:auto}
+.modal-pe{padding:12px 18px;border-top:1px solid var(--line-2);display:flex;gap:8px;
+  justify-content:flex-end;flex-wrap:wrap;background:var(--sunk)}
+.modal-pe .esq{margin-right:auto}
+
+/* ---------- condicionais ---------- */
+.cond-linha{display:flex;gap:7px;align-items:center;margin-bottom:7px;flex-wrap:wrap}
+.cond-linha select,.cond-linha input{padding:6px 8px;border:1px solid var(--line);
+  border-radius:7px;background:var(--card);color:var(--ink)}
+.cond-linha .campo-sel{flex:1.2;min-width:140px}
+.cond-linha .op-sel{flex:1;min-width:120px}
+.cond-linha .val{flex:1.2;min-width:120px}
+.cond-linha .x{border:1px solid var(--line);background:var(--card);border-radius:7px;
+  width:28px;height:30px;cursor:pointer;color:var(--neg)}
+.regra-item{border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:9px;
+  background:var(--card)}
+.regra-item .l1{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.regra-item .l1 .nome{font-weight:700;font-size:12.5px;flex:1}
+.regra-item .fluxo{font-size:11.5px;color:var(--ink-2);margin-top:6px}
+.regra-item .fluxo code{background:var(--chip);border-radius:4px;padding:1px 5px;
+  font-family:"Archivo Narrow","Archivo",sans-serif;font-size:11.5px}
+.seta-fluxo{color:var(--wine);font-weight:700}
+
+/* ---------- avisos ---------- */
+.aviso{padding:11px 13px;border-radius:9px;font-size:12px;margin-bottom:12px;
+  border:1px solid var(--line);background:var(--sunk);color:var(--ink-2)}
+.aviso.ok{border-color:rgba(44,107,79,.3);background:rgba(44,107,79,.08);color:var(--pos)}
+.aviso.erro{border-color:rgba(163,58,42,.3);background:rgba(163,58,42,.08);color:var(--neg)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:9500;
+  background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:9px;font-size:12.5px;
+  font-weight:600;box-shadow:var(--shadow-2);opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+.vazio-geral{text-align:center;padding:34px 16px;color:var(--ink-3);font-size:12.5px}
+.carregando{text-align:center;padding:26px;color:var(--ink-3);font-size:12px}
+
+@media (max-width:640px){
+  .wrap{padding:14px 12px 50px}
+  .app-header{padding:13px 12px 0}
+  .col{flex:0 0 264px;width:264px}
+  .modal{padding:14px 8px}
+}
+@media print{.no-print,.nav,.regras-btn{display:none!important}}
+</style>
+</head>
+<body>
+
+<header class="app-header no-print">
+  <div class="top">
+    <div>
+      <h1>Funis</h1>
+      <div class="sub">Wendell Global Interlining</div>
+    </div>
+    <div class="spacer"></div>
+    <div id="infoPerm" class="sub"></div>
+  </div>
+  <nav class="nav">
+    <button id="tabFunis" class="on" onclick="irPara('funis')">Funis</button>
+    <button id="tabAdm" hidden onclick="irPara('adm')">Administração</button>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <!-- ============================ PÁGINA PRINCIPAL ============================ -->
+  <section id="viewFunis">
+
+    <div class="bloco">
+      <div class="cab">
+        <h2>Funis cadastrados</h2>
+        <span class="dica" id="dicaFunis"></span>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn sm" onclick="carregarTudo()">Atualizar</button>
+          <button class="btn sm pri" id="btnNovoFunilAtalho" hidden onclick="irPara('adm');admAba('funis');abrirFunilForm()">Novo funil</button>
+        </div>
+      </div>
+      <div class="corpo">
+        <div id="menuFunis" class="funis-grid"><div class="carregando">Carregando funis…</div></div>
+      </div>
+    </div>
+
+    <div class="bloco" id="blocoKanban" hidden>
+      <div class="cab">
+        <h2 id="kanbanNome">Funil</h2>
+        <span class="dica" id="kanbanDesc"></span>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input id="buscaCard" class="busca" type="text" placeholder="Buscar card…" oninput="renderKanban()">
+          <button class="btn sm" onclick="rodarRegrasManual()">Rodar condicionais</button>
+          <button class="btn sm pri" id="btnNovoCard" onclick="abrirCardForm(null)">Novo card</button>
+        </div>
+      </div>
+      <div class="corpo">
+        <div id="kanban" class="kanban"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================================= ADM ================================= -->
+  <section id="viewAdm" hidden>
+
+    <div class="subnav">
+      <button id="sub-funis"  class="on" onclick="admAba('funis')">Funis e etapas</button>
+      <button id="sub-campos" onclick="admAba('campos')">Formulário do card</button>
+      <button id="sub-regras" onclick="admAba('regras')">Condicionais</button>
+      <button id="sub-acesso" onclick="admAba('acesso')">Acesso</button>
+    </div>
+
+    <!-- ---- ADM: funis e etapas ---- -->
+    <div id="adm-funis">
+      <div class="bloco">
+        <div class="cab">
+          <h2>Funis</h2>
+          <span class="dica">Crie o funil e nomeie as etapas na tabela abaixo.</span>
+          <button class="btn sm pri" style="margin-left:auto" onclick="abrirFunilForm()">Novo funil</button>
+        </div>
+        <div class="corpo" style="padding:0">
+          <table class="tab">
+            <thead><tr>
+              <th style="width:34px"></th><th>Funil</th><th>Descrição</th>
+              <th class="num">Etapas</th><th class="num">Cards</th><th>Status</th><th></th>
+            </tr></thead>
+            <tbody id="admFunisTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bloco" id="admEtapasBloco" hidden>
+        <div class="cab">
+          <h2>Etapas de <span id="admEtapasFunil"></span></h2>
+          <span class="dica">Ordem, responsável e as regras que aparecem no botão recolhido do kanban.</span>
+          <button class="btn sm pri" style="margin-left:auto" onclick="abrirEtapaForm()">Nova etapa</button>
+        </div>
+        <div class="corpo" style="padding:0">
+          <table class="tab">
+            <thead><tr>
+              <th style="width:70px">Ordem</th><th>Etapa</th><th>Tipo</th>
+              <th>Responsável</th><th>Regras</th><th class="num">Prazo</th><th></th>
+            </tr></thead>
+            <tbody id="admEtapasTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- ADM: campos do formulário ---- -->
+    <div id="adm-campos" hidden>
+      <div class="bloco">
+        <div class="cab">
+          <h2>Formulário do card</h2>
+          <span class="dica">Cada campo daqui vira uma pergunta no formulário que cria o card — e pode ser usado nas condicionais.</span>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <select id="selFunilCampos" class="busca" onchange="admTrocarFunil(this.value)"></select>
+            <button class="btn sm pri" onclick="abrirCampoForm()">Novo campo</button>
+          </div>
+        </div>
+        <div class="corpo" style="padding:0">
+          <table class="tab">
+            <thead><tr>
+              <th style="width:70px">Ordem</th><th>Rótulo</th><th>Chave</th><th>Tipo</th>
+              <th>Opções</th><th>Obrig.</th><th>No card</th><th></th>
+            </tr></thead>
+            <tbody id="admCamposTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- ADM: condicionais ---- -->
+    <div id="adm-regras" hidden>
+      <div class="bloco">
+        <div class="cab">
+          <h2>Condicionais</h2>
+          <span class="dica">Quando as condições baterem, o card anda sozinho para a etapa de destino.</span>
+          <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <select id="selFunilRegras" class="busca" onchange="admTrocarFunil(this.value)"></select>
+            <button class="btn sm pri" onclick="abrirRegraForm()">Nova condicional</button>
+          </div>
+        </div>
+        <div class="corpo">
+          <div id="admRegrasLista"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- ADM: acesso ---- -->
+    <div id="adm-acesso" hidden>
+      <div class="bloco">
+        <div class="cab"><h2>Acesso pela Central</h2>
+          <span class="dica">Quem entra e o que cada um pode fazer é definido na Central de Acesso.</span></div>
+        <div class="corpo">
+          <div class="aviso">
+            Esta ferramenta está cadastrada na Central de Acesso com a chave <strong>funis</strong>.
+            O login é o do hub (e-mail e senha da pessoa) e a permissão liberada lá define o que ela vê aqui:
+            <ul style="margin:8px 0 0;padding-left:18px">
+              <li><strong>Somente leitura</strong> — vê os funis e os cards, não move nem cria nada.</li>
+              <li><strong>Edição</strong> — cria, edita e move cards; não entra nesta área.</li>
+              <li><strong>Acesso total</strong> — tudo acima mais esta área de administração.</li>
+            </ul>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a class="btn" id="linkHub" href="#" target="_blank" rel="noopener">Abrir Central de Acesso</a>
+            <button class="btn" onclick="carregarContas()">Atualizar lista de pessoas</button>
+          </div>
+          <div id="listaContas" style="margin-top:14px"></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<!-- ================================ MODAIS ================================ -->
+
+<div class="modal" id="mdFunil"><div class="modal-box">
+  <div class="modal-cab"><h3 id="mdFunilTit">Novo funil</h3>
+    <button class="x" onclick="fechar('mdFunil')">&times;</button></div>
+  <div class="modal-corpo">
+    <div class="campo"><label>Nome do funil</label>
+      <input type="text" id="fFunilNome" placeholder="Ex.: Prospecção comercial"></div>
+    <div class="campo"><label>Descrição</label>
+      <textarea id="fFunilDesc" placeholder="Para que serve este funil"></textarea></div>
+    <div class="linha">
+      <div class="campo"><label>Cor</label>
+        <select id="fFunilCor">
+          <option value="#7C1B29">Vinho</option>
+          <option value="#1E6FB8">Azul</option>
+          <option value="#2C6B4F">Verde</option>
+          <option value="#B8801F">Âmbar</option>
+          <option value="#5A555C">Grafite</option>
+          <option value="#7c3aed">Roxo</option>
+        </select></div>
+      <div class="campo"><label>Sigla</label>
+        <input type="text" id="fFunilIcone" maxlength="3" placeholder="FN"></div>
+      <div class="campo"><label>Ordem</label>
+        <input type="number" id="fFunilOrdem" value="0"></div>
+    </div>
+    <label class="check"><input type="checkbox" id="fFunilAtivo" checked> Funil ativo</label>
+  </div>
+  <div class="modal-pe">
+    <button class="btn danger esq" id="btnExcluirFunil" hidden onclick="excluirFunil()">Excluir funil</button>
+    <button class="btn" onclick="fechar('mdFunil')">Cancelar</button>
+    <button class="btn pri" onclick="salvarFunil()">Salvar</button>
+  </div>
+</div></div>
+
+<div class="modal" id="mdEtapa"><div class="modal-box">
+  <div class="modal-cab"><h3 id="mdEtapaTit">Nova etapa</h3>
+    <button class="x" onclick="fechar('mdEtapa')">&times;</button></div>
+  <div class="modal-corpo">
+    <div class="linha">
+      <div class="campo" style="flex:2"><label>Nome da etapa</label>
+        <input type="text" id="fEtapaNome" placeholder="Ex.: Proposta enviada"></div>
+      <div class="campo"><label>Ordem</label>
+        <input type="number" id="fEtapaOrdem" value="0"></div>
+    </div>
+    <div class="linha">
+      <div class="campo"><label>Tipo</label>
+        <select id="fEtapaTipo">
+          <option value="inicio">Entrada (cards novos)</option>
+          <option value="normal" selected>Intermediária</option>
+          <option value="ganho">Conclusão — ganho</option>
+          <option value="perda">Conclusão — perda</option>
+        </select></div>
+      <div class="campo"><label>Cor</label>
+        <select id="fEtapaCor">
+          <option value="#7C1B29">Vinho</option>
+          <option value="#1E6FB8">Azul</option>
+          <option value="#2C6B4F">Verde</option>
+          <option value="#B8801F">Âmbar</option>
+          <option value="#A33A2A">Vermelho</option>
+          <option value="#5A555C">Grafite</option>
+        </select></div>
+      <div class="campo"><label>Prazo (dias)</label>
+        <input type="number" id="fEtapaPrazo" placeholder="opcional">
+        <span class="ajuda">Card parado além disso fica marcado.</span></div>
+    </div>
+    <div class="campo"><label>Responsável pela etapa</label>
+      <select id="fEtapaResp"></select>
+      <span class="ajuda">Lista vem das contas da Central de Acesso.</span></div>
+    <div class="campo"><label>Regras da etapa</label>
+      <textarea id="fEtapaRegras" placeholder="O que precisa acontecer nesta etapa. Este texto é o que aparece no botão recolhido do kanban."></textarea></div>
+  </div>
+  <div class="modal-pe">
+    <button class="btn danger esq" id="btnExcluirEtapa" hidden onclick="excluirEtapa()">Excluir etapa</button>
+    <button class="btn" onclick="fechar('mdEtapa')">Cancelar</button>
+    <button class="btn pri" onclick="salvarEtapa()">Salvar</button>
+  </div>
+</div></div>
+
+<div class="modal" id="mdCampo"><div class="modal-box">
+  <div class="modal-cab"><h3 id="mdCampoTit">Novo campo</h3>
+    <button class="x" onclick="fechar('mdCampo')">&times;</button></div>
+  <div class="modal-corpo">
+    <div class="linha">
+      <div class="campo" style="flex:2"><label>Rótulo</label>
+        <input type="text" id="fCampoRotulo" placeholder="Ex.: Valor da proposta" oninput="sugerirChave()"></div>
+      <div class="campo"><label>Chave</label>
+        <input type="text" id="fCampoChave" placeholder="valor_da_proposta">
+        <span class="ajuda">Usada nas condicionais.</span></div>
+    </div>
+    <div class="linha">
+      <div class="campo"><label>Tipo</label>
+        <select id="fCampoTipo" onchange="toggleOpcoes()">
+          <option value="texto">Texto curto</option>
+          <option value="textarea">Texto longo</option>
+          <option value="numero">Número</option>
+          <option value="moeda">Valor (R$)</option>
+          <option value="data">Data</option>
+          <option value="select">Lista de opções</option>
+          <option value="checkbox">Sim / Não</option>
+          <option value="email">E-mail</option>
+          <option value="telefone">Telefone</option>
+        </select></div>
+      <div class="campo"><label>Ordem</label>
+        <input type="number" id="fCampoOrdem" value="0"></div>
+    </div>
+    <div class="campo" id="boxOpcoes" hidden><label>Opções (uma por linha)</label>
+      <textarea id="fCampoOpcoes" placeholder="Novo&#10;Em análise&#10;Aprovado"></textarea></div>
+    <label class="check" style="margin-bottom:8px"><input type="checkbox" id="fCampoObrig"> Preenchimento obrigatório</label>
+    <label class="check"><input type="checkbox" id="fCampoNoCard"> Mostrar no card do kanban</label>
+  </div>
+  <div class="modal-pe">
+    <button class="btn danger esq" id="btnExcluirCampo" hidden onclick="excluirCampo()">Excluir campo</button>
+    <button class="btn" onclick="fechar('mdCampo')">Cancelar</button>
+    <button class="btn pri" onclick="salvarCampo()">Salvar</button>
+  </div>
+</div></div>
+
+<div class="modal" id="mdRegra"><div class="modal-box lg">
+  <div class="modal-cab"><h3 id="mdRegraTit">Nova condicional</h3>
+    <button class="x" onclick="fechar('mdRegra')">&times;</button></div>
+  <div class="modal-corpo">
+    <div class="linha">
+      <div class="campo" style="flex:2"><label>Nome da condicional</label>
+        <input type="text" id="fRegraNome" placeholder="Ex.: Proposta aceita vai para Fechamento"></div>
+      <div class="campo"><label>Quando avaliar</label>
+        <select id="fRegraGatilho">
+          <option value="salvar">Ao criar e ao salvar o card</option>
+          <option value="criar">Só ao criar o card</option>
+          <option value="manual">Só no botão "Rodar condicionais"</option>
+        </select></div>
+    </div>
+    <div class="linha">
+      <div class="campo"><label>Etapa de origem</label>
+        <select id="fRegraOrigem"></select>
+        <span class="ajuda">"Qualquer etapa" avalia o card onde ele estiver.</span></div>
+      <div class="campo"><label>Mover para</label>
+        <select id="fRegraDestino"></select></div>
+      <div class="campo" style="max-width:150px"><label>Combinação</label>
+        <select id="fRegraLogica">
+          <option value="E">Todas as condições</option>
+          <option value="OU">Qualquer condição</option>
+        </select></div>
+    </div>
+    <div class="campo" style="margin-bottom:6px"><label>Condições</label></div>
+    <div id="condLista"></div>
+    <button class="btn sm" onclick="addCondicao()">+ Adicionar condição</button>
+    <label class="check" style="margin-top:14px"><input type="checkbox" id="fRegraAtivo" checked> Condicional ativa</label>
+  </div>
+  <div class="modal-pe">
+    <button class="btn danger esq" id="btnExcluirRegra" hidden onclick="excluirRegra()">Excluir</button>
+    <button class="btn" onclick="fechar('mdRegra')">Cancelar</button>
+    <button class="btn pri" onclick="salvarRegra()">Salvar</button>
+  </div>
+</div></div>
+
+<div class="modal" id="mdCard"><div class="modal-box lg">
+  <div class="modal-cab"><h3 id="mdCardTit">Novo card</h3>
+    <button class="x" onclick="fechar('mdCard')">&times;</button></div>
+  <div class="modal-corpo">
+    <div id="cardAviso"></div>
+    <div class="linha">
+      <div class="campo" style="flex:2"><label>Título do card</label>
+        <input type="text" id="fCardTitulo" placeholder="Ex.: Tecelagem Aurora — entretela 402"></div>
+      <div class="campo"><label>Etapa</label>
+        <select id="fCardEtapa"></select></div>
+    </div>
+    <div class="linha">
+      <div class="campo"><label>Responsável</label>
+        <select id="fCardResp"></select></div>
+      <div class="campo"><label>Valor (R$)</label>
+        <input type="number" id="fCardValor" step="0.01" value="0"></div>
+    </div>
+    <div id="cardCampos"></div>
+    <div id="cardHistorico"></div>
+  </div>
+  <div class="modal-pe">
+    <button class="btn danger esq" id="btnExcluirCard" hidden onclick="excluirCard()">Excluir card</button>
+    <button class="btn" onclick="fechar('mdCard')">Cancelar</button>
+    <button class="btn pri" id="btnSalvarCard" onclick="salvarCard()">Salvar</button>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   Funis — Wendell Global Interlining
+   Sessao, permissao e cliente Supabase vem do guard.js da Central de Acesso.
+   Tabelas: funis, funil_etapas, funil_campos, funil_cards, funil_regras,
+            funil_historico.
+   ===================================================================== */
+(function () {
+'use strict';
+
+var sb = null;
+var S = {
+  funis: [], etapas: [], campos: [], regras: [], cards: [], contas: [],
+  funil: null,            // funil aberto no kanban
+  admFunilId: null,       // funil aberto na area ADM
+  contagem: {},           // { funil_id: {etapas:n, cards:n} }
+  abertas: {},            // etapas com o box de regras aberto
+  edit: { funil:null, etapa:null, campo:null, regra:null, card:null }
+};
+
+/* ---------------------------------------------------------------- utils */
+function $(id){ return document.getElementById(id); }
+function esc(v){
+  return String(v == null ? '' : v)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function agora(){ return new Date().toISOString(); }
+function num(v){
+  if(typeof v === 'number') return isNaN(v) ? 0 : v;
+  var s = String(v == null ? '' : v).trim();
+  if(!s) return 0;
+  if(s.indexOf(',') >= 0 && s.indexOf('.') >= 0) s = s.replace(/\./g,'').replace(',','.');
+  else s = s.replace(',','.');
+  var n = parseFloat(s.replace(/[^0-9.\-]/g,''));
+  return isNaN(n) ? 0 : n;
+}
+function moeda(v){
+  return (num(v)).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+}
+function dataBR(v){
+  if(!v) return '';
+  var d = new Date(v); if(isNaN(d)) return String(v);
+  return d.toLocaleDateString('pt-BR');
+}
+function dias(desde){
+  if(!desde) return 0;
+  var d = new Date(desde); if(isNaN(d)) return 0;
+  return Math.floor((Date.now() - d.getTime()) / 86400000);
+}
+function iniciais(nome){
+  var p = String(nome||'').trim().split(/\s+/).filter(Boolean);
+  if(!p.length) return '?';
+  return ((p[0][0]||'') + (p.length>1 ? p[p.length-1][0] : '')).toUpperCase();
+}
+function chaveSlug(t){
+  return String(t||'').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,'').slice(0,40);
+}
+function normal(v){
+  return String(v == null ? '' : v).trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+var _toast;
+function toast(msg, erro){
+  var t = $('toast');
+  t.textContent = msg;
+  t.style.background = erro ? '#A33A2A' : '';
+  t.style.color = erro ? '#fff' : '';
+  t.classList.add('on');
+  clearTimeout(_toast);
+  _toast = setTimeout(function(){ t.classList.remove('on'); }, 2800);
+}
+function erroSb(e, ctx){
+  console.error('[funis]', ctx || '', e);
+  toast((ctx ? ctx + ': ' : '') + ((e && e.message) || 'falha na operação'), true);
+}
+function abrir(id){ $(id).classList.add('on'); }
+function fechar(id){ $(id).classList.remove('on'); }
+function podeEditar(){ return window.APP && APP.podeEditar(); }
+function eAdmin(){ return window.APP && APP.eAdmin(); }
+
+/* ------------------------------------------------------------- navegacao */
+function irPara(v){
+  var adm = v === 'adm';
+  $('viewFunis').hidden = adm;
+  $('viewAdm').hidden = !adm;
+  $('tabFunis').classList.toggle('on', !adm);
+  $('tabAdm').classList.toggle('on', adm);
+  if(adm && !S.admFunilId && S.funis.length) S.admFunilId = (S.funil && S.funil.id) || S.funis[0].id;
+  if(adm) renderAdm();
+  window.scrollTo(0,0);
+}
+function admAba(aba){
+  ['funis','campos','regras','acesso'].forEach(function(a){
+    $('adm-'+a).hidden = a !== aba;
+    $('sub-'+a).classList.toggle('on', a === aba);
+  });
+  if(aba !== 'funis' && S.admFunilId) carregarAdmFunil(S.admFunilId).then(renderAdm);
+  else renderAdm();
+}
+
+/* ------------------------------------------------------------ carregamento */
+function carregarTudo(){
+  return Promise.all([
+    sb.from('funis').select('*').order('ordem').order('nome'),
+    sb.from('funil_etapas').select('id,funil_id'),
+    sb.from('funil_cards').select('id,funil_id').eq('arquivado', false)
+  ]).then(function(r){
+    if(r[0].error) throw r[0].error;
+    S.funis = r[0].data || [];
+    S.contagem = {};
+    S.funis.forEach(function(f){ S.contagem[f.id] = { etapas:0, cards:0 }; });
+    (r[1].data||[]).forEach(function(e){ if(S.contagem[e.funil_id]) S.contagem[e.funil_id].etapas++; });
+    (r[2].data||[]).forEach(function(c){ if(S.contagem[c.funil_id]) S.contagem[c.funil_id].cards++; });
+    renderMenuFunis();
+    if(S.funil){
+      var aindaExiste = S.funis.some(function(f){ return f.id === S.funil.id; });
+      if(aindaExiste) return abrirFunil(S.funil.id);
+      S.funil = null; $('blocoKanban').hidden = true;
+    } else if(S.funis.length === 1){
+      return abrirFunil(S.funis[0].id);
+    }
+  }).catch(function(e){ erroSb(e, 'carregar funis'); });
+}
+
+function abrirFunil(id){
+  var f = S.funis.filter(function(x){ return x.id === id; })[0];
+  if(!f) return Promise.resolve();
+  S.funil = f;
+  return Promise.all([
+    sb.from('funil_etapas').select('*').eq('funil_id', id).order('ordem'),
+    sb.from('funil_campos').select('*').eq('funil_id', id).order('ordem'),
+    sb.from('funil_regras').select('*').eq('funil_id', id).order('ordem'),
+    sb.from('funil_cards').select('*').eq('funil_id', id).eq('arquivado', false).order('ordem')
+  ]).then(function(r){
+    r.forEach(function(x){ if(x.error) throw x.error; });
+    S.etapas = r[0].data || [];
+    S.campos = r[1].data || [];
+    S.regras = r[2].data || [];
+    S.cards  = r[3].data || [];
+    renderMenuFunis();
+    renderKanban();
+  }).catch(function(e){ erroSb(e, 'abrir funil'); });
+}
+
+function carregarAdmFunil(id){
+  S.admFunilId = id;
+  return Promise.all([
+    sb.from('funil_etapas').select('*').eq('funil_id', id).order('ordem'),
+    sb.from('funil_campos').select('*').eq('funil_id', id).order('ordem'),
+    sb.from('funil_regras').select('*').eq('funil_id', id).order('ordem')
+  ]).then(function(r){
+    S.admEtapas = r[0].data || [];
+    S.admCampos = r[1].data || [];
+    S.admRegras = r[2].data || [];
+  }).catch(function(e){ erroSb(e, 'carregar configuração'); });
+}
+
+function carregarContas(){
+  return sb.rpc('app_contas').then(function(r){
+    if(r.error) throw r.error;
+    S.contas = (r.data || []).filter(function(c){ return c.email; });
+    renderContas();
+  }).catch(function(){
+    S.contas = [];
+    renderContas();
+  });
+}
+
+/* -------------------------------------------------------- menu de funis */
+function renderMenuFunis(){
+  var box = $('menuFunis');
+  var visiveis = S.funis.filter(function(f){ return f.ativo || eAdmin(); });
+  $('dicaFunis').textContent = visiveis.length
+    ? visiveis.length + (visiveis.length === 1 ? ' funil' : ' funis') + ' — clique para abrir o kanban'
+    : '';
+  if(!visiveis.length){
+    box.innerHTML = '<div class="vazio-geral">Nenhum funil cadastrado ainda.' +
+      (eAdmin() ? ' Crie o primeiro em <strong>Administração</strong>.' : ' Peça a um administrador para criar.') +
+      '</div>';
+    return;
+  }
+  box.innerHTML = visiveis.map(function(f){
+    var c = S.contagem[f.id] || {etapas:0,cards:0};
+    var on = S.funil && S.funil.id === f.id;
+    return '<div class="funil-card' + (on ? ' on' : '') + '" style="--cor:' + esc(f.cor) + '" ' +
+             'data-funil="' + esc(f.id) + '" role="button" tabindex="0">' +
+             (f.ativo ? '' : '<span class="tag-off">inativo</span>') +
+             '<div class="nome">' + esc(f.nome) + '</div>' +
+             '<div class="desc">' + esc(f.descricao || '') + '</div>' +
+             '<div class="nums">' +
+               '<div class="num"><b>' + c.etapas + '</b><span>etapas</span></div>' +
+               '<div class="num"><b>' + c.cards + '</b><span>cards</span></div>' +
+             '</div></div>';
+  }).join('');
+  Array.prototype.forEach.call(box.querySelectorAll('[data-funil]'), function(el){
+    el.addEventListener('click', function(){ abrirFunil(el.dataset.funil); });
+    el.addEventListener('keydown', function(ev){
+      if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); abrirFunil(el.dataset.funil); }
+    });
+  });
+}
+
+/* --------------------------------------------------------------- kanban */
+function etapaPor(id){ return S.etapas.filter(function(e){ return e.id === id; })[0] || null; }
+function nomeEtapa(id){ var e = etapaPor(id); return e ? e.nome : '—'; }
+function etapaInicial(){
+  return S.etapas.filter(function(e){ return e.tipo === 'inicio'; })[0] || S.etapas[0] || null;
+}
+
+function renderKanban(){
+  var f = S.funil;
+  if(!f){ $('blocoKanban').hidden = true; return; }
+  $('blocoKanban').hidden = false;
+  $('kanbanNome').textContent = f.nome;
+  $('kanbanDesc').textContent = f.descricao || '';
+  $('btnNovoCard').hidden = !podeEditar() || !S.etapas.length;
+
+  var box = $('kanban');
+  if(!S.etapas.length){
+    box.innerHTML = '<div class="vazio-geral">Este funil ainda não tem etapas.' +
+      (eAdmin() ? ' Cadastre em <strong>Administração › Funis e etapas</strong>.' : '') + '</div>';
+    return;
+  }
+  var termo = normal($('buscaCard').value);
+  box.innerHTML = S.etapas.map(function(e){ return colunaHTML(e, termo); }).join('');
+  ligarKanban();
+}
+
+function colunaHTML(e, termo){
+  var lista = S.cards.filter(function(c){
+    if(c.etapa_id !== e.id) return false;
+    if(!termo) return true;
+    var alvo = normal(c.titulo + ' ' + (c.responsavel_nome||'') + ' ' + JSON.stringify(c.dados||{}));
+    return alvo.indexOf(termo) >= 0;
+  });
+  var soma = lista.reduce(function(a,c){ return a + num(c.valor); }, 0);
+  var aberto = !!S.abertas[e.id];
+  var autos = {
+    sai: S.regras.filter(function(r){
+      return r.ativo && r.etapa_destino_id !== e.id &&
+             (r.etapa_origem_id === e.id || !r.etapa_origem_id);
+    }),
+    chega: S.regras.filter(function(r){
+      return r.ativo && r.etapa_destino_id === e.id;
+    })
+  };
+
+  return '<div class="col" data-etapa="' + esc(e.id) + '" style="--cor:' + esc(e.cor) + '">' +
+    '<div class="col-head">' +
+      '<div class="l1">' +
+        '<span class="nome" title="' + esc(e.nome) + '">' + esc(e.nome) + '</span>' +
+        (e.tipo !== 'normal' ? '<span class="pill ' + esc(e.tipo) + '">' +
+            (e.tipo === 'inicio' ? 'entrada' : e.tipo) + '</span>' : '') +
+        '<span class="qtd">' + lista.length + '</span>' +
+      '</div>' +
+      '<div class="l2">' +
+        (e.responsavel_nome
+          ? '<span class="resp"><span class="ini">' + esc(iniciais(e.responsavel_nome)) + '</span>' +
+            esc(e.responsavel_nome) + '</span>'
+          : '<span style="color:var(--neg);font-weight:600">sem responsável</span>') +
+        (soma ? '<span class="soma">' + esc(moeda(soma)) + '</span>' : '') +
+      '</div>' +
+      '<button class="regras-btn' + (aberto ? ' aberto' : '') + '" data-regras="' + esc(e.id) + '">' +
+        'Regras da etapa<span class="seta">&#9662;</span></button>' +
+    '</div>' +
+    (aberto ? boxRegrasHTML(e, autos) : '') +
+    '<div class="col-body" data-drop="' + esc(e.id) + '">' +
+      (lista.length ? lista.map(cardHTML).join('')
+                    : '<div class="vazio">nenhum card</div>') +
+    '</div>' +
+  '</div>';
+}
+
+function boxRegrasHTML(e, autos){
+  function lista(titulo, arr, modo){
+    if(!arr.length) return '';
+    return '<div class="auto"><h5>' + titulo + '</h5><ul>' +
+      arr.map(function(r){ return '<li>' + condicoesEmTexto(r) +
+        (modo === 'sai' ? ' <span class="seta-fluxo">&rarr;</span> <code>' + esc(nomeEtapaQualquer(r.etapa_destino_id)) + '</code>'
+                        : ' <span style="color:var(--ink-3)">(vindo de <code>' +
+                          esc(r.etapa_origem_id ? nomeEtapaQualquer(r.etapa_origem_id) : 'qualquer etapa') + '</code>)</span>') +
+        '</li>'; }).join('') + '</ul></div>';
+  }
+  return '<div class="regras-box">' +
+    '<h5>Regras desta etapa</h5>' +
+    (e.regras ? esc(e.regras) : '<span class="vazio">Nenhuma regra escrita para esta etapa.</span>') +
+    (e.prazo_dias ? '<div style="margin-top:8px"><strong>Prazo:</strong> ' + e.prazo_dias + ' dias na etapa.</div>' : '') +
+    (e.responsavel_nome ? '<div style="margin-top:6px"><strong>Responsável:</strong> ' + esc(e.responsavel_nome) + '</div>' : '') +
+    lista('Movimentação automática — sai daqui quando', autos.sai, 'sai') +
+    lista('Movimentação automática — chega aqui quando', autos.chega, 'chega') +
+  '</div>';
+}
+
+function cardHTML(c){
+  var e = etapaPor(c.etapa_id);
+  var d = dias(c.etapa_desde);
+  var atrasado = e && e.prazo_dias && d > e.prazo_dias;
+  var chips = S.campos.filter(function(f){ return f.mostrar_no_card; }).map(function(f){
+    var v = (c.dados||{})[f.chave];
+    if(v === undefined || v === null || v === '' || v === false) return '';
+    if(f.tipo === 'checkbox') v = 'sim';
+    if(f.tipo === 'moeda') v = moeda(v);
+    if(f.tipo === 'data') v = dataBR(v);
+    return '<span class="chip"><b>' + esc(f.rotulo) + ':</b> ' + esc(v) + '</span>';
+  }).join('');
+
+  return '<div class="kcard" data-card="' + esc(c.id) + '" draggable="' + (podeEditar() ? 'true':'false') + '" ' +
+      'style="--cor:' + esc((e && e.cor) || '#7C1B29') + '">' +
+    '<div class="tit">' + esc(c.titulo) + '</div>' +
+    (chips ? '<div class="chips">' + chips + '</div>' : '') +
+    '<div class="pe">' +
+      (c.responsavel_nome ? '<span>' + esc(c.responsavel_nome) + '</span>' : '<span>sem responsável</span>') +
+      '<span class="' + (atrasado ? 'alerta' : '') + '">' + d + 'd</span>' +
+      (num(c.valor) ? '<span class="val">' + esc(moeda(c.valor)) + '</span>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+function ligarKanban(){
+  var box = $('kanban');
+
+  Array.prototype.forEach.call(box.querySelectorAll('[data-regras]'), function(b){
+    b.addEventListener('click', function(){
+      var id = b.dataset.regras;
+      S.abertas[id] = !S.abertas[id];
+      renderKanban();
+    });
+  });
+
+  Array.prototype.forEach.call(box.querySelectorAll('[data-card]'), function(el){
+    el.addEventListener('click', function(){ abrirCardForm(el.dataset.card); });
+    el.addEventListener('dragstart', function(ev){
+      if(!podeEditar()) return;
+      ev.dataTransfer.setData('text/plain', el.dataset.card);
+      ev.dataTransfer.effectAllowed = 'move';
+      el.classList.add('arrastando');
+    });
+    el.addEventListener('dragend', function(){ el.classList.remove('arrastando'); });
+  });
+
+  Array.prototype.forEach.call(box.querySelectorAll('[data-drop]'), function(zona){
+    var col = zona.parentNode;
+    zona.addEventListener('dragover', function(ev){
+      if(!podeEditar()) return;
+      ev.preventDefault(); ev.dataTransfer.dropEffect = 'move'; col.classList.add('drop');
+    });
+    zona.addEventListener('dragleave', function(){ col.classList.remove('drop'); });
+    zona.addEventListener('drop', function(ev){
+      ev.preventDefault(); col.classList.remove('drop');
+      if(!podeEditar()) return;
+      var id = ev.dataTransfer.getData('text/plain');
+      var card = S.cards.filter(function(c){ return c.id === id; })[0];
+      if(!card || card.etapa_id === zona.dataset.drop) return;
+      moverCard(card, zona.dataset.drop, 'manual', null).then(function(){
+        renderKanban();
+        toast('Card movido para ' + nomeEtapa(zona.dataset.drop));
+      });
+    });
+  });
+}
+
+/* ------------------------------------------------------ mover e historico */
+function moverCard(card, etapaId, origem, regraNome){
+  var de = nomeEtapa(card.etapa_id), para = nomeEtapa(etapaId), t = agora();
+  return sb.from('funil_cards')
+    .update({ etapa_id: etapaId, etapa_desde: t, atualizado_em: t })
+    .eq('id', card.id)
+    .then(function(r){
+      if(r.error) throw r.error;
+      card.etapa_id = etapaId; card.etapa_desde = t;
+      return sb.from('funil_historico').insert({
+        card_id: card.id, etapa_de: de, etapa_para: para,
+        origem: origem, regra_nome: regraNome || null,
+        usuario: (APP.usuario && APP.usuario.nome) || ''
+      });
+    })
+    .catch(function(e){ erroSb(e, 'mover card'); });
+}
+
+function registrar(cardId, origem, detalhe){
+  return sb.from('funil_historico').insert({
+    card_id: cardId, origem: origem, detalhe: detalhe || null,
+    usuario: (APP.usuario && APP.usuario.nome) || ''
+  }).then(function(){}, function(){});
+}
+
+/* ------------------------------------------------- motor de condicionais */
+var OPERADORES = [
+  { v:'igual',        t:'é igual a',        valor:true  },
+  { v:'diferente',    t:'é diferente de',   valor:true  },
+  { v:'contem',       t:'contém',           valor:true  },
+  { v:'nao_contem',   t:'não contém',       valor:true  },
+  { v:'maior',        t:'é maior que',      valor:true  },
+  { v:'maior_igual',  t:'é maior ou igual a', valor:true },
+  { v:'menor',        t:'é menor que',      valor:true  },
+  { v:'menor_igual',  t:'é menor ou igual a', valor:true },
+  { v:'preenchido',   t:'está preenchido',  valor:false },
+  { v:'vazio',        t:'está vazio',       valor:false },
+  { v:'marcado',      t:'está marcado (sim)', valor:false },
+  { v:'desmarcado',   t:'não está marcado', valor:false }
+];
+var META = [
+  { chave:'__titulo',       rotulo:'Título do card' },
+  { chave:'__valor',        rotulo:'Valor (R$)' },
+  { chave:'__responsavel',  rotulo:'Responsável' },
+  { chave:'__dias_etapa',   rotulo:'Dias parado na etapa' },
+  { chave:'__dias_criacao', rotulo:'Dias desde a criação' }
+];
+
+function camposDisponiveis(lista){
+  return META.concat((lista || S.campos).map(function(c){
+    return { chave:c.chave, rotulo:c.rotulo, tipo:c.tipo };
+  }));
+}
+function rotuloCampo(chave, lista){
+  var achado = camposDisponiveis(lista).filter(function(c){ return c.chave === chave; })[0];
+  return achado ? achado.rotulo : chave;
+}
+function rotuloOperador(op){
+  var o = OPERADORES.filter(function(x){ return x.v === op; })[0];
+  return o ? o.t : op;
+}
+
+function valorDoCard(card, chave){
+  switch(chave){
+    case '__titulo':       return card.titulo || '';
+    case '__valor':        return num(card.valor);
+    case '__responsavel':  return card.responsavel_nome || '';
+    case '__dias_etapa':   return dias(card.etapa_desde);
+    case '__dias_criacao': return dias(card.criado_em);
+    default:               return (card.dados || {})[chave];
+  }
+}
+
+function ehNumero(v){
+  if(typeof v === 'number') return true;
+  if(typeof v !== 'string' || !v.trim()) return false;
+  return !isNaN(parseFloat(v.replace(',','.'))) && /^-?[\d.,\s]+$/.test(v.trim());
+}
+
+function testarCondicao(card, c){
+  var v = valorDoCard(card, c.campo);
+  var alvo = c.valor;
+  var vazio = (v === undefined || v === null || v === '' ||
+              (Array.isArray(v) && !v.length));
+
+  switch(c.operador){
+    case 'preenchido':  return !vazio && v !== false;
+    case 'vazio':       return vazio || v === false;
+    case 'marcado':     return v === true || normal(v) === 'sim' || normal(v) === 'true';
+    case 'desmarcado':  return !(v === true || normal(v) === 'sim' || normal(v) === 'true');
+  }
+  if(vazio) return c.operador === 'diferente' || c.operador === 'nao_contem';
+
+  if(['maior','maior_igual','menor','menor_igual'].indexOf(c.operador) >= 0){
+    var a = num(v), b = num(alvo);
+    if(c.operador === 'maior')       return a >  b;
+    if(c.operador === 'maior_igual') return a >= b;
+    if(c.operador === 'menor')       return a <  b;
+    return a <= b;
+  }
+  if(c.operador === 'contem')      return normal(v).indexOf(normal(alvo)) >= 0;
+  if(c.operador === 'nao_contem')  return normal(v).indexOf(normal(alvo)) < 0;
+
+  var iguais = (ehNumero(v) && ehNumero(alvo))
+    ? num(v) === num(alvo)
+    : normal(v) === normal(alvo);
+  if(c.operador === 'igual')     return iguais;
+  if(c.operador === 'diferente') return !iguais;
+  return false;
+}
+
+function regraBate(card, regra){
+  var conds = regra.condicoes || [];
+  if(!conds.length) return false;
+  if(regra.etapa_origem_id && regra.etapa_origem_id !== card.etapa_id) return false;
+  if(regra.etapa_destino_id === card.etapa_id) return false;
+  if(regra.logica === 'OU'){
+    return conds.some(function(c){ return testarCondicao(card, c); });
+  }
+  return conds.every(function(c){ return testarCondicao(card, c); });
+}
+
+/* avalia as condicionais de um card; encadeia no maximo 5 saltos */
+function avaliarRegras(card, evento){
+  var aplicaveis = S.regras.filter(function(r){
+    if(!r.ativo) return false;
+    if(evento === 'manual') return true;                       // o botao roda todas
+    if(r.gatilho === 'manual') return false;
+    if(r.gatilho === 'criar')  return evento === 'criar';
+    return evento === 'criar' || evento === 'salvar';          // gatilho 'salvar'
+  }).sort(function(a,b){ return (a.ordem||0) - (b.ordem||0); });
+
+  var passos = [];
+  function proximo(n){
+    if(n >= 5) return Promise.resolve(passos);
+    var regra = aplicaveis.filter(function(r){ return regraBate(card, r); })[0];
+    if(!regra) return Promise.resolve(passos);
+    var destino = regra.etapa_destino_id;
+    if(passos.some(function(p){ return p.etapa === destino; })) return Promise.resolve(passos);
+    return moverCard(card, destino, 'regra', regra.nome).then(function(){
+      passos.push({ etapa: destino, regra: regra.nome, nome: nomeEtapa(destino) });
+      return proximo(n + 1);
+    });
+  }
+  return proximo(0);
+}
+
+function rodarRegrasManual(){
+  if(!S.funil) return;
+  if(!podeEditar()){ toast('Seu acesso é somente leitura.', true); return; }
+  var fila = S.cards.slice();
+  var movidos = 0;
+  function proximo(i){
+    if(i >= fila.length) return Promise.resolve();
+    return avaliarRegras(fila[i], 'manual').then(function(passos){
+      if(passos.length) movidos++;
+      return proximo(i + 1);
+    });
+  }
+  toast('Avaliando condicionais…');
+  proximo(0).then(function(){
+    renderKanban();
+    toast(movidos ? movidos + (movidos === 1 ? ' card movido' : ' cards movidos')
+                  : 'Nenhum card se encaixou nas condicionais');
+  });
+}
+
+function condicoesEmTexto(r){
+  var lista = (S.campos && S.campos.length) ? S.campos : (S.admCampos || []);
+  var conds = (r.condicoes || []).map(function(c){
+    var o = OPERADORES.filter(function(x){ return x.v === c.operador; })[0];
+    return '<code>' + esc(rotuloCampo(c.campo, lista)) + '</code> ' + esc(rotuloOperador(c.operador)) +
+           (o && o.valor ? ' <code>' + esc(c.valor) + '</code>' : '');
+  });
+  return conds.join(r.logica === 'OU' ? ' <em>ou</em> ' : ' <em>e</em> ') || '<em>sem condições</em>';
+}
+
+function descreverRegra(r, curto){
+  var junta = condicoesEmTexto(r);
+  var origem = r.etapa_origem_id ? nomeEtapaQualquer(r.etapa_origem_id) : 'qualquer etapa';
+  var destino = nomeEtapaQualquer(r.etapa_destino_id);
+  return (curto ? '' : '<strong>' + esc(r.nome) + '</strong> — ') +
+         'em <code>' + esc(origem) + '</code>, se ' + junta +
+         ' <span class="seta-fluxo">&rarr;</span> <code>' + esc(destino) + '</code>';
+}
+function nomeEtapaQualquer(id){
+  var todas = (S.etapas || []).concat(S.admEtapas || []);
+  var e = todas.filter(function(x){ return x.id === id; })[0];
+  return e ? e.nome : '—';
+}
+
+/* ------------------------------------------------------------ card: form */
+function listaResponsaveis(){
+  var nomes = {};
+  S.contas.forEach(function(c){ nomes[c.nome || c.email] = true; });
+  (S.etapas||[]).forEach(function(e){ if(e.responsavel_nome) nomes[e.responsavel_nome] = true; });
+  if(APP.usuario && APP.usuario.nome) nomes[APP.usuario.nome] = true;
+  return Object.keys(nomes).sort();
+}
+function selectResponsavel(sel, valor){
+  var opts = ['<option value="">— sem responsável —</option>'];
+  listaResponsaveis().forEach(function(n){
+    opts.push('<option value="' + esc(n) + '"' + (n === valor ? ' selected' : '') + '>' + esc(n) + '</option>');
+  });
+  if(valor && listaResponsaveis().indexOf(valor) < 0){
+    opts.push('<option value="' + esc(valor) + '" selected>' + esc(valor) + '</option>');
+  }
+  sel.innerHTML = opts.join('');
+}
+
+function abrirCardForm(id){
+  if(!S.funil) return;
+  var card = id ? S.cards.filter(function(c){ return c.id === id; })[0] : null;
+  S.edit.card = card || null;
+  var editavel = podeEditar();
+
+  $('mdCardTit').textContent = card ? card.titulo : 'Novo card · ' + S.funil.nome;
+  $('cardAviso').innerHTML = editavel ? '' :
+    '<div class="aviso">Seu acesso é somente leitura: dá para consultar, não para alterar.</div>';
+  $('fCardTitulo').value = card ? card.titulo : '';
+  $('fCardValor').value  = card ? num(card.valor) : 0;
+
+  var etapas = S.etapas;
+  $('fCardEtapa').innerHTML = etapas.map(function(e){
+    var sel = card ? (e.id === card.etapa_id) : (etapaInicial() && e.id === etapaInicial().id);
+    return '<option value="' + esc(e.id) + '"' + (sel ? ' selected' : '') + '>' + esc(e.nome) + '</option>';
+  }).join('');
+
+  var respPadrao = card ? card.responsavel_nome
+                        : (etapaInicial() ? etapaInicial().responsavel_nome : '');
+  selectResponsavel($('fCardResp'), respPadrao || '');
+
+  $('cardCampos').innerHTML = S.campos.length
+    ? S.campos.map(function(f){ return campoFormHTML(f, card ? (card.dados||{})[f.chave] : undefined); }).join('')
+    : '<div class="aviso">Este funil ainda não tem campos no formulário.' +
+      (eAdmin() ? ' Cadastre em <strong>Administração › Formulário do card</strong>.' : '') + '</div>';
+
+  Array.prototype.forEach.call($('mdCard').querySelectorAll('input,select,textarea'), function(el){
+    el.disabled = !editavel;
+  });
+  $('btnSalvarCard').hidden = !editavel;
+  $('btnExcluirCard').hidden = !card || !editavel;
+
+  $('cardHistorico').innerHTML = '';
+  if(card) carregarHistorico(card.id);
+  abrir('mdCard');
+}
+
+function campoFormHTML(f, valor){
+  var id = 'fc_' + f.chave;
+  var lab = '<label>' + esc(f.rotulo) + (f.obrigatorio ? ' *' : '') + '</label>';
+  var v = valor === undefined || valor === null ? '' : valor;
+  var ctl;
+  if(f.tipo === 'textarea'){
+    ctl = '<textarea id="' + id + '" data-chave="' + esc(f.chave) + '">' + esc(v) + '</textarea>';
+  } else if(f.tipo === 'select'){
+    var ops = ['<option value="">—</option>'].concat((f.opcoes||[]).map(function(o){
+      return '<option value="' + esc(o) + '"' + (String(o) === String(v) ? ' selected' : '') + '>' + esc(o) + '</option>';
+    }));
+    ctl = '<select id="' + id + '" data-chave="' + esc(f.chave) + '">' + ops.join('') + '</select>';
+  } else if(f.tipo === 'checkbox'){
+    return '<div class="campo"><label class="check"><input type="checkbox" id="' + id + '" ' +
+           'data-chave="' + esc(f.chave) + '"' + (v === true || normal(v) === 'sim' ? ' checked' : '') + '> ' +
+           esc(f.rotulo) + '</label></div>';
+  } else {
+    var t = f.tipo === 'numero' || f.tipo === 'moeda' ? 'number'
+          : f.tipo === 'data' ? 'date'
+          : f.tipo === 'email' ? 'email'
+          : f.tipo === 'telefone' ? 'tel' : 'text';
+    var step = (f.tipo === 'moeda') ? ' step="0.01"' : '';
+    ctl = '<input type="' + t + '"' + step + ' id="' + id + '" data-chave="' + esc(f.chave) + '" value="' + esc(v) + '">';
+  }
+  return '<div class="campo">' + lab + ctl + '</div>';
+}
+
+function lerCampos(){
+  var dados = {}, faltou = null;
+  S.campos.forEach(function(f){
+    var el = $('fc_' + f.chave);
+    if(!el) return;
+    var v = f.tipo === 'checkbox' ? el.checked : el.value;
+    if(f.tipo === 'numero' || f.tipo === 'moeda') v = el.value === '' ? '' : num(el.value);
+    if(f.obrigatorio && (v === '' || v === null || v === undefined || v === false) && !faltou) faltou = f.rotulo;
+    dados[f.chave] = v;
+  });
+  return { dados: dados, faltou: faltou };
+}
+
+function salvarCard(){
+  if(!podeEditar()) return;
+  var titulo = $('fCardTitulo').value.trim();
+  if(!titulo){ toast('Dê um título ao card.', true); return; }
+  var leitura = lerCampos();
+  if(leitura.faltou){ toast('Campo obrigatório: ' + leitura.faltou, true); return; }
+
+  var card = S.edit.card;
+  var etapaId = $('fCardEtapa').value;
+  var reg = {
+    funil_id: S.funil.id,
+    etapa_id: etapaId,
+    titulo: titulo,
+    dados: leitura.dados,
+    responsavel_nome: $('fCardResp').value || null,
+    valor: num($('fCardValor').value),
+    atualizado_em: agora()
+  };
+
+  var p;
+  if(card){
+    if(card.etapa_id !== etapaId) reg.etapa_desde = agora();
+    p = sb.from('funil_cards').update(reg).eq('id', card.id).select().then(function(r){
+      if(r.error) throw r.error;
+      var novo = r.data[0];
+      if(card.etapa_id !== etapaId){
+        registrar(novo.id, 'manual', 'Etapa alterada no formulário: ' +
+          nomeEtapa(card.etapa_id) + ' para ' + nomeEtapa(etapaId));
+      } else {
+        registrar(novo.id, 'edicao', 'Card editado');
+      }
+      return { card: novo, evento: 'salvar' };
+    });
+  } else {
+    reg.criado_por = (APP.usuario && APP.usuario.nome) || '';
+    reg.criado_por_email = (APP.usuario && APP.usuario.email) || '';
+    reg.etapa_desde = agora();
+    p = sb.from('funil_cards').insert(reg).select().then(function(r){
+      if(r.error) throw r.error;
+      var novo = r.data[0];
+      registrar(novo.id, 'criacao', 'Card criado em ' + nomeEtapa(etapaId));
+      return { card: novo, evento: 'criar' };
+    });
+  }
+
+  p.then(function(res){
+    var idx = -1;
+    S.cards.forEach(function(c, i){ if(c.id === res.card.id) idx = i; });
+    if(idx >= 0) S.cards[idx] = res.card; else S.cards.push(res.card);
+    return avaliarRegras(res.card, res.evento).then(function(passos){
+      fechar('mdCard');
+      renderKanban();
+      carregarTudo();
+      if(passos.length){
+        toast('Condicional "' + passos[passos.length-1].regra + '": card foi para ' +
+              passos[passos.length-1].nome);
+      } else {
+        toast('Card salvo');
+      }
+    });
+  }).catch(function(e){ erroSb(e, 'salvar card'); });
+}
+
+function excluirCard(){
+  var card = S.edit.card;
+  if(!card || !podeEditar()) return;
+  if(!confirm('Excluir o card "' + card.titulo + '"? Isso não pode ser desfeito.')) return;
+  sb.from('funil_cards').delete().eq('id', card.id).then(function(r){
+    if(r.error) throw r.error;
+    S.cards = S.cards.filter(function(c){ return c.id !== card.id; });
+    fechar('mdCard'); renderKanban(); carregarTudo(); toast('Card excluído');
+  }).catch(function(e){ erroSb(e, 'excluir card'); });
+}
+
+function carregarHistorico(cardId){
+  sb.from('funil_historico').select('*').eq('card_id', cardId)
+    .order('criado_em', { ascending:false }).limit(25)
+    .then(function(r){
+      var l = r.data || [];
+      $('cardHistorico').innerHTML =
+        '<div class="campo" style="margin-top:6px"><label>Histórico</label>' +
+        (l.length
+          ? '<table class="tab"><tbody>' + l.map(function(h){
+              var o = h.origem === 'regra' ? 'condicional "' + esc(h.regra_nome || '') + '"' : esc(h.origem);
+              var mov = h.etapa_para ? esc(h.etapa_de || '—') + ' &rarr; ' + esc(h.etapa_para) : esc(h.detalhe || '');
+              return '<tr><td style="width:120px;color:var(--ink-3)">' +
+                     esc(new Date(h.criado_em).toLocaleString('pt-BR')) + '</td>' +
+                     '<td>' + mov + '</td>' +
+                     '<td style="color:var(--ink-3)">' + o + '</td>' +
+                     '<td style="color:var(--ink-3)">' + esc(h.usuario || '') + '</td></tr>';
+            }).join('') + '</tbody></table>'
+          : '<span class="ajuda">Sem movimentações registradas.</span>') +
+        '</div>';
+    }, function(){});
+}
+
+/* =====================================================================
+   ÁREA ADM
+   ===================================================================== */
+function renderAdm(){
+  if(!eAdmin()) return;
+  renderAdmFunis();
+  ['selFunilCampos','selFunilRegras'].forEach(function(id){
+    $(id).innerHTML = S.funis.map(function(f){
+      return '<option value="' + esc(f.id) + '"' + (f.id === S.admFunilId ? ' selected' : '') + '>' +
+             esc(f.nome) + '</option>';
+    }).join('');
+  });
+  renderAdmEtapas();
+  renderAdmCampos();
+  renderAdmRegras();
+}
+
+function admTrocarFunil(id){
+  carregarAdmFunil(id).then(renderAdm);
+}
+
+function renderAdmFunis(){
+  $('admFunisTbody').innerHTML = S.funis.length ? S.funis.map(function(f){
+    var c = S.contagem[f.id] || {etapas:0,cards:0};
+    return '<tr>' +
+      '<td><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:' + esc(f.cor) + '"></span></td>' +
+      '<td><strong>' + esc(f.nome) + '</strong></td>' +
+      '<td style="color:var(--ink-2)">' + esc(f.descricao || '') + '</td>' +
+      '<td class="num">' + c.etapas + '</td>' +
+      '<td class="num">' + c.cards + '</td>' +
+      '<td><span class="pill ' + (f.ativo ? 'on' : 'off') + '">' + (f.ativo ? 'ativo' : 'inativo') + '</span></td>' +
+      '<td class="acoes">' +
+        '<button class="btn sm" data-etapas="' + esc(f.id) + '">Etapas</button> ' +
+        '<button class="btn sm" data-editf="' + esc(f.id) + '">Editar</button>' +
+      '</td></tr>';
+  }).join('') : '<tr><td colspan="7" style="color:var(--ink-3);padding:18px">Nenhum funil ainda. Clique em “Novo funil”.</td></tr>';
+
+  var tb = $('admFunisTbody');
+  Array.prototype.forEach.call(tb.querySelectorAll('[data-etapas]'), function(b){
+    b.addEventListener('click', function(){ admTrocarFunil(b.dataset.etapas); });
+  });
+  Array.prototype.forEach.call(tb.querySelectorAll('[data-editf]'), function(b){
+    b.addEventListener('click', function(){ abrirFunilForm(b.dataset.editf); });
+  });
+}
+
+function renderAdmEtapas(){
+  var f = S.funis.filter(function(x){ return x.id === S.admFunilId; })[0];
+  $('admEtapasBloco').hidden = !f;
+  if(!f) return;
+  $('admEtapasFunil').textContent = f.nome;
+  var etapas = S.admEtapas || [];
+  var tipos = { inicio:'entrada', normal:'intermediária', ganho:'ganho', perda:'perda' };
+  $('admEtapasTbody').innerHTML = etapas.length ? etapas.map(function(e, i){
+    return '<tr>' +
+      '<td><button class="btn sm" data-sobe="' + esc(e.id) + '"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button> ' +
+          '<button class="btn sm" data-desce="' + esc(e.id) + '"' + (i === etapas.length-1 ? ' disabled' : '') + '>&darr;</button></td>' +
+      '<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + esc(e.cor) + ';margin-right:6px"></span>' +
+          '<strong>' + esc(e.nome) + '</strong></td>' +
+      '<td><span class="pill ' + esc(e.tipo) + '">' + esc(tipos[e.tipo] || e.tipo) + '</span></td>' +
+      '<td>' + (e.responsavel_nome ? esc(e.responsavel_nome) :
+          '<span style="color:var(--neg)">definir</span>') + '</td>' +
+      '<td style="color:var(--ink-2);max-width:280px">' +
+          esc((e.regras || '').slice(0,90)) + ((e.regras||'').length > 90 ? '…' : '') + '</td>' +
+      '<td class="num">' + (e.prazo_dias || '—') + '</td>' +
+      '<td class="acoes"><button class="btn sm" data-edite="' + esc(e.id) + '">Editar</button></td>' +
+    '</tr>';
+  }).join('') : '<tr><td colspan="7" style="color:var(--ink-3);padding:18px">Nenhuma etapa. Clique em “Nova etapa”.</td></tr>';
+
+  var tb = $('admEtapasTbody');
+  Array.prototype.forEach.call(tb.querySelectorAll('[data-edite]'), function(b){
+    b.addEventListener('click', function(){ abrirEtapaForm(b.dataset.edite); });
+  });
+  Array.prototype.forEach.call(tb.querySelectorAll('[data-sobe]'), function(b){
+    b.addEventListener('click', function(){ reordenarEtapa(b.dataset.sobe, -1); });
+  });
+  Array.prototype.forEach.call(tb.querySelectorAll('[data-desce]'), function(b){
+    b.addEventListener('click', function(){ reordenarEtapa(b.dataset.desce, 1); });
+  });
+}
+
+function reordenarEtapa(id, dir){
+  var lista = (S.admEtapas || []).slice();
+  var i = -1; lista.forEach(function(e, k){ if(e.id === id) i = k; });
+  var j = i + dir;
+  if(i < 0 || j < 0 || j >= lista.length) return;
+  var tmp = lista[i]; lista[i] = lista[j]; lista[j] = tmp;
+  Promise.all(lista.map(function(e, k){
+    return sb.from('funil_etapas').update({ ordem: k }).eq('id', e.id);
+  })).then(function(){
+    return carregarAdmFunil(S.admFunilId);
+  }).then(function(){
+    renderAdm();
+    if(S.funil && S.funil.id === S.admFunilId) abrirFunil(S.funil.id);
+  }).catch(function(e){ erroSb(e, 'reordenar'); });
+}
+
+/* ---- funil: form ---- */
+function abrirFunilForm(id){
+  var f = id ? S.funis.filter(function(x){ return x.id === id; })[0] : null;
+  S.edit.funil = f || null;
+  $('mdFunilTit').textContent = f ? 'Editar funil' : 'Novo funil';
+  $('fFunilNome').value = f ? f.nome : '';
+  $('fFunilDesc').value = f ? (f.descricao || '') : '';
+  $('fFunilCor').value = f ? f.cor : '#7C1B29';
+  $('fFunilIcone').value = f ? f.icone : 'FN';
+  $('fFunilOrdem').value = f ? f.ordem : (S.funis.length * 10);
+  $('fFunilAtivo').checked = f ? f.ativo : true;
+  $('btnExcluirFunil').hidden = !f;
+  abrir('mdFunil');
+}
+
+function salvarFunil(){
+  var nome = $('fFunilNome').value.trim();
+  if(!nome){ toast('Dê um nome ao funil.', true); return; }
+  var reg = {
+    nome: nome,
+    descricao: $('fFunilDesc').value.trim() || null,
+    cor: $('fFunilCor').value,
+    icone: ($('fFunilIcone').value.trim() || 'FN').toUpperCase().slice(0,3),
+    ordem: parseInt($('fFunilOrdem').value, 10) || 0,
+    ativo: $('fFunilAtivo').checked,
+    atualizado_em: agora()
+  };
+  var f = S.edit.funil;
+  var p = f
+    ? sb.from('funis').update(reg).eq('id', f.id).select()
+    : sb.from('funis').insert(Object.assign({ criado_por: (APP.usuario && APP.usuario.nome) || '' }, reg)).select();
+
+  p.then(function(r){
+    if(r.error) throw r.error;
+    var novo = r.data[0];
+    fechar('mdFunil');
+    return carregarTudo().then(function(){
+      S.admFunilId = novo.id;
+      return carregarAdmFunil(novo.id);
+    }).then(function(){ renderAdm(); toast('Funil salvo'); });
+  }).catch(function(e){ erroSb(e, 'salvar funil'); });
+}
+
+function excluirFunil(){
+  var f = S.edit.funil;
+  if(!f) return;
+  if(!confirm('Excluir o funil "' + f.nome + '"? Etapas, campos, condicionais e cards dele serão apagados.')) return;
+  sb.from('funis').delete().eq('id', f.id).then(function(r){
+    if(r.error) throw r.error;
+    fechar('mdFunil');
+    if(S.funil && S.funil.id === f.id){ S.funil = null; $('blocoKanban').hidden = true; }
+    if(S.admFunilId === f.id) S.admFunilId = null;
+    return carregarTudo().then(function(){
+      if(!S.admFunilId && S.funis.length) return carregarAdmFunil(S.funis[0].id);
+    }).then(function(){ renderAdm(); toast('Funil excluído'); });
+  }).catch(function(e){ erroSb(e, 'excluir funil'); });
+}
+
+/* ---- etapa: form ---- */
+function abrirEtapaForm(id){
+  if(!S.admFunilId){ toast('Escolha um funil primeiro.', true); return; }
+  var e = id ? (S.admEtapas || []).filter(function(x){ return x.id === id; })[0] : null;
+  S.edit.etapa = e || null;
+  $('mdEtapaTit').textContent = e ? 'Editar etapa' : 'Nova etapa';
+  $('fEtapaNome').value = e ? e.nome : '';
+  $('fEtapaOrdem').value = e ? e.ordem : (S.admEtapas || []).length;
+  $('fEtapaTipo').value = e ? e.tipo : ((S.admEtapas||[]).length ? 'normal' : 'inicio');
+  $('fEtapaCor').value = e ? e.cor : (S.funis.filter(function(x){ return x.id === S.admFunilId; })[0] || {}).cor || '#7C1B29';
+  $('fEtapaPrazo').value = e && e.prazo_dias ? e.prazo_dias : '';
+  $('fEtapaRegras').value = e ? (e.regras || '') : '';
+  selectResponsavel($('fEtapaResp'), e ? (e.responsavel_nome || '') : '');
+  $('btnExcluirEtapa').hidden = !e;
+  abrir('mdEtapa');
+}
+
+function salvarEtapa(){
+  var nome = $('fEtapaNome').value.trim();
+  if(!nome){ toast('Dê um nome à etapa.', true); return; }
+  var resp = $('fEtapaResp').value || null;
+  var conta = S.contas.filter(function(c){ return (c.nome || c.email) === resp; })[0];
+  var reg = {
+    funil_id: S.admFunilId,
+    nome: nome,
+    ordem: parseInt($('fEtapaOrdem').value, 10) || 0,
+    tipo: $('fEtapaTipo').value,
+    cor: $('fEtapaCor').value,
+    prazo_dias: $('fEtapaPrazo').value === '' ? null : parseInt($('fEtapaPrazo').value, 10),
+    responsavel_nome: resp,
+    responsavel_email: conta ? conta.email : (S.edit.etapa && S.edit.etapa.responsavel_nome === resp
+      ? S.edit.etapa.responsavel_email : null),
+    regras: $('fEtapaRegras').value.trim() || null
+  };
+  var e = S.edit.etapa;
+  var p = e ? sb.from('funil_etapas').update(reg).eq('id', e.id)
+            : sb.from('funil_etapas').insert(reg);
+  p.then(function(r){
+    if(r.error) throw r.error;
+    fechar('mdEtapa');
+    return carregarAdmFunil(S.admFunilId);
+  }).then(function(){
+    renderAdm();
+    return carregarTudo();
+  }).then(function(){ toast('Etapa salva'); })
+   .catch(function(err){ erroSb(err, 'salvar etapa'); });
+}
+
+function excluirEtapa(){
+  var e = S.edit.etapa;
+  if(!e) return;
+  if(!confirm('Excluir a etapa "' + e.nome + '"? Cards nela ficam sem etapa e condicionais ligadas a ela também são apagadas.')) return;
+  sb.from('funil_etapas').delete().eq('id', e.id).then(function(r){
+    if(r.error) throw r.error;
+    fechar('mdEtapa');
+    return carregarAdmFunil(S.admFunilId);
+  }).then(function(){
+    renderAdm();
+    return carregarTudo();
+  }).then(function(){ toast('Etapa excluída'); })
+   .catch(function(err){ erroSb(err, 'excluir etapa'); });
+}
+
+/* ---- campos: form ---- */
+function renderAdmCampos(){
+  var tipos = { texto:'Texto', textarea:'Texto longo', numero:'Número', moeda:'Valor (R$)',
+                data:'Data', select:'Lista', checkbox:'Sim/Não', email:'E-mail', telefone:'Telefone' };
+  var campos = S.admCampos || [];
+  $('admCamposTbody').innerHTML = campos.length ? campos.map(function(c, i){
+    return '<tr>' +
+      '<td><button class="btn sm" data-csobe="' + esc(c.id) + '"' + (i===0?' disabled':'') + '>&uarr;</button> ' +
+          '<button class="btn sm" data-cdesce="' + esc(c.id) + '"' + (i===campos.length-1?' disabled':'') + '>&darr;</button></td>' +
+      '<td><strong>' + esc(c.rotulo) + '</strong></td>' +
+      '<td><code style="font-size:11px;color:var(--ink-2)">' + esc(c.chave) + '</code></td>' +
+      '<td>' + esc(tipos[c.tipo] || c.tipo) + '</td>' +
+      '<td style="color:var(--ink-2)">' + esc((c.opcoes||[]).join(', ').slice(0,50)) + '</td>' +
+      '<td>' + (c.obrigatorio ? 'sim' : '—') + '</td>' +
+      '<td>' + (c.mostrar_no_card ? 'sim' : '—') + '</td>' +
+      '<td class="acoes"><button class="btn sm" data-editc="' + esc(c.id) + '">Editar</button></td>' +
+    '</tr>';
+  }).join('') : '<tr><td colspan="8" style="color:var(--ink-3);padding:18px">Nenhum campo. O card terá só título, etapa, responsável e valor.</td></tr>';
+
+  var tb = $('admCamposTbody');
+  Array.prototype.forEach.call(tb.querySelectorAll('[data-editc]'), function(b){
+    b.addEventListener('click', function(){ abrirCampoForm(b.dataset.editc); });
+  });
+  Array.prototype.forEach.call(tb.querySelectorAll('[data-csobe]'), function(b){
+    b.addEventListener('click', function(){ reordenarCampo(b.dataset.csobe, -1); });
+  });
+  Array.prototype.forEach.call(tb.querySelectorAll('[data-cdesce]'), function(b){
+    b.addEventListener('click', function(){ reordenarCampo(b.dataset.cdesce, 1); });
+  });
+}
+
+function reordenarCampo(id, dir){
+  var lista = (S.admCampos || []).slice();
+  var i = -1; lista.forEach(function(c, k){ if(c.id === id) i = k; });
+  var j = i + dir;
+  if(i < 0 || j < 0 || j >= lista.length) return;
+  var tmp = lista[i]; lista[i] = lista[j]; lista[j] = tmp;
+  Promise.all(lista.map(function(c, k){
+    return sb.from('funil_campos').update({ ordem: k }).eq('id', c.id);
+  })).then(function(){ return carregarAdmFunil(S.admFunilId); })
+    .then(function(){ renderAdm(); if(S.funil && S.funil.id === S.admFunilId) abrirFunil(S.funil.id); })
+    .catch(function(e){ erroSb(e, 'reordenar campos'); });
+}
+
+function sugerirChave(){
+  if(S.edit.campo) return;
+  $('fCampoChave').value = chaveSlug($('fCampoRotulo').value);
+}
+function toggleOpcoes(){
+  $('boxOpcoes').hidden = $('fCampoTipo').value !== 'select';
+}
+
+function abrirCampoForm(id){
+  if(!S.admFunilId){ toast('Escolha um funil primeiro.', true); return; }
+  var c = id ? (S.admCampos || []).filter(function(x){ return x.id === id; })[0] : null;
+  S.edit.campo = c || null;
+  $('mdCampoTit').textContent = c ? 'Editar campo' : 'Novo campo';
+  $('fCampoRotulo').value = c ? c.rotulo : '';
+  $('fCampoChave').value = c ? c.chave : '';
+  $('fCampoTipo').value = c ? c.tipo : 'texto';
+  $('fCampoOrdem').value = c ? c.ordem : (S.admCampos || []).length;
+  $('fCampoOpcoes').value = c ? (c.opcoes || []).join('\n') : '';
+  $('fCampoObrig').checked = c ? c.obrigatorio : false;
+  $('fCampoNoCard').checked = c ? c.mostrar_no_card : false;
+  $('btnExcluirCampo').hidden = !c;
+  toggleOpcoes();
+  abrir('mdCampo');
+}
+
+function salvarCampo(){
+  var rotulo = $('fCampoRotulo').value.trim();
+  var chave = chaveSlug($('fCampoChave').value || rotulo);
+  if(!rotulo || !chave){ toast('Informe rótulo e chave.', true); return; }
+  var reg = {
+    funil_id: S.admFunilId,
+    rotulo: rotulo,
+    chave: chave,
+    tipo: $('fCampoTipo').value,
+    opcoes: $('fCampoTipo').value === 'select'
+      ? $('fCampoOpcoes').value.split('\n').map(function(s){ return s.trim(); }).filter(Boolean)
+      : [],
+    obrigatorio: $('fCampoObrig').checked,
+    mostrar_no_card: $('fCampoNoCard').checked,
+    ordem: parseInt($('fCampoOrdem').value, 10) || 0
+  };
+  var c = S.edit.campo;
+  var p = c ? sb.from('funil_campos').update(reg).eq('id', c.id)
+            : sb.from('funil_campos').insert(reg);
+  p.then(function(r){
+    if(r.error) throw r.error;
+    fechar('mdCampo');
+    return carregarAdmFunil(S.admFunilId);
+  }).then(function(){
+    renderAdm();
+    if(S.funil && S.funil.id === S.admFunilId) return abrirFunil(S.funil.id);
+  }).then(function(){ toast('Campo salvo'); })
+   .catch(function(e){ erroSb(e, 'salvar campo'); });
+}
+
+function excluirCampo(){
+  var c = S.edit.campo;
+  if(!c) return;
+  if(!confirm('Excluir o campo "' + c.rotulo + '"? As respostas já gravadas nos cards deixam de aparecer.')) return;
+  sb.from('funil_campos').delete().eq('id', c.id).then(function(r){
+    if(r.error) throw r.error;
+    fechar('mdCampo');
+    return carregarAdmFunil(S.admFunilId);
+  }).then(function(){
+    renderAdm();
+    if(S.funil && S.funil.id === S.admFunilId) return abrirFunil(S.funil.id);
+  }).then(function(){ toast('Campo excluído'); })
+   .catch(function(e){ erroSb(e, 'excluir campo'); });
+}
+
+/* ---- condicionais: form ---- */
+function renderAdmRegras(){
+  var regras = S.admRegras || [];
+  $('admRegrasLista').innerHTML = regras.length ? regras.map(function(r){
+    var gat = { salvar:'ao criar e salvar', criar:'ao criar', manual:'manual' }[r.gatilho] || r.gatilho;
+    return '<div class="regra-item">' +
+      '<div class="l1">' +
+        '<span class="nome">' + esc(r.nome) + '</span>' +
+        '<span class="pill">' + esc(gat) + '</span>' +
+        '<span class="pill ' + (r.ativo ? 'on' : 'off') + '">' + (r.ativo ? 'ativa' : 'inativa') + '</span>' +
+        '<button class="btn sm" data-editr="' + esc(r.id) + '">Editar</button>' +
+      '</div>' +
+      '<div class="fluxo">' + descreverRegra(r, true) + '</div>' +
+    '</div>';
+  }).join('') : '<div class="vazio-geral">Nenhuma condicional neste funil. ' +
+      'Elas leem os campos do formulário e movem o card sozinho.</div>';
+
+  Array.prototype.forEach.call($('admRegrasLista').querySelectorAll('[data-editr]'), function(b){
+    b.addEventListener('click', function(){ abrirRegraForm(b.dataset.editr); });
+  });
+}
+
+function opcoesEtapas(sel, valor, incluirQualquer){
+  var etapas = S.admEtapas || [];
+  var html = incluirQualquer ? '<option value="">Qualquer etapa</option>' : '';
+  html += etapas.map(function(e){
+    return '<option value="' + esc(e.id) + '"' + (e.id === valor ? ' selected' : '') + '>' + esc(e.nome) + '</option>';
+  }).join('');
+  sel.innerHTML = html;
+  if(valor) sel.value = valor;
+}
+
+function condLinhaHTML(c){
+  var campos = camposDisponiveis(S.admCampos || []);
+  var ops = OPERADORES.map(function(o){
+    return '<option value="' + o.v + '"' + (o.v === c.operador ? ' selected' : '') + '>' + esc(o.t) + '</option>';
+  }).join('');
+  var semValor = (OPERADORES.filter(function(o){ return o.v === c.operador; })[0] || {}).valor === false;
+  return '<div class="cond-linha">' +
+    '<select class="campo-sel">' + campos.map(function(f){
+      return '<option value="' + esc(f.chave) + '"' + (f.chave === c.campo ? ' selected' : '') + '>' +
+             esc(f.rotulo) + '</option>';
+    }).join('') + '</select>' +
+    '<select class="op-sel">' + ops + '</select>' +
+    '<input class="val" type="text" placeholder="valor" value="' + esc(c.valor || '') + '"' +
+      (semValor ? ' disabled' : '') + '>' +
+    '<button class="x" title="remover">&times;</button>' +
+  '</div>';
+}
+
+function addCondicao(c){
+  var div = document.createElement('div');
+  div.innerHTML = condLinhaHTML(c || { campo: (camposDisponiveis(S.admCampos||[])[0]||{}).chave, operador:'igual', valor:'' });
+  var linha = div.firstChild;
+  linha.querySelector('.x').addEventListener('click', function(){ linha.remove(); });
+  linha.querySelector('.op-sel').addEventListener('change', function(){
+    var o = OPERADORES.filter(function(x){ return x.v === linha.querySelector('.op-sel').value; })[0];
+    linha.querySelector('.val').disabled = o && o.valor === false;
+  });
+  $('condLista').appendChild(linha);
+}
+
+function lerCondicoes(){
+  return Array.prototype.map.call($('condLista').querySelectorAll('.cond-linha'), function(l){
+    return {
+      campo: l.querySelector('.campo-sel').value,
+      operador: l.querySelector('.op-sel').value,
+      valor: l.querySelector('.val').value
+    };
+  });
+}
+
+function abrirRegraForm(id){
+  if(!S.admFunilId){ toast('Escolha um funil primeiro.', true); return; }
+  if(!(S.admEtapas || []).length){ toast('Cadastre as etapas antes das condicionais.', true); return; }
+  var r = id ? (S.admRegras || []).filter(function(x){ return x.id === id; })[0] : null;
+  S.edit.regra = r || null;
+  $('mdRegraTit').textContent = r ? 'Editar condicional' : 'Nova condicional';
+  $('fRegraNome').value = r ? r.nome : '';
+  $('fRegraGatilho').value = r ? r.gatilho : 'salvar';
+  $('fRegraLogica').value = r ? r.logica : 'E';
+  $('fRegraAtivo').checked = r ? r.ativo : true;
+  opcoesEtapas($('fRegraOrigem'), r ? (r.etapa_origem_id || '') : '', true);
+  opcoesEtapas($('fRegraDestino'), r ? r.etapa_destino_id : (S.admEtapas[0] || {}).id, false);
+  $('condLista').innerHTML = '';
+  ((r && r.condicoes) || []).forEach(addCondicao);
+  if(!r) addCondicao();
+  $('btnExcluirRegra').hidden = !r;
+  abrir('mdRegra');
+}
+
+function salvarRegra(){
+  var nome = $('fRegraNome').value.trim();
+  if(!nome){ toast('Dê um nome à condicional.', true); return; }
+  var conds = lerCondicoes().filter(function(c){ return c.campo; });
+  if(!conds.length){ toast('Adicione ao menos uma condição.', true); return; }
+  var destino = $('fRegraDestino').value;
+  if(!destino){ toast('Escolha a etapa de destino.', true); return; }
+  var origem = $('fRegraOrigem').value || null;
+  if(origem && origem === destino){ toast('Origem e destino não podem ser a mesma etapa.', true); return; }
+
+  var reg = {
+    funil_id: S.admFunilId,
+    nome: nome,
+    etapa_origem_id: origem,
+    etapa_destino_id: destino,
+    logica: $('fRegraLogica').value,
+    condicoes: conds,
+    gatilho: $('fRegraGatilho').value,
+    ativo: $('fRegraAtivo').checked,
+    ordem: S.edit.regra ? S.edit.regra.ordem : (S.admRegras || []).length
+  };
+  var r = S.edit.regra;
+  var p = r ? sb.from('funil_regras').update(reg).eq('id', r.id)
+            : sb.from('funil_regras').insert(reg);
+  p.then(function(res){
+    if(res.error) throw res.error;
+    fechar('mdRegra');
+    return carregarAdmFunil(S.admFunilId);
+  }).then(function(){
+    renderAdm();
+    if(S.funil && S.funil.id === S.admFunilId) return abrirFunil(S.funil.id);
+  }).then(function(){ toast('Condicional salva'); })
+   .catch(function(e){ erroSb(e, 'salvar condicional'); });
+}
+
+function excluirRegra(){
+  var r = S.edit.regra;
+  if(!r) return;
+  if(!confirm('Excluir a condicional "' + r.nome + '"?')) return;
+  sb.from('funil_regras').delete().eq('id', r.id).then(function(res){
+    if(res.error) throw res.error;
+    fechar('mdRegra');
+    return carregarAdmFunil(S.admFunilId);
+  }).then(function(){
+    renderAdm();
+    if(S.funil && S.funil.id === S.admFunilId) return abrirFunil(S.funil.id);
+  }).then(function(){ toast('Condicional excluída'); })
+   .catch(function(e){ erroSb(e, 'excluir condicional'); });
+}
+
+/* ---- acesso ---- */
+function renderContas(){
+  var box = $('listaContas');
+  if(!box) return;
+  if(!S.contas.length){
+    box.innerHTML = '<div class="ajuda" style="color:var(--ink-3)">Lista indisponível — abra a Central de Acesso para administrar as pessoas.</div>';
+    return;
+  }
+  var niveis = { admin:'acesso total', usuario:'edição', consulta:'somente leitura' };
+  box.innerHTML = '<table class="tab"><thead><tr><th>Pessoa</th><th>E-mail</th><th>Nível no hub</th></tr></thead><tbody>' +
+    S.contas.map(function(c){
+      return '<tr><td><strong>' + esc(c.nome || '') + '</strong></td><td>' + esc(c.email) + '</td>' +
+             '<td><span class="pill">' + esc(niveis[c.nivel] || c.nivel) + '</span></td></tr>';
+    }).join('') + '</tbody></table>';
+}
+
+/* --------------------------------------------------------------- inicio */
+function iniciar(){
+  sb = APP.sb;
+  var rot = { admin:'Acesso total', editar:'Edição', ver:'Somente leitura' };
+  $('infoPerm').textContent = rot[APP.permissao] || '';
+  $('linkHub').href = APP.hub;
+  if(eAdmin()){
+    $('tabAdm').hidden = false;
+    $('btnNovoFunilAtalho').hidden = false;
+  }
+  carregarContas();
+  carregarTudo();
+
+  document.addEventListener('keydown', function(ev){
+    if(ev.key === 'Escape'){
+      ['mdFunil','mdEtapa','mdCampo','mdRegra','mdCard'].forEach(fechar);
+    }
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.modal'), function(m){
+    m.addEventListener('click', function(ev){ if(ev.target === m) m.classList.remove('on'); });
+  });
+}
+
+/* funcoes usadas pelos atributos onclick do HTML */
+window.irPara = irPara;
+window.admAba = admAba;
+window.admTrocarFunil = admTrocarFunil;
+window.carregarTudo = carregarTudo;
+window.carregarContas = carregarContas;
+window.renderKanban = renderKanban;
+window.rodarRegrasManual = rodarRegrasManual;
+window.abrirFunilForm = abrirFunilForm;
+window.salvarFunil = salvarFunil;
+window.excluirFunil = excluirFunil;
+window.abrirEtapaForm = abrirEtapaForm;
+window.salvarEtapa = salvarEtapa;
+window.excluirEtapa = excluirEtapa;
+window.abrirCampoForm = abrirCampoForm;
+window.salvarCampo = salvarCampo;
+window.excluirCampo = excluirCampo;
+window.sugerirChave = sugerirChave;
+window.toggleOpcoes = toggleOpcoes;
+window.abrirRegraForm = abrirRegraForm;
+window.salvarRegra = salvarRegra;
+window.excluirRegra = excluirRegra;
+window.addCondicao = addCondicao;
+window.abrirCardForm = abrirCardForm;
+window.salvarCard = salvarCard;
+window.excluirCard = excluirCard;
+window.fechar = fechar;
+/* expostos para teste do motor de condicionais */
+window.__motor = { testarCondicao: testarCondicao, regraBate: regraBate, valorDoCard: valorDoCard };
+
+if(window.APP && APP.pronto){
+  APP.pronto.then(iniciar).catch(function(){ /* guard ja mostrou o aviso */ });
+} else {
+  document.addEventListener('DOMContentLoaded', function(){
+    document.body.innerHTML = '<div class="vazio-geral">Esta página precisa da Central de Acesso para funcionar.</div>';
+  });
+}
+})();
+</script>
+</body>
+</html>
