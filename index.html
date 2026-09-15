@@ -1196,13 +1196,16 @@ function carregarAdmFunil(id){
 }
 
 function carregarContas(){
-  return sb.rpc('app_contas').then(function(r){
-    if(r.error) throw r.error;
-    S.contas = (r.data || []).filter(function(c){ return c.email; });
-    renderContas();
+  return sb.rpc('app_pessoas').then(function(r){
+    if(r.error || !r.data) throw (r.error || new Error('sem retorno'));
+    return r.data;
   }).catch(function(){
-    S.contas = [];
+    /* bancos ainda sem app_pessoas: cai para app_contas (so admin) */
+    return sb.rpc('app_contas').then(function(r2){ return (r2 && r2.data) || []; }, function(){ return []; });
+  }).then(function(lista){
+    S.contas = (lista || []).filter(function(c){ return c.email; });
     renderContas();
+    renderKanban();
   });
 }
 
@@ -1234,13 +1237,12 @@ function sincronizar(silencioso){
       Object.keys(row).forEach(function(k){ dados[k] = row[k]; });
       var titulo = c.titulo(row);
       var valor = c.valor(row);
-      var resp = c.responsavel(row);
       var card = porOrigem[oid];
 
       if(!card){
         return sb.from('funil_cards').insert({
           funil_id: f.id, etapa_id: inicial.id, titulo: titulo, dados: dados,
-          responsavel_nome: resp || inicial.responsavel_nome || null,
+          responsavel_nome: inicial.responsavel_nome || null,
           valor: valor, origem_tabela: c.tabela, origem_id: oid, origem_ref: c.ref(row),
           criado_por: 'sincronização', etapa_desde: agora(), sincronizado_em: agora()
         }).select().then(function(res){
@@ -1258,7 +1260,6 @@ function sincronizar(silencioso){
 
       return sb.from('funil_cards').update({
         titulo: titulo, dados: dados, valor: valor,
-        responsavel_nome: card.responsavel_nome || resp || null,
         origem_ref: c.ref(row), sincronizado_em: agora(), atualizado_em: agora()
       }).eq('id', card.id).then(function(res){
         if(res.error) throw res.error;
@@ -1447,7 +1448,8 @@ function atrasoDias(card){
 }
 function respEfetivo(card){
   var e = etapaPor(card.etapa_id);
-  return card.responsavel_nome || (e && e.responsavel_nome) || '';
+  var doCard = doHub(card.responsavel_nome) ? card.responsavel_nome : '';
+  return doCard || (e && e.responsavel_nome) || '';
 }
 
 /* ------------------------- funis virtuais (sem tabela) ------------------- */
@@ -2223,22 +2225,29 @@ function nomeEtapaQualquer(id){
 }
 
 /* ================= CARD ESTILO BITRIX: dados + linha do tempo ========== */
+/* Os agentes do funil são SÓ as contas da Central de Acesso. Vendedores que
+   aparecem nos formulários (vendedor_nome do pedido, por exemplo) continuam
+   como dado do card, nunca como responsável. */
 function listaResponsaveis(){
   var nomes = {};
   S.contas.forEach(function(c){ nomes[c.nome || c.email] = true; });
-  (S.etapas||[]).forEach(function(e){ if(e.responsavel_nome) nomes[e.responsavel_nome] = true; });
-  (S.cards||[]).forEach(function(c){ if(c.responsavel_nome) nomes[c.responsavel_nome] = true; });
-  if(euSou()) nomes[euSou()] = true;
+  if(!Object.keys(nomes).length && euSou()) nomes[euSou()] = true;
   return Object.keys(nomes).sort();
+}
+function doHub(nome){
+  if(!nome) return false;
+  var alvo = normal(nome);
+  return listaResponsaveis().some(function(n){ return normal(n) === alvo; });
 }
 function selectResponsavel(sel, valor){
   var lista = listaResponsaveis();
   var opts = ['<option value="">— sem responsável —</option>'];
   lista.forEach(function(n){
-    opts.push('<option value="' + esc(n) + '"' + (n === valor ? ' selected' : '') + '>' + esc(n) + '</option>');
+    opts.push('<option value="' + esc(n) + '"' + (normal(n) === normal(valor) ? ' selected' : '') +
+              '>' + esc(n) + '</option>');
   });
-  if(valor && lista.indexOf(valor) < 0){
-    opts.push('<option value="' + esc(valor) + '" selected>' + esc(valor) + '</option>');
+  if(valor && !doHub(valor)){
+    opts.push('<option value="' + esc(valor) + '" selected>' + esc(valor) + ' — fora do hub</option>');
   }
   sel.innerHTML = opts.join('');
 }
@@ -2555,6 +2564,7 @@ function renderAdm(){
     }).join('');
   });
   renderAdmEtapas();
+  renderContas();
   renderAdmOrigem();
   renderAdmCampos();
   renderAdmRegras();
@@ -3153,7 +3163,27 @@ function excluirRegra(){
    .catch(function(e){ erroSb(e, 'excluir condicional'); });
 }
 
-/* ---- acesso ---- */
+/* ---- acesso: pessoas do hub e limpeza de responsáveis antigos ---- */
+function foraDoHub(){
+  var cards = S.cardsTodos.filter(function(c){ return c.responsavel_nome && !doHub(c.responsavel_nome); });
+  var etapas = S.etapasTodas.filter(function(e){ return e.responsavel_nome && !doHub(e.responsavel_nome); });
+  return { cards: cards, etapas: etapas };
+}
+
+function limparForaDoHub(){
+  var fora = foraDoHub();
+  if(!fora.cards.length){ toast('Nenhum card com responsável fora do hub'); return; }
+  if(!confirm(fora.cards.length + ' card(s) estão com responsável que não é conta da Central de Acesso ' +
+              '(normalmente o vendedor que lançou o pedido). Limpar esse campo nesses cards?')) return;
+  Promise.all(fora.cards.map(function(c){
+    return sb.from('funil_cards')
+      .update({ responsavel_nome: null, responsavel_email: null, atualizado_em: agora() })
+      .eq('id', c.id);
+  })).then(function(){ return carregarTudo(); })
+    .then(function(){ renderAdm(); toast(fora.cards.length + ' card(s) sem responsável — reatribua pelo hub'); })
+    .catch(function(e){ erroSb(e, 'limpar responsáveis'); });
+}
+
 function renderContas(){
   var box = $('listaContas');
   if(!box) return;
@@ -3162,7 +3192,19 @@ function renderContas(){
     return;
   }
   var niveis = { admin:'acesso total', usuario:'edição', consulta:'somente leitura' };
-  box.innerHTML = '<table class="tab"><thead><tr><th>Pessoa</th><th>E-mail</th><th>Nível no hub</th></tr></thead><tbody>' +
+  var fora = foraDoHub();
+  box.innerHTML =
+    (fora.cards.length || fora.etapas.length
+      ? '<div class="aviso erro" style="margin-bottom:12px">' +
+        'Só contas da Central de Acesso podem ser agentes do funil. ' +
+        (fora.cards.length ? '<strong>' + fora.cards.length + '</strong> card(s) ainda estão com um nome de fora ' +
+          '(vendedor do formulário, por exemplo). ' : '') +
+        (fora.etapas.length ? '<strong>' + fora.etapas.length + '</strong> etapa(s) também — corrija em Funis e etapas. ' : '') +
+        (fora.cards.length ? '<button class="btn sm" style="margin-top:8px" onclick="limparForaDoHub()">' +
+          'Limpar responsável desses cards</button>' : '') +
+        '</div>'
+      : '') +
+    '<table class="tab"><thead><tr><th>Pessoa</th><th>E-mail</th><th>Nível no hub</th></tr></thead><tbody>' +
     S.contas.map(function(c){
       return '<tr><td><strong>' + esc(c.nome || '') + '</strong></td><td>' + esc(c.email) + '</td>' +
              '<td><span class="pill">' + esc(niveis[c.nivel] || c.nivel) + '</span></td></tr>';
@@ -3179,8 +3221,7 @@ function iniciar(){
     $('tabAdm').hidden = false;
     $('btnNovoFunilAtalho').hidden = false;
   }
-  carregarContas();
-  carregarTudo();
+  carregarContas().then(carregarTudo);
 
   document.addEventListener('keydown', function(ev){
     if(ev.key === 'Escape'){ ['mdFunil','mdEtapa','mdCampo','mdRegra','mdCard'].forEach(fechar); }
@@ -3200,6 +3241,7 @@ window.admAba = admAba;
 window.admTrocarFunil = admTrocarFunil;
 window.carregarTudo = carregarTudo;
 window.carregarContas = carregarContas;
+window.limparForaDoHub = limparForaDoHub;
 window.renderKanban = renderKanban;
 window.buscar = buscar;
 window.toggleBuscaMovel = toggleBuscaMovel;
