@@ -284,6 +284,21 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
 .col-head .sub-col{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;
   color:var(--ink-3);font-weight:700}
 
+/* ---------- aprovação pendente dentro do card ---------- */
+.kc-aprov{display:flex;align-items:center;gap:6px;margin-top:8px;padding:6px 9px;
+  border:1px solid rgba(184,128,31,.55);background:rgba(184,128,31,.12);color:var(--s2);
+  border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;line-height:1.25}
+.kc-aprov:hover{background:rgba(184,128,31,.22);border-color:var(--s2)}
+.kc-aprov .seta{margin-left:auto;font-size:12px}
+.kc-aprov .ico{font-size:12px}
+.kcard.atrasado .kc-aprov{background:rgba(184,128,31,.18)}
+.aprov-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;
+  padding:10px 12px;border:1px solid rgba(184,128,31,.55);border-radius:9px;
+  background:rgba(184,128,31,.12)}
+.aprov-bar .txt{flex:1;font-size:12px;font-weight:700;color:var(--s2)}
+.aprov-bar .btn{border-color:var(--s2);color:var(--s2);background:var(--card)}
+.aprov-bar .btn:hover{background:rgba(184,128,31,.18)}
+
 /* ---------- ações rápidas no card ---------- */
 .kcard .kc-acoes{display:flex;gap:6px;margin-top:8px}
 .kc-btn{border:1px solid var(--line);background:var(--card);color:var(--ink-2);
@@ -854,6 +869,7 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
     <div class="pane-esq">
       <div class="pane-tit">Dados do registro <span class="ct" id="cardOrigemTag"></span></div>
       <div id="cardOrigemBar"></div>
+      <div id="cardAprovacao"></div>
       <div id="cardAviso"></div>
       <div id="cardDados"></div>
     </div>
@@ -997,6 +1013,17 @@ var CATALOGO = {
     ref: function(r){ return r.numero_pedido || r.bitrix_deal_id || ''; },
     valor: function(r){ return num(r.total_geral); },
     responsavel: function(r){ return r.vendedor_nome || ''; },
+    /* pedido aguardando assinatura: 0/2 ou 1/2, e nao reprovado */
+    aprovacao: function(r){
+      var etapa = num(r.aprovacao_etapa);
+      var reprovado = normal(r.aprov1_decisao) === 'reprovado' || normal(r.status) === 'reprovado';
+      if(reprovado || etapa >= 2) return null;
+      return {
+        etapa: etapa,
+        rotulo: 'Aprovação pendente ' + etapa + '/2',
+        detalhe: etapa === 0 ? 'aguardando a 1ª assinatura' : 'aguardando a assinatura final'
+      };
+    },
     campos: [
       ['numero_pedido','Número do pedido','texto',1],
       ['status','Status','texto',1],
@@ -1280,6 +1307,19 @@ function linkOrigem(card){
     if(v) url += (url.indexOf('?') >= 0 ? '&' : '?') + f.link_param + '=' + encodeURIComponent(v);
   }
   return url;
+}
+
+/* aprovacao pendente: link que abre o formulario de origem no proprio pedido */
+function aprovacaoPendente(card){
+  var fun = funilPor(card.funil_id);
+  var c = cat(fun && fun.fonte);
+  if(!c || !c.aprovacao) return null;
+  var info = c.aprovacao(card.dados || {});
+  if(!info) return null;
+  var link = linkOrigem(card);
+  if(!link) return null;
+  info.link = link;
+  return info;
 }
 
 /* -------------------------------------------------------- menu de funis */
@@ -1741,7 +1781,7 @@ function colunaHTML(e, termo){
     (aberto ? boxRegrasHTML(e, autos) : '') +
     (filtroOn ? boxFiltroHTML(e, lista.length, todos.length) : '') +
     '<div class="col-body" data-drop="' + esc(e.id) + '">' +
-      (lista.length ? lista.map(cardHTML).join('')
+      (lista.length ? lista.map(function(c){ return cardHTML(c, false); }).join('')
                     : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>') +
     '</div>' +
   '</div>';
@@ -1840,6 +1880,7 @@ function cardHTML(c, virtual){
                   '&#9888; ' + atraso + 'd</span>' : '') +
     '</div>' +
     (chips ? '<div class="chips">' + chips + '</div>' : '') +
+    aprovacaoHTML(c) +
     '<div class="pe">' +
       (respEfetivo(c) ? '<span>' + esc(respEfetivo(c)) + '</span>' : '<span>sem responsável</span>') +
       '<span class="' + (atrasado ? 'alerta' : '') + '">' + d + 'd</span>' +
@@ -1847,6 +1888,15 @@ function cardHTML(c, virtual){
     '</div>' +
     acoesCardHTML(c, e) +
   '</div>';
+}
+
+function aprovacaoHTML(c){
+  var a = aprovacaoPendente(c);
+  if(!a) return '';
+  return '<a class="kc-aprov" href="' + esc(a.link) + '" target="_blank" rel="noopener" ' +
+    'data-aprov="1" title="Abrir o pedido para assinar — ' + esc(a.detalhe) + '">' +
+    '<span class="ico">&#9873;</span>' + esc(a.rotulo) +
+    '<span class="seta">&rarr;</span></a>';
 }
 
 /* botões de liberação rápida da etapa, direto no card */
@@ -1898,6 +1948,10 @@ function liberarCard(id, dir){
 
 function ligarKanban(){
   var box = $('kanban');
+
+  Array.prototype.forEach.call(box.querySelectorAll('[data-aprov]'), function(a){
+    a.addEventListener('click', function(ev){ ev.stopPropagation(); });
+  });
 
   Array.prototype.forEach.call(box.querySelectorAll('[data-liberar]'), function(b){
     b.addEventListener('click', function(ev){
@@ -2205,6 +2259,12 @@ function abrirCardForm(id){
   $('mdCardEtapa').textContent = card ? nomeEtapa(card.etapa_id)
                                       : ((etapasDoFunil(fun.id)[0] || {}).nome || '');
   $('cardOrigemTag').textContent = fo ? fo.rotulo : 'card manual';
+  var ap = card ? aprovacaoPendente(card) : null;
+  $('cardAprovacao').innerHTML = ap
+    ? '<div class="aprov-bar"><span class="ico" style="font-size:14px;color:var(--s2)">&#9873;</span>' +
+      '<span class="txt">' + esc(ap.rotulo) + ' — ' + esc(ap.detalhe) + '</span>' +
+      '<a class="btn sm" href="' + esc(ap.link) + '" target="_blank" rel="noopener">Abrir para assinar</a></div>'
+    : '';
   $('cardAviso').innerHTML = editavel ? '' :
     '<div class="aviso">Seu acesso é somente leitura: dá para consultar, não para alterar.</div>';
 
@@ -3145,6 +3205,7 @@ window.buscar = buscar;
 window.toggleBuscaMovel = toggleBuscaMovel;
 window.voltarAosFunis = voltarAosFunis;
 window.liberarCard = liberarCard;
+window.aprovacaoPendente = aprovacaoPendente;
 window.escolherEtapaMovel = escolherEtapaMovel;
 window.trocarUsuarioVirtual = trocarUsuarioVirtual;
 window.rodarRegrasManual = rodarRegrasManual;
