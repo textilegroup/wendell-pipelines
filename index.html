@@ -104,27 +104,32 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
 .check{display:flex;align-items:center;gap:8px;font-size:12.5px}
 .check input{width:15px;height:15px;accent-color:var(--wine)}
 
-/* ---------- menu de funis (cards) ---------- */
-.funis-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
-.funil-card{position:relative;text-align:left;background:var(--card);
-  border:1px solid var(--line);border-radius:var(--r);padding:14px 14px 12px 16px;
-  cursor:pointer;box-shadow:var(--shadow);transition:transform .12s,box-shadow .12s,border-color .12s}
-.funil-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-2)}
-.funil-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
-  border-radius:var(--r) 0 0 var(--r);background:var(--cor,var(--wine))}
-.funil-card.on{border-color:var(--cor,var(--wine));box-shadow:var(--shadow-2)}
-.funil-card .nome{font-size:14px;font-weight:700;margin-bottom:2px}
-.funil-card .desc{font-size:11.5px;color:var(--ink-2);min-height:16px;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.funil-card .nums{display:flex;gap:14px;margin-top:10px;padding-top:9px;
-  border-top:1px solid var(--line-2)}
-.funil-card .num b{display:block;font-family:"Archivo Narrow","Archivo",sans-serif;
-  font-size:17px;line-height:1;color:var(--cor,var(--wine))}
-.funil-card .num span{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+/* ---------- menu de funis: faixa compacta, o espaço é dos cards ---------- */
+.funis-grid{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;align-items:stretch}
+.funil-card{position:relative;flex:0 0 auto;max-width:210px;text-align:left;
+  background:var(--card);border:1px solid var(--line);border-radius:9px;
+  padding:7px 11px 7px 13px;cursor:pointer;box-shadow:var(--shadow);
+  transition:border-color .12s,box-shadow .12s}
+.funil-card:hover{border-color:var(--cor,var(--wine));box-shadow:var(--shadow-2)}
+.funil-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  border-radius:9px 0 0 9px;background:var(--cor,var(--wine))}
+.funil-card.on{border-color:var(--cor,var(--wine));background:var(--chip);
+  box-shadow:inset 0 0 0 1px var(--cor,var(--wine))}
+.funil-card .nome{display:flex;align-items:center;gap:5px;font-size:12.5px;
+  font-weight:700;line-height:1.2;min-width:0}
+.funil-card .nome .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.funil-card .desc{display:none}
+.funil-card .nums{display:flex;gap:8px;margin-top:2px;align-items:baseline}
+.funil-card .num{display:flex;gap:3px;align-items:baseline;white-space:nowrap}
+.funil-card .num b{font-family:"Archivo Narrow","Archivo",sans-serif;
+  font-size:12.5px;line-height:1;color:var(--cor,var(--wine))}
+.funil-card .num span{font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;
   color:var(--ink-3);font-weight:600}
-.funil-card .tag-off{position:absolute;top:10px;right:10px;font-size:9px;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
-  border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+.funil-card .tag-off,.funil-card .tag-virt{position:static;flex:0 0 auto;
+  font-size:8.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+.funil-card .pegar{position:static;float:right;margin-left:6px;font-size:11px;
+  color:var(--ink-3);cursor:grab;letter-spacing:-2px}
 
 /* ---------- kanban ---------- */
 .kanban-topo{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
@@ -269,10 +274,7 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
 
 /* ---------- funis virtuais ---------- */
 .funil-card.virtual{border-style:dashed}
-.funil-card.virtual .nome{padding-right:82px}
-.funil-card .tag-virt{position:absolute;top:10px;right:10px;font-size:8.5px;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--cor,var(--wine));
-  border:1px solid var(--cor,var(--wine));border-radius:5px;padding:1px 5px;opacity:.75}
+.funil-card.virtual .tag-virt{color:var(--cor,var(--wine));border-color:var(--cor,var(--wine))}
 .barra-virtual{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;
   padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--sunk)}
 .barra-virtual label{font-size:10.5px;font-weight:700;letter-spacing:.07em;
@@ -299,13 +301,36 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
 .aprov-bar .btn{border-color:var(--s2);color:var(--s2);background:var(--card)}
 .aprov-bar .btn:hover{background:rgba(184,128,31,.18)}
 
+/* ---------- seleção em massa ---------- */
+.kcard .kc-sel{flex:0 0 auto;width:15px;height:15px;margin:1px 0 0;accent-color:var(--wine);cursor:pointer}
+.barra-selecao{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:9200;
+  display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:11px;
+  background:var(--ink);color:var(--bg);box-shadow:var(--shadow-2)}
+.barra-selecao .qt{font-size:12.5px;font-weight:600}
+.barra-selecao .qt b{font-family:"Archivo Narrow","Archivo",sans-serif;font-size:15px}
+.barra-selecao .btn{background:transparent;border-color:rgba(255,255,255,.35);color:var(--bg)}
+.barra-selecao .btn:hover{background:rgba(255,255,255,.12)}
+.barra-selecao .btn.danger{border-color:rgba(255,255,255,.35);color:#FFB9AE}
+.barra-selecao .btn.danger:hover{background:rgba(255,255,255,.12)}
+
+/* ---------- anexos (PDF) dentro do card ---------- */
+.kc-arqs{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.kc-arq{display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:7px;
+  border:1px solid var(--line);background:var(--sunk);color:var(--ink-2);
+  font-size:11px;font-weight:700;text-decoration:none}
+.kc-arq:hover{border-color:var(--wine-soft);color:var(--wine);background:var(--chip)}
+.kc-arq .ico{color:var(--neg);font-size:12px}
+.dado .v a{color:var(--wine);font-weight:600}
+
 /* ---------- ações rápidas no card ---------- */
 .kcard .kc-acoes{display:flex;gap:6px;margin-top:8px}
 .kc-btn{border:1px solid var(--line);background:var(--card);color:var(--ink-2);
   border-radius:7px;padding:5px 8px;font-size:11px;font-weight:700;cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:4px;min-height:28px}
 .kc-btn:hover{border-color:var(--wine-soft);color:var(--wine)}
-.kc-btn.liberar{flex:1}
+.kc-btn.liberar{flex:1;text-decoration:none}
+a.kc-btn{text-decoration:none}
+.kc-btn .ico{font-size:12px}
 .kc-btn.liberar.meu{background:var(--wine);border-color:var(--wine);color:var(--wine-txt)}
 .kc-btn.liberar.meu:hover{background:var(--wine-deep);border-color:var(--wine-deep);color:var(--wine-txt)}
 .kc-btn.volta{flex:0 0 32px;padding:5px}
@@ -436,17 +461,13 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
   .col-acoes > button{padding:7px 8px}
 
   /* menu de funis mais compacto */
-  .funis-grid{grid-template-columns:1fr 1fr;gap:9px}
-  .funil-card{padding:11px 11px 10px 13px}
-  .funil-card .nome{font-size:13px}
-  .funil-card .desc{display:none}
-  .funil-card .nums{margin-top:7px;padding-top:7px;gap:10px}
+  .funis-grid{gap:7px}
+  .funil-card{max-width:180px}
   .bloco > .cab{padding:10px 12px}
   .bloco > .corpo{padding:12px}
   .busca,#buscaCard{width:100%}
 }
 @media (max-width:420px){
-  .funis-grid{grid-template-columns:1fr}
   .tl-acoes select{min-width:100%}
 }
 @media print{.no-print,.nav,.regras-btn{display:none!important}}
@@ -743,6 +764,41 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
     <div class="campo"><label>Regras da etapa</label>
       <textarea id="fEtapaRegras" placeholder="O que precisa acontecer nesta etapa. Este texto é o que aparece no botão recolhido do kanban."></textarea></div>
 
+    <div class="campo" style="margin-bottom:6px"><label>Como o card sai desta etapa</label>
+      <span class="ajuda">É isso que define o único botão do rodapé do card.</span></div>
+    <div class="linha">
+      <div class="campo" style="flex:2"><label>Movimentação</label>
+        <select id="fEtapaMovimento" onchange="movimentoMudou()">
+          <option value="manual">Manual — qualquer um com permissão libera</option>
+          <option value="responsavel">Manual — só o responsável da etapa libera</option>
+          <option value="assinatura">Assinatura no formulário de origem</option>
+          <option value="automatico">Automática — só as condicionais movem</option>
+        </select></div>
+    </div>
+    <div id="boxAssinatura" hidden>
+      <div class="linha">
+        <div class="campo"><label>Qual assinatura</label>
+          <select id="fEtapaAssinatura"></select>
+          <span class="ajuda" id="ajudaAssinatura"></span></div>
+        <div class="campo"><label>Quem assina</label>
+          <select id="fEtapaQuemAssina" onchange="quemAssinaMudou()">
+            <option value="qualquer">Qualquer pessoa com acesso</option>
+            <option value="responsavel">O responsável da etapa</option>
+            <option value="pessoa">Uma pessoa específica</option>
+            <option value="nivel">Quem tiver um nível no hub</option>
+          </select></div>
+      </div>
+      <div class="linha">
+        <div class="campo" id="boxAssinaPessoa" hidden><label>Pessoa</label>
+          <select id="fEtapaAssinaPessoa"></select></div>
+        <div class="campo" id="boxAssinaNivel" hidden><label>Nível no hub</label>
+          <select id="fEtapaAssinaNivel">
+            <option value="admin">Acesso total</option>
+            <option value="usuario">Edição</option>
+          </select></div>
+      </div>
+    </div>
+
     <div class="campo" style="margin-top:6px"><label>Listagem padrão da coluna</label>
       <span class="ajuda">Vale para todo mundo; cada pessoa pode ajustar na hora pelo filtro da coluna.</span></div>
     <div class="linha">
@@ -894,6 +950,12 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
   </div>
 </div></div>
 
+<div class="barra-selecao no-print" id="barraSelecao" hidden>
+  <span class="qt"><b id="selQtd">0</b> card(s) selecionado(s)</span>
+  <button class="btn sm" onclick="limparSelecao()">Limpar</button>
+  <button class="btn sm danger" onclick="excluirSelecionados()">Excluir selecionados</button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -917,6 +979,7 @@ var S = {
   admFunilId: null,       // funil aberto na area ADM
   admEtapas: [], admCampos: [], admRegras: [],
   contagem: {},           // { funil_id: {etapas:n, cards:n} }
+  selecao: {},            // cards marcados para exclusão em massa
   abertas: {},            // etapas com o box de regras aberto
   filtroAberto: {},       // etapas com o filtro aberto
   filtros: {},            // filtro em uso por etapa (comeca no padrao do ADM)
@@ -1013,6 +1076,19 @@ var CATALOGO = {
     ref: function(r){ return r.numero_pedido || r.bitrix_deal_id || ''; },
     valor: function(r){ return num(r.total_geral); },
     responsavel: function(r){ return r.vendedor_nome || ''; },
+    /* assinaturas do formulario de pedidos, na ordem em que acontecem */
+    assinaturas: [
+      { chave:'aprov1', rotulo:'Aprovação comercial (1/2)',
+        assinada: function(r){ return num(r.aprovacao_etapa) >= 1; },
+        recusada: function(r){ return normal(r.aprov1_decisao) === 'reprovado'; },
+        por: function(r){ return r.aprov1_por || r.aprov1_email || ''; },
+        em:  function(r){ return r.aprov1_data || ''; } },
+      { chave:'aprov2', rotulo:'Aprovação final (2/2)',
+        assinada: function(r){ return num(r.aprovacao_etapa) >= 2; },
+        recusada: function(r){ return normal(r.status) === 'reprovado'; },
+        por: function(r){ return r.aprov2_por || r.aprov2_email || ''; },
+        em:  function(r){ return r.aprov2_data || ''; } }
+    ],
     /* pedido aguardando assinatura: 0/2 ou 1/2, e nao reprovado */
     aprovacao: function(r){
       var etapa = num(r.aprovacao_etapa);
@@ -1048,6 +1124,8 @@ var CATALOGO = {
       ['aprov2_motivo','Motivo 2/2','texto',0],
       ['bitrix_deal_id','Negócio no Bitrix','texto',0],
       ['editado_por','Editado por','texto',0],
+      ['pdf_url','PDF pedido comercial','arquivo',1],
+      ['pdf_cliente_url','PDF pedido versão cliente','arquivo',1],
       ['itens','Itens do pedido','lista',0],
       ['created_at','Criado em','data',0],
       ['updated_at','Atualizado em','data',0]
@@ -1310,6 +1388,131 @@ function linkOrigem(card){
   return url;
 }
 
+/* ------------------------- assinaturas da etapa ------------------------
+   A etapa diz COMO o card sai dela (campo movimento). Quando é por
+   assinatura, `assinatura_chave` aponta para uma assinatura do catálogo da
+   fonte e `assinatura_quem` diz de quem é a vez de assinar.
+   ---------------------------------------------------------------------- */
+var QUEM_ASSINA = {
+  qualquer:   'Qualquer pessoa com acesso à ferramenta',
+  responsavel:'O responsável da etapa',
+  pessoa:     'Uma pessoa específica',
+  nivel:      'Quem tiver um nível no hub'
+};
+var MOVIMENTOS = {
+  manual:      'Manual — qualquer um com permissão libera',
+  responsavel: 'Manual — só o responsável da etapa libera',
+  assinatura:  'Assinatura no formulário de origem',
+  automatico:  'Automática — só as condicionais movem'
+};
+
+function assinaturasDaFonte(fonte){
+  var c = cat(fonte);
+  return (c && c.assinaturas) || [];
+}
+function assinaturaDaEtapa(etapa){
+  if(!etapa || etapa.movimento !== 'assinatura' || !etapa.assinatura_chave) return null;
+  var fun = funilPor(etapa.funil_id);
+  return assinaturasDaFonte(fun && fun.fonte).filter(function(a){
+    return a.chave === etapa.assinatura_chave;
+  })[0] || null;
+}
+function estadoAssinatura(card, etapa){
+  var a = assinaturaDaEtapa(etapa);
+  if(!a) return null;
+  var d = card.dados || {};
+  return {
+    rotulo: a.rotulo,
+    assinada: !!a.assinada(d),
+    recusada: !!(a.recusada && a.recusada(d)),
+    por: a.por ? a.por(d) : '',
+    em: a.em ? a.em(d) : ''
+  };
+}
+function souOAssinador(etapa){
+  if(!etapa) return false;
+  var eu = normal(euSou());
+  var meuNivel = (window.APP && APP.usuario && APP.usuario.nivel) || '';
+  switch(etapa.assinatura_quem){
+    case 'responsavel': return normal(etapa.responsavel_nome) === eu;
+    case 'pessoa':      return normal(etapa.assinatura_pessoa) === eu;
+    case 'nivel':       return !etapa.assinatura_nivel || etapa.assinatura_nivel === meuNivel;
+    default:            return true;
+  }
+}
+function quemAssinaTexto(etapa){
+  if(!etapa) return '';
+  if(etapa.assinatura_quem === 'responsavel') return etapa.responsavel_nome || 'responsável da etapa';
+  if(etapa.assinatura_quem === 'pessoa')      return etapa.assinatura_pessoa || 'pessoa definida no ADM';
+  if(etapa.assinatura_quem === 'nivel'){
+    var rot = { admin:'acesso total', usuario:'edição', consulta:'somente leitura' };
+    return 'quem tem ' + (rot[etapa.assinatura_nivel] || etapa.assinatura_nivel || 'nível definido');
+  }
+  return 'qualquer pessoa com acesso';
+}
+function movimentoTexto(etapa){
+  if(!etapa) return '';
+  if(etapa.movimento !== 'assinatura') return MOVIMENTOS[etapa.movimento] || MOVIMENTOS.manual;
+  var a = assinaturaDaEtapa(etapa);
+  return 'Assinatura: ' + (a ? a.rotulo : 'não escolhida') + ' — assina ' + quemAssinaTexto(etapa);
+}
+
+/* ----------------------- anexos (PDF) do card -------------------------
+   O campo do tipo "arquivo" aceita duas formas:
+     https://...            link direto, abre como está
+     pedidos/1681-v3.pdf    caminho no Storage privado (bucket pedidos-pdf,
+                            ou "bucket:caminho"), aberto com link assinado
+   ---------------------------------------------------------------------- */
+var BUCKET_PADRAO = 'pedidos-pdf';
+function ehUrl(v){ return typeof v === 'string' && /^https?:\/\//i.test(v.trim()); }
+function ehArquivo(campo, valor){
+  if(valor === undefined || valor === null || valor === '') return false;
+  if(typeof valor !== 'string') return false;
+  if(campo && campo.tipo === 'arquivo') return true;
+  return ehUrl(valor) && /\.pdf($|\?)/i.test(valor);
+}
+function partesArquivo(valor){
+  var v = String(valor).trim();
+  if(ehUrl(v)) return { url: v };
+  var i = v.indexOf(':');
+  if(i > 0 && v.indexOf('/') > i) return { bucket: v.slice(0, i), caminho: v.slice(i+1) };
+  return { bucket: BUCKET_PADRAO, caminho: v.replace(/^\/+/, '') };
+}
+function arquivosDoCard(card){
+  var d = card.dados || {};
+  return camposDoFunil(card.funil_id).filter(function(f){
+    return ehArquivo(f, d[f.chave]);
+  }).map(function(f){
+    var p = partesArquivo(d[f.chave]);
+    p.rotulo = f.rotulo;
+    return p;
+  });
+}
+function rotuloCurtoArquivo(r){ return String(r || 'Arquivo').replace(/^PDF (do |da |de )?/i, 'PDF '); }
+
+function abrirArquivo(bucket, caminho, url){
+  if(url){ window.open(url, '_blank', 'noopener'); return; }
+  if(!sb || !sb.storage){ toast('Não foi possível abrir o arquivo.', true); return; }
+  sb.storage.from(bucket).createSignedUrl(caminho, 120).then(function(r){
+    if(r.error || !r.data || !r.data.signedUrl) throw (r.error || new Error('sem link'));
+    window.open(r.data.signedUrl, '_blank', 'noopener');
+  }).catch(function(e){ erroSb(e, 'abrir o PDF'); });
+}
+
+function botaoArquivoHTML(a, classe){
+  return '<a class="' + classe + '" href="' + esc(a.url || '#') + '"' +
+    (a.url ? ' target="_blank" rel="noopener"' : '') +
+    ' data-arq="1"' + (a.caminho ? ' data-bucket="' + esc(a.bucket) + '" data-caminho="' + esc(a.caminho) + '"' : '') +
+    ' title="' + esc(a.rotulo) + '"><span class="ico">&#128196;</span>' +
+    esc(rotuloCurtoArquivo(a.rotulo)) + '</a>';
+}
+function arquivosHTML(card){
+  var arqs = arquivosDoCard(card);
+  if(!arqs.length) return '';
+  return '<div class="kc-arqs">' +
+    arqs.map(function(a){ return botaoArquivoHTML(a, 'kc-arq'); }).join('') + '</div>';
+}
+
 /* aprovacao pendente: link que abre o formulario de origem no proprio pedido */
 function aprovacaoPendente(card){
   var fun = funilPor(card.funil_id);
@@ -1345,13 +1548,13 @@ function renderMenuFunis(){
              'data-funil="' + esc(f.id) + '" role="button" tabindex="0"' +
              (eAdmin() ? ' draggable="true"' : '') + '>' +
              (eAdmin() ? '<span class="pegar" title="arraste para reposicionar">&#8942;&#8942;</span>' : '') +
-             (f.ativo ? '' : '<span class="tag-off">inativo</span>') +
-             '<div class="nome">' + esc(f.nome) + '</div>' +
-             '<div class="desc">' + esc(f.descricao || (fo ? 'Origem: ' + fo.rotulo : '')) + '</div>' +
+             '<div class="nome" title="' + esc(f.descricao || f.nome) + '">' +
+               '<span class="t">' + esc(f.nome) + '</span>' +
+               (f.ativo ? '' : '<span class="tag-off">inativo</span>') + '</div>' +
              '<div class="nums">' +
-               '<div class="num"><b>' + c.etapas + '</b><span>etapas</span></div>' +
                '<div class="num"><b>' + c.cards + '</b><span>cards</span></div>' +
-               (fo ? '<div class="num"><b>&#8635;</b><span>' + esc(fo.rotulo) + '</span></div>' : '') +
+               '<div class="num"><b>' + c.etapas + '</b><span>etapas</span></div>' +
+               (fo ? '<div class="num"><span>&#8635; ' + esc(fo.rotulo) + '</span></div>' : '') +
              '</div></div>';
   }).join('') + cardsVirtuaisHTML();
   ligarMenuFunis();
@@ -1370,10 +1573,9 @@ function cardsVirtuaisHTML(){
   return dados.map(function(d){
     var on = S.virtual === d.v.id;
     return '<div class="funil-card virtual' + (on ? ' on' : '') + '" style="--cor:' + esc(d.v.cor) + '" ' +
-      'data-funil="' + esc(d.v.id) + '" role="button" tabindex="0">' +
-      '<span class="tag-virt">automático</span>' +
-      '<div class="nome">' + esc(d.v.nome) + '</div>' +
-      '<div class="desc">' + esc(d.v.descricao) + '</div>' +
+      'data-funil="' + esc(d.v.id) + '" role="button" tabindex="0" title="' + esc(d.v.descricao) + '">' +
+      '<div class="nome"><span class="t">' + esc(d.v.nome) + '</span>' +
+        '<span class="tag-virt">auto</span></div>' +
       '<div class="nums">' +
         '<div class="num"><b>' + d.n + '</b><span>' + esc(d.rot) + '</span></div>' +
         '<div class="num"><b>' + d.extra + '</b><span>' + esc(d.rotExtra) + '</span></div>' +
@@ -1584,6 +1786,7 @@ function renderVirtual(){
                               : 'Nenhum card fora do prazo. ') + '</div>';
   ligarKanban();
   atualizarBarraMovel();
+  atualizarSelecao();
 }
 
 function colunaVirtualHTML(col){
@@ -1648,6 +1851,7 @@ function renderKanban(){
   box.innerHTML = etapasVis.map(function(e){ return colunaHTML(e, termo); }).join('');
   ligarKanban();
   atualizarBarraMovel();
+  atualizarSelecao();
 }
 
 /* ---- barra fixa do celular e busca única para as duas caixas ---- */
@@ -1804,6 +2008,7 @@ function boxRegrasHTML(e, autos){
     (e.regras ? esc(e.regras) : '<span class="vazio">Nenhuma regra escrita para esta etapa.</span>') +
     (e.prazo_dias ? '<div style="margin-top:8px"><strong>Prazo:</strong> ' + e.prazo_dias + ' dias na etapa.</div>' : '') +
     (e.responsavel_nome ? '<div style="margin-top:6px"><strong>Responsável:</strong> ' + esc(e.responsavel_nome) + '</div>' : '') +
+    '<div style="margin-top:6px"><strong>Saída:</strong> ' + esc(movimentoTexto(e)) + '</div>' +
     lista('Movimentação automática — sai daqui quando', autos.sai, 'sai') +
     lista('Movimentação automática — chega aqui quando', autos.chega, 'chega') +
   '</div>';
@@ -1866,6 +2071,7 @@ function cardHTML(c, virtual){
   var chips = ctx + camposDoFunil(c.funil_id).filter(function(f){ return f.mostrar_no_card; }).map(function(f){
     var v = (c.dados||{})[f.chave];
     if(v === undefined || v === null || v === '' || v === false) return '';
+    if(f.tipo === 'arquivo') return '';
     if(f.tipo === 'checkbox') v = 'sim';
     else if(f.tipo === 'moeda') v = moeda(v);
     else if(f.tipo === 'data') v = dataBR(v);
@@ -1877,12 +2083,14 @@ function cardHTML(c, virtual){
       'draggable="' + (podeEditar() && !virtual ? 'true':'false') + '" ' +
       'style="--cor:' + esc((e && e.cor) || '#7C1B29') + '">' +
     '<div class="kc-topo">' +
+      (podeEditar() ? '<input type="checkbox" class="kc-sel" data-sel="' + esc(c.id) + '"' +
+        (S.selecao[c.id] ? ' checked' : '') + ' title="Selecionar para exclusão em massa">' : '') +
       '<div class="tit">' + esc(c.titulo) + '</div>' +
       (atrasado ? '<span class="selo-atraso" title="' + atraso + ' dia(s) além do prazo da etapa">' +
                   '&#9888; ' + atraso + 'd</span>' : '') +
     '</div>' +
     (chips ? '<div class="chips">' + chips + '</div>' : '') +
-    aprovacaoHTML(c) +
+    arquivosHTML(c) +
     '<div class="pe">' +
       (respEfetivo(c) ? '<span>' + esc(respEfetivo(c)) + '</span>' : '<span>sem responsável</span>') +
       '<span class="' + (atrasado ? 'alerta' : '') + '">' + d + 'd</span>' +
@@ -1901,6 +2109,17 @@ function aprovacaoHTML(c){
     '<span class="seta">&rarr;</span></a>';
 }
 
+function ligarArquivos(escopo){
+  Array.prototype.forEach.call(escopo.querySelectorAll('[data-arq]'), function(a){
+    a.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      if(!a.dataset.caminho) return;          // link direto segue normal
+      ev.preventDefault();
+      abrirArquivo(a.dataset.bucket || BUCKET_PADRAO, a.dataset.caminho, null);
+    });
+  });
+}
+
 /* botões de liberação rápida da etapa, direto no card */
 function vizinhas(card){
   var lista = etapasDoFunil(card.funil_id);
@@ -1914,26 +2133,48 @@ function souResponsavel(card, etapa){
   if(!eu) return false;
   return normal(card.responsavel_nome) === eu || (etapa && normal(etapa.responsavel_nome) === eu);
 }
+/* UM único botão no rodapé do card. O que ele faz vem da etapa (ADM). */
 function acoesCardHTML(c, etapa){
   if(!podeEditar()) return '';
+  function caixa(html){ return '<div class="kc-acoes">' + html + '</div>'; }
+  function selo(txt, titulo){
+    return caixa('<button class="kc-btn fim" disabled' +
+      (titulo ? ' title="' + esc(titulo) + '"' : '') + '>' + txt + '</button>');
+  }
   var v = vizinhas(c);
-  var meu = souResponsavel(c, etapa) ? ' meu' : '';
-  var botoes = '';
-  if(v.anterior){
-    botoes += '<button class="kc-btn volta" data-volta="' + esc(c.id) + '" ' +
-      'title="Devolver para ' + esc(v.anterior.nome) + '">&#8592;</button>';
+  var mov = (etapa && etapa.movimento) || 'manual';
+
+  if(!v.proxima) return selo(etapa && etapa.tipo === 'perda' ? 'encerrado' : 'etapa final',
+                             'Última etapa do funil — mova pelo card se precisar voltar');
+
+  if(mov === 'automatico')
+    return selo('&#8635; anda pelas condicionais', 'Esta etapa não tem liberação manual');
+
+  if(mov === 'assinatura'){
+    var est = estadoAssinatura(c, etapa);
+    if(!est) return selo('assinatura não definida', 'Escolha a assinatura em Administração › Funis e etapas');
+    if(est.recusada) return selo('&#10007; ' + esc(est.rotulo) + ' — recusada',
+                                 'O formulário registrou recusa nesta assinatura');
+    if(est.assinada) return selo('&#10003; ' + esc(est.rotulo),
+                                 'Assinado' + (est.por ? ' por ' + est.por : '') +
+                                 (est.em ? ' em ' + dataBR(est.em) : '') + ' — o card sai pela condicional');
+    var link = linkOrigem(c);
+    if(!link) return selo('&#9873; ' + esc(est.rotulo), 'Cadastre o link do formulário em ADM › Origem do card');
+    var meuTurno = souOAssinador(etapa) ? ' meu' : '';
+    return caixa('<a class="kc-btn liberar' + meuTurno + '" data-assinar="1" href="' + esc(link) + '" ' +
+      'target="_blank" rel="noopener" title="Assina: ' + esc(quemAssinaTexto(etapa)) + '">' +
+      '<span class="ico">&#9873;</span>Assinar: ' + esc(est.rotulo) + '</a>');
   }
-  if(v.proxima){
-    botoes += '<button class="kc-btn liberar' + meu + '" data-liberar="' + esc(c.id) + '" ' +
-      'title="Liberar para ' + esc(v.proxima.nome) +
-      (etapa && etapa.responsavel_nome ? ' · responsável: ' + esc(etapa.responsavel_nome) : '') + '">' +
-      'Liberar &rarr; ' + esc(v.proxima.nome.length > 16 ? v.proxima.nome.slice(0,15) + '…' : v.proxima.nome) +
-      '</button>';
-  } else {
-    botoes += '<button class="kc-btn fim" disabled>' +
-      (etapa && etapa.tipo === 'perda' ? 'encerrado' : 'etapa final') + '</button>';
-  }
-  return '<div class="kc-acoes">' + botoes + '</div>';
+
+  var soResp = mov === 'responsavel';
+  var souDono = souResponsavel(c, etapa);
+  var nome = v.proxima.nome.length > 18 ? v.proxima.nome.slice(0,17) + '…' : v.proxima.nome;
+  if(soResp && !souDono)
+    return selo('Liberação de ' + esc(etapa.responsavel_nome || 'quem responde pela etapa'),
+                'Só o responsável desta etapa libera o card');
+  return caixa('<button class="kc-btn liberar' + (souDono ? ' meu' : '') + '" ' +
+    'data-liberar="' + esc(c.id) + '" title="Liberar para ' + esc(v.proxima.nome) + '">' +
+    'Liberar &rarr; ' + esc(nome) + '</button>');
 }
 
 function liberarCard(id, dir){
@@ -1951,9 +2192,18 @@ function liberarCard(id, dir){
 function ligarKanban(){
   var box = $('kanban');
 
-  Array.prototype.forEach.call(box.querySelectorAll('[data-aprov]'), function(a){
+  Array.prototype.forEach.call(box.querySelectorAll('[data-aprov],[data-assinar]'), function(a){
     a.addEventListener('click', function(ev){ ev.stopPropagation(); });
   });
+  Array.prototype.forEach.call(box.querySelectorAll('[data-sel]'), function(chk){
+    chk.addEventListener('click', function(ev){ ev.stopPropagation(); });
+    chk.addEventListener('change', function(){
+      if(chk.checked) S.selecao[chk.dataset.sel] = true;
+      else delete S.selecao[chk.dataset.sel];
+      atualizarSelecao();
+    });
+  });
+  ligarArquivos(box);
 
   Array.prototype.forEach.call(box.querySelectorAll('[data-liberar]'), function(b){
     b.addEventListener('click', function(ev){
@@ -2034,6 +2284,47 @@ function ligarKanban(){
       });
     });
   });
+}
+
+/* ------------------------------ seleção em massa ----------------------- */
+function idsSelecionados(){
+  return Object.keys(S.selecao).filter(function(id){
+    return S.cardsTodos.some(function(c){ return c.id === id; });
+  });
+}
+function atualizarSelecao(){
+  var ids = idsSelecionados();
+  var barra = $('barraSelecao');
+  if(!barra) return;
+  barra.hidden = !ids.length;
+  $('selQtd').textContent = ids.length;
+}
+function limparSelecao(){
+  S.selecao = {};
+  renderKanban();
+}
+function excluirSelecionados(){
+  var ids = idsSelecionados();
+  if(!ids.length || !podeEditar()) return;
+  var externos = ids.filter(function(id){
+    var c = S.cardsTodos.filter(function(x){ return x.id === id; })[0];
+    return c && c.origem_id;
+  }).length;
+  var aviso = externos
+    ? '\n\n' + externos + ' deles vieram de um formulário — o registro de origem continua lá e ' +
+      'o card volta na próxima sincronização.'
+    : '';
+  if(!confirm('Excluir ' + ids.length + ' card(s) selecionado(s)?' + aviso)) return;
+  toast('Excluindo ' + ids.length + ' card(s)…');
+  Promise.all(ids.map(function(id){
+    return sb.from('funil_cards').delete().eq('id', id);
+  })).then(function(){
+    S.selecao = {};
+    return carregarTudo();
+  }).then(function(){
+    atualizarSelecao();
+    toast(ids.length + ' card(s) excluído(s)');
+  }).catch(function(e){ erroSb(e, 'excluir selecionados'); });
 }
 
 /* ------------------------------------------------------ mover e historico */
@@ -2330,6 +2621,7 @@ function abrirCardForm(id){
     });
   }
 
+  ligarArquivos($('mdCard'));
   $('cardTimeline').innerHTML = card ? '<div class="carregando">Carregando…</div>'
     : '<div class="ajuda" style="color:var(--ink-3)">A linha do tempo começa quando o card é criado.</div>';
   if(card) carregarHistorico(card.id);
@@ -2349,6 +2641,10 @@ function dadosOrigemHTML(card){
     if(f.tipo === 'lista' && Array.isArray(v) && v.length){ listas.push([f.rotulo, v]); return ''; }
     var txt;
     if(v === undefined || v === null || v === '') txt = '<span class="v vazio">—</span>';
+    else if(ehArquivo(f, v)){
+      var arq = partesArquivo(v); arq.rotulo = f.rotulo;
+      txt = '<span class="v">' + botaoArquivoHTML(arq, 'kc-arq') + '</span>';
+    }
     else if(f.tipo === 'moeda') txt = '<span class="v">' + esc(moeda(v)) + '</span>';
     else if(f.tipo === 'data') txt = '<span class="v">' + esc(dataHoraBR(v)) + '</span>';
     else txt = '<span class="v">' + esc(texto(v)) + '</span>';
@@ -2615,8 +2911,7 @@ function renderAdmEtapas(){
           '<strong>' + esc(e.nome) + '</strong></td>' +
       '<td><span class="pill ' + esc(e.tipo) + '">' + esc(tipos[e.tipo] || e.tipo) + '</span></td>' +
       '<td>' + (e.responsavel_nome ? esc(e.responsavel_nome) : '<span style="color:var(--neg)">definir</span>') + '</td>' +
-      '<td style="color:var(--ink-2);max-width:260px">' +
-          esc((e.regras || '').slice(0,80)) + ((e.regras||'').length > 80 ? '…' : '') + '</td>' +
+      '<td style="color:var(--ink-2);max-width:230px;font-size:11.5px">' + esc(movimentoTexto(e)) + '</td>' +
       '<td class="num">' + (e.prazo_dias || '—') + '</td>' +
       '<td class="acoes">' +
         '<button class="btn sm" data-dupe="' + esc(e.id) + '">Duplicar</button> ' +
@@ -2665,6 +2960,11 @@ function duplicarEtapa(id){
     responsavel_email: e.responsavel_email,
     regras: e.regras,
     prazo_dias: e.prazo_dias,
+    movimento: e.movimento || 'manual',
+    assinatura_chave: e.assinatura_chave,
+    assinatura_quem: e.assinatura_quem || 'qualquer',
+    assinatura_pessoa: e.assinatura_pessoa,
+    assinatura_nivel: e.assinatura_nivel,
     filtro: e.filtro || {}
   };
   sb.from('funil_etapas').insert(copia).select().then(function(r){
@@ -2753,6 +3053,33 @@ function preencherFiltroEtapa(filtro){
   $('fEtapaFiltroDirecao').value = filtro.direcao || 'asc';
 }
 
+function movimentoMudou(){
+  var mov = $('fEtapaMovimento').value;
+  $('boxAssinatura').hidden = mov !== 'assinatura';
+  if(mov === 'assinatura') quemAssinaMudou();
+}
+function quemAssinaMudou(){
+  var q = $('fEtapaQuemAssina').value;
+  $('boxAssinaPessoa').hidden = q !== 'pessoa';
+  $('boxAssinaNivel').hidden = q !== 'nivel';
+}
+function preencherAssinaturas(etapa){
+  var f = admFunil();
+  var lista = assinaturasDaFonte(f && f.fonte);
+  var atual = etapa ? etapa.assinatura_chave : '';
+  $('fEtapaAssinatura').innerHTML = lista.length
+    ? lista.map(function(a){
+        return '<option value="' + esc(a.chave) + '"' + (a.chave === atual ? ' selected' : '') + '>' +
+               esc(a.rotulo) + '</option>'; }).join('')
+    : '<option value="">— a fonte deste funil não tem assinaturas —</option>';
+  $('ajudaAssinatura').textContent = lista.length
+    ? 'A assinatura é lida do próprio registro; o card sai quando ela acontece.'
+    : 'Só fontes com fluxo de assinatura (pedidos) oferecem esta opção.';
+  selectResponsavel($('fEtapaAssinaPessoa'), etapa ? (etapa.assinatura_pessoa || '') : '');
+  $('fEtapaQuemAssina').value = (etapa && etapa.assinatura_quem) || 'qualquer';
+  $('fEtapaAssinaNivel').value = (etapa && etapa.assinatura_nivel) || 'usuario';
+}
+
 function abrirEtapaForm(id){
   if(!S.admFunilId){ toast('Escolha um funil primeiro.', true); return; }
   var e = id ? (S.admEtapas || []).filter(function(x){ return x.id === id; })[0] : null;
@@ -2765,6 +3092,9 @@ function abrirEtapaForm(id){
   $('fEtapaPrazo').value = e && e.prazo_dias ? e.prazo_dias : '';
   $('fEtapaRegras').value = e ? (e.regras || '') : '';
   selectResponsavel($('fEtapaResp'), e ? (e.responsavel_nome || '') : '');
+  $('fEtapaMovimento').value = (e && e.movimento) || 'manual';
+  preencherAssinaturas(e);
+  movimentoMudou();
   preencherFiltroEtapa(e ? e.filtro : null);
   $('btnExcluirEtapa').hidden = !e;
   $('btnDuplicarEtapa').hidden = !e;
@@ -2800,6 +3130,14 @@ function salvarEtapa(){
     responsavel_email: conta ? conta.email : (S.edit.etapa && S.edit.etapa.responsavel_nome === resp
       ? S.edit.etapa.responsavel_email : null),
     regras: $('fEtapaRegras').value.trim() || null,
+    movimento: $('fEtapaMovimento').value,
+    assinatura_chave: $('fEtapaMovimento').value === 'assinatura'
+      ? ($('fEtapaAssinatura').value || null) : null,
+    assinatura_quem: $('fEtapaQuemAssina').value || 'qualquer',
+    assinatura_pessoa: $('fEtapaQuemAssina').value === 'pessoa'
+      ? ($('fEtapaAssinaPessoa').value || null) : null,
+    assinatura_nivel: $('fEtapaQuemAssina').value === 'nivel'
+      ? ($('fEtapaAssinaNivel').value || null) : null,
     filtro: lerFiltroEtapa()
   };
   var e = S.edit.etapa;
@@ -2909,7 +3247,7 @@ function carregarCamposDaFonte(silencioso){
 function renderAdmCampos(){
   var tipos = { texto:'Texto', textarea:'Texto longo', numero:'Número', moeda:'Valor (R$)',
                 data:'Data', select:'Lista', checkbox:'Sim/Não', email:'E-mail',
-                telefone:'Telefone', lista:'Lista de itens' };
+                telefone:'Telefone', lista:'Lista de itens', arquivo:'Arquivo (PDF)' };
   var campos = S.admCampos || [];
   $('admCamposTbody').innerHTML = campos.length ? campos.map(function(c, i){
     return '<tr>' +
@@ -3242,6 +3580,10 @@ window.admTrocarFunil = admTrocarFunil;
 window.carregarTudo = carregarTudo;
 window.carregarContas = carregarContas;
 window.limparForaDoHub = limparForaDoHub;
+window.limparSelecao = limparSelecao;
+window.movimentoMudou = movimentoMudou;
+window.quemAssinaMudou = quemAssinaMudou;
+window.excluirSelecionados = excluirSelecionados;
 window.renderKanban = renderKanban;
 window.buscar = buscar;
 window.toggleBuscaMovel = toggleBuscaMovel;
