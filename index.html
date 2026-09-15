@@ -1108,28 +1108,36 @@ var CATALOGO = {
     ref: function(r){ return r.numero_pedido || r.bitrix_deal_id || ''; },
     valor: function(r){ return num(r.total_geral); },
     responsavel: function(r){ return r.vendedor_nome || ''; },
-    /* assinaturas do formulario de pedidos, na ordem em que acontecem */
+    /* as tres assinaturas do formulario de pedidos, na ordem em que acontecem */
     assinaturas: [
-      { chave:'aprov1', rotulo:'Aprovação comercial (1/2)',
+      { chave:'aprov1', rotulo:'Aprovação comercial inicial (1/3)',
         assinada: function(r){ return num(r.aprovacao_etapa) >= 1; },
         recusada: function(r){ return normal(r.aprov1_decisao) === 'reprovado'; },
         por: function(r){ return r.aprov1_por || r.aprov1_email || ''; },
         em:  function(r){ return r.aprov1_data || ''; } },
-      { chave:'aprov2', rotulo:'Aprovação final (2/2)',
+      { chave:'aprov2', rotulo:'Aprovação cadastral (2/3)',
         assinada: function(r){ return num(r.aprovacao_etapa) >= 2; },
-        recusada: function(r){ return normal(r.status) === 'reprovado'; },
         por: function(r){ return r.aprov2_por || r.aprov2_email || ''; },
-        em:  function(r){ return r.aprov2_data || ''; } }
+        em:  function(r){ return r.aprov2_data || ''; } },
+      { chave:'aprov3', rotulo:'Aprovação comercial final (3/3)',
+        assinada: function(r){ return num(r.aprovacao_etapa) >= 3; },
+        recusada: function(r){ return normal(r.status) === 'reprovado'; },
+        por: function(r){ return r.aprov3_por || r.aprov3_email || ''; },
+        em:  function(r){ return r.aprov3_data || ''; } }
     ],
-    /* pedido aguardando assinatura: 0/2 ou 1/2, e nao reprovado */
+    total_assinaturas: 3,
+    /* pedido ainda sem as tres assinaturas, e nao reprovado */
     aprovacao: function(r){
       var etapa = num(r.aprovacao_etapa);
       var reprovado = normal(r.aprov1_decisao) === 'reprovado' || normal(r.status) === 'reprovado';
-      if(reprovado || etapa >= 2) return null;
+      if(reprovado || etapa >= 3) return null;
+      var falta = ['a 1ª assinatura (comercial inicial)',
+                   'a assinatura cadastral',
+                   'a assinatura comercial final'][etapa] || 'a próxima assinatura';
       return {
         etapa: etapa,
-        rotulo: 'Aprovação pendente ' + etapa + '/2',
-        detalhe: etapa === 0 ? 'aguardando a 1ª assinatura' : 'aguardando a assinatura final'
+        rotulo: 'Aprovação pendente ' + etapa + '/3',
+        detalhe: 'aguardando ' + falta
       };
     },
     campos: [
@@ -1408,6 +1416,7 @@ function sincronizar(silencioso){
     return passo(0).then(function(){ return { novos: novos, atualizados: atualizados }; });
   }).then(function(res){
     S.sincronizando = false;
+    S.ultimoSync = new Date();
     renderKanban();
     if(res && (res.novos || res.atualizados)){
       toast(res.novos + ' novo(s), ' + res.atualizados + ' atualizado(s) de ' + c.rotulo);
@@ -1420,6 +1429,25 @@ function sincronizar(silencioso){
     S.sincronizando = false;
     erroSb(e, 'sincronizar');
   });
+}
+
+var timerSync = null;
+function modalAberto(){ return !!document.querySelector('.modal.on'); }
+function podeSincronizar(){
+  return !!(S.funil && S.funil.fonte !== 'manual' && S.funil.sync_auto !== false &&
+            podeEditar() && !S.sincronizando && !modalAberto());
+}
+function syncAutomatico(){
+  if(document.hidden || !podeSincronizar()) return;
+  sincronizar(true);
+}
+function ligarSyncAutomatico(){
+  clearInterval(timerSync);
+  timerSync = setInterval(syncAutomatico, 90000);   /* a cada 1min30 */
+  document.addEventListener('visibilitychange', function(){
+    if(!document.hidden) syncAutomatico();          /* ao voltar para a aba */
+  });
+  window.addEventListener('focus', syncAutomatico);
 }
 
 function novoCard(){
@@ -1888,7 +1916,13 @@ function renderKanban(){
   $('avisoFonte').innerHTML = fo
     ? '<div class="aviso">Os cards deste funil vêm de <strong>' + esc(fo.rotulo) + '</strong>' +
       (f.form_url ? ' — <a href="' + esc(f.form_url) + '" target="_blank" rel="noopener">abrir o formulário</a>' : '') +
-      '. Cada gravação lá atualiza os campos do card e reavalia as condicionais.</div>'
+      '. Cada gravação lá atualiza os campos do card e reavalia as condicionais.' +
+      (f.sync_auto !== false
+        ? ' <span style="color:var(--ink-3)">Confere sozinho a cada 1min30 e sempre que você volta para esta aba' +
+          (S.ultimoSync ? ' — última checagem às ' + esc(S.ultimoSync.toLocaleTimeString('pt-BR').slice(0,5)) : '') +
+          '.</span>'
+        : '') +
+      '</div>'
     : '';
 
   var box = $('kanban');
@@ -3742,6 +3776,7 @@ function iniciar(){
     $('btnNovoFunilAtalho').hidden = false;
   }
   carregarContas().then(carregarTudo);
+  ligarSyncAutomatico();
 
   document.addEventListener('keydown', function(ev){
     if(ev.key === 'Escape'){ ['mdFunil','mdEtapa','mdCampo','mdRegra','mdCard'].forEach(fechar); }
