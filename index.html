@@ -254,6 +254,36 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
 .vazio-geral{text-align:center;padding:34px 16px;color:var(--ink-3);font-size:12.5px}
 .carregando{text-align:center;padding:26px;color:var(--ink-3);font-size:12px}
 
+/* ---------- card atrasado ---------- */
+.kcard .kc-topo{display:flex;align-items:flex-start;gap:7px}
+.kcard .kc-topo .tit{flex:1;min-width:0}
+.selo-atraso{display:inline-flex;align-items:center;gap:3px;flex:0 0 auto;
+  background:var(--neg);color:#fff;border-radius:5px;padding:1px 6px;
+  font-size:10px;font-weight:700;letter-spacing:.03em;white-space:nowrap}
+.kcard.atrasado{background:rgba(163,58,42,.09);border-color:rgba(163,58,42,.45);
+  border-left-color:var(--neg)}
+.kcard.atrasado .tit{color:var(--neg)}
+.kcard.atrasado .chip{background:rgba(163,58,42,.07);border-color:rgba(163,58,42,.2)}
+.kcard.atrasado:hover{border-color:var(--neg)}
+.col.col-atraso .col-head{border-top-color:var(--neg)}
+
+/* ---------- funis virtuais ---------- */
+.funil-card.virtual{border-style:dashed}
+.funil-card.virtual .nome{padding-right:82px}
+.funil-card .tag-virt{position:absolute;top:10px;right:10px;font-size:8.5px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--cor,var(--wine));
+  border:1px solid var(--cor,var(--wine));border-radius:5px;padding:1px 5px;opacity:.75}
+.barra-virtual{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;
+  padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--sunk)}
+.barra-virtual label{font-size:10.5px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink-3)}
+.barra-virtual select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;
+  background:var(--card);color:var(--ink);min-width:180px}
+.barra-virtual .resumo{margin-left:auto;font-size:11.5px;color:var(--ink-2)}
+.barra-virtual .resumo b{font-family:"Archivo Narrow","Archivo",sans-serif;font-size:14px;color:var(--ink)}
+.col-head .sub-col{font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:700}
+
 /* ---------- ações rápidas no card ---------- */
 .kcard .kc-acoes{display:flex;gap:6px;margin-top:8px}
 .kc-btn{border:1px solid var(--line);background:var(--card);color:var(--ink-2);
@@ -274,6 +304,10 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
   background:linear-gradient(100deg,var(--wine-deep) 0%,var(--wine) 62%,var(--wine-deep) 100%);
   color:#fff;position:sticky;top:34px;z-index:60;box-shadow:var(--shadow)}
 .barra-movel .bm-tit{flex:1;min-width:0;font-size:13px;font-weight:700;line-height:1.15}
+.barra-movel select{max-width:42%;min-width:110px;padding:6px 7px;border-radius:8px;
+  border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;
+  font-size:11.5px;font-weight:600}
+.barra-movel select option{color:var(--ink);background:var(--card)}
 .barra-movel .bm-tit > div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #bmBuscaRow{display:none}
 .barra-movel .bm-sub{font-size:9.5px;opacity:.75;font-weight:600;
@@ -432,6 +466,7 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
         <div id="bmTitulo">Funil</div>
         <div class="bm-sub" id="bmSub"></div>
       </div>
+      <select id="bmEtapa" title="Etapa" onchange="escolherEtapaMovel(this.value)"></select>
       <button id="bmBuscaBtn" onclick="toggleBuscaMovel()" title="Buscar">&#9906;</button>
       <button id="bmSync" onclick="sincronizar(false)" title="Sincronizar">&#8635;</button>
       <button class="pri" id="bmNovo" onclick="novoCard()" title="Novo card">+</button>
@@ -462,12 +497,13 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
         <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <input id="buscaCard" class="busca" type="text" placeholder="Buscar card…" oninput="buscar(this.value)">
           <button class="btn sm" id="btnSincronizar" hidden onclick="sincronizar(false)">Sincronizar</button>
-          <button class="btn sm" onclick="rodarRegrasManual()">Rodar condicionais</button>
+          <button class="btn sm" id="btnRegrasManual" onclick="rodarRegrasManual()">Rodar condicionais</button>
           <button class="btn sm pri" id="btnNovoCard" onclick="novoCard()">Novo card</button>
         </div>
       </div>
       <div class="corpo">
         <div id="avisoFonte"></div>
+        <div id="barraVirtual"></div>
         <div id="kanban" class="kanban"></div>
       </div>
     </div>
@@ -857,7 +893,11 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
 var sb = null;
 var S = {
   funis: [], etapas: [], campos: [], regras: [], cards: [], contas: [],
+  etapasTodas: [], camposTodos: [], regrasTodas: [], cardsTodos: [],
   funil: null,            // funil aberto no kanban
+  virtual: null,          // '__meus' | '__atrasados' quando o funil e virtual
+  filtroUsuario: '',      // filtro do funil "Minha responsabilidade"
+  etapaMovel: '',         // etapa escolhida no seletor do celular
   admFunilId: null,       // funil aberto na area ADM
   admEtapas: [], admCampos: [], admRegras: [],
   contagem: {},           // { funil_id: {etapas:n, cards:n} }
@@ -1050,16 +1090,28 @@ function admAba(aba){
 function carregarTudo(){
   return Promise.all([
     sb.from('funis').select('*').order('ordem').order('nome'),
-    sb.from('funil_etapas').select('id,funil_id'),
-    sb.from('funil_cards').select('id,funil_id').eq('arquivado', false)
+    sb.from('funil_etapas').select('*').order('ordem'),
+    sb.from('funil_campos').select('*').order('ordem'),
+    sb.from('funil_regras').select('*').order('ordem'),
+    sb.from('funil_cards').select('*').eq('arquivado', false).order('ordem')
   ]).then(function(r){
-    if(r[0].error) throw r[0].error;
-    S.funis = r[0].data || [];
+    r.forEach(function(x){ if(x.error) throw x.error; });
+    S.funis       = r[0].data || [];
+    S.etapasTodas = r[1].data || [];
+    S.camposTodos = r[2].data || [];
+    S.regrasTodas = r[3].data || [];
+    S.cardsTodos  = r[4].data || [];
+
     S.contagem = {};
     S.funis.forEach(function(f){ S.contagem[f.id] = { etapas:0, cards:0 }; });
-    (r[1].data||[]).forEach(function(e){ if(S.contagem[e.funil_id]) S.contagem[e.funil_id].etapas++; });
-    (r[2].data||[]).forEach(function(c){ if(S.contagem[c.funil_id]) S.contagem[c.funil_id].cards++; });
+    S.etapasTodas.forEach(function(e){ if(S.contagem[e.funil_id]) S.contagem[e.funil_id].etapas++; });
+    S.cardsTodos.forEach(function(c){ if(S.contagem[c.funil_id]) S.contagem[c.funil_id].cards++; });
+    S.etapasTodas.forEach(function(e){
+      if(!S.filtros[e.id]) S.filtros[e.id] = Object.assign({}, e.filtro || {});
+    });
+
     renderMenuFunis();
+    if(S.virtual){ abrirVirtual(S.virtual); return; }
     if(S.funil){
       var aindaExiste = S.funis.some(function(f){ return f.id === S.funil.id; });
       if(aindaExiste) return abrirFunil(S.funil.id, true);
@@ -1070,40 +1122,49 @@ function carregarTudo(){
   }).catch(function(e){ erroSb(e, 'carregar funis'); });
 }
 
+/* recortes por funil, tirados do carregamento geral */
+function etapasDoFunil(fid){
+  return S.etapasTodas.filter(function(e){ return e.funil_id === fid; })
+    .sort(function(a,b){ return (a.ordem||0) - (b.ordem||0); });
+}
+function camposDoFunil(fid){
+  return S.camposTodos.filter(function(c){ return c.funil_id === fid; })
+    .sort(function(a,b){ return (a.ordem||0) - (b.ordem||0); });
+}
+function regrasDoFunil(fid){
+  return S.regrasTodas.filter(function(r){ return r.funil_id === fid; })
+    .sort(function(a,b){ return (a.ordem||0) - (b.ordem||0); });
+}
+function cardsDoFunil(fid){
+  return S.cardsTodos.filter(function(c){ return c.funil_id === fid; });
+}
+function funilPor(id){ return S.funis.filter(function(f){ return f.id === id; })[0] || null; }
+
 function abrirFunil(id, semSync){
-  var f = S.funis.filter(function(x){ return x.id === id; })[0];
+  if(id && id.indexOf('__') === 0) return abrirVirtual(id);
+  var f = funilPor(id);
   if(!f) return Promise.resolve();
+  S.virtual = null;
   S.funil = f;
-  return Promise.all([
-    sb.from('funil_etapas').select('*').eq('funil_id', id).order('ordem'),
-    sb.from('funil_campos').select('*').eq('funil_id', id).order('ordem'),
-    sb.from('funil_regras').select('*').eq('funil_id', id).order('ordem'),
-    sb.from('funil_cards').select('*').eq('funil_id', id).eq('arquivado', false).order('ordem')
-  ]).then(function(r){
-    r.forEach(function(x){ if(x.error) throw x.error; });
-    S.etapas = r[0].data || [];
-    S.campos = r[1].data || [];
-    S.regras = r[2].data || [];
-    S.cards  = r[3].data || [];
-    S.etapas.forEach(function(e){
-      if(!S.filtros[e.id]) S.filtros[e.id] = Object.assign({}, e.filtro || {});
-    });
-    renderMenuFunis();
-    renderKanban();
-    if(!semSync && f.fonte !== 'manual' && f.sync_auto && podeEditar()) return sincronizar(true);
-  }).catch(function(e){ erroSb(e, 'abrir funil'); });
+  S.etapas = etapasDoFunil(id);
+  S.campos = camposDoFunil(id);
+  S.regras = regrasDoFunil(id);
+  S.cards  = cardsDoFunil(id);
+  if(!S.etapaMovel || !etapaPor(S.etapaMovel) || etapaPor(S.etapaMovel).funil_id !== id){
+    S.etapaMovel = (etapaInicial() || {}).id || '';
+  }
+  renderMenuFunis();
+  renderKanban();
+  if(!semSync && f.fonte !== 'manual' && f.sync_auto && podeEditar()) return sincronizar(true);
+  return Promise.resolve();
 }
 
 function carregarAdmFunil(id){
   S.admFunilId = id;
-  return Promise.all([
-    sb.from('funil_etapas').select('*').eq('funil_id', id).order('ordem'),
-    sb.from('funil_campos').select('*').eq('funil_id', id).order('ordem'),
-    sb.from('funil_regras').select('*').eq('funil_id', id).order('ordem')
-  ]).then(function(r){
-    S.admEtapas = r[0].data || [];
-    S.admCampos = r[1].data || [];
-    S.admRegras = r[2].data || [];
+  return carregarTudo().then(function(){
+    S.admEtapas = etapasDoFunil(id);
+    S.admCampos = camposDoFunil(id);
+    S.admRegras = regrasDoFunil(id);
   }).catch(function(e){ erroSb(e, 'carregar configuração'); });
 }
 
@@ -1158,7 +1219,7 @@ function sincronizar(silencioso){
         }).select().then(function(res){
           if(res.error) throw res.error;
           var novo = res.data[0];
-          S.cards.push(novo); novos++;
+          S.cards.push(novo); S.cardsTodos.push(novo); novos++;
           return registrar(novo.id, 'sync', 'Card criado a partir de ' + c.rotulo + ' em ' + inicial.nome)
             .then(function(){ return avaliarRegras(novo, 'criar'); });
         }).then(function(){ return passo(i+1); });
@@ -1211,7 +1272,7 @@ function novoCard(){
 }
 
 function linkOrigem(card){
-  var f = S.funil;
+  var f = funilPor(card.funil_id) || S.funil;
   if(!f || !f.form_url) return null;
   var url = f.form_url;
   if(f.link_param && f.link_campo){
@@ -1251,8 +1312,32 @@ function renderMenuFunis(){
                '<div class="num"><b>' + c.cards + '</b><span>cards</span></div>' +
                (fo ? '<div class="num"><b>&#8635;</b><span>' + esc(fo.rotulo) + '</span></div>' : '') +
              '</div></div>';
-  }).join('');
+  }).join('') + cardsVirtuaisHTML();
   ligarMenuFunis();
+}
+
+function cardsVirtuaisHTML(){
+  var meus = cardsAguardando(euSou());
+  var atrasados = cardsAtrasados();
+  var meusAtraso = meus.filter(function(c){ return atrasoDias(c) > 0; }).length;
+  var dados = [
+    { v: VIRTUAIS['__meus'], n: meus.length, rot:'aguardando', extra: meusAtraso, rotExtra:'atrasados' },
+    { v: VIRTUAIS['__atrasados'], n: atrasados.length, rot:'vencidos',
+      extra: S.funis.filter(function(f){
+        return atrasados.some(function(c){ return c.funil_id === f.id; }); }).length, rotExtra:'funis' }
+  ];
+  return dados.map(function(d){
+    var on = S.virtual === d.v.id;
+    return '<div class="funil-card virtual' + (on ? ' on' : '') + '" style="--cor:' + esc(d.v.cor) + '" ' +
+      'data-funil="' + esc(d.v.id) + '" role="button" tabindex="0">' +
+      '<span class="tag-virt">automático</span>' +
+      '<div class="nome">' + esc(d.v.nome) + '</div>' +
+      '<div class="desc">' + esc(d.v.descricao) + '</div>' +
+      '<div class="nums">' +
+        '<div class="num"><b>' + d.n + '</b><span>' + esc(d.rot) + '</span></div>' +
+        '<div class="num"><b>' + d.extra + '</b><span>' + esc(d.rotExtra) + '</span></div>' +
+      '</div></div>';
+  }).join('');
 }
 
 function ligarMenuFunis(){
@@ -1263,7 +1348,7 @@ function ligarMenuFunis(){
     el.addEventListener('keydown', function(ev){
       if(ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); abrirFunil(el.dataset.funil); }
     });
-    if(!eAdmin()) return;
+    if(!eAdmin() || el.classList.contains('virtual')) return;
     el.addEventListener('dragstart', function(ev){
       arrastado = el.dataset.funil;
       ev.dataTransfer.setData('text/plain', arrastado);
@@ -1303,20 +1388,196 @@ function reposicionarFunil(idArrastado, idAlvo){
 }
 
 /* --------------------------------------------------------------- kanban */
-function etapaPor(id){ return S.etapas.filter(function(e){ return e.id === id; })[0] || null; }
+function etapaPor(id){
+  return S.etapasTodas.filter(function(e){ return e.id === id; })[0] ||
+         S.etapas.filter(function(e){ return e.id === id; })[0] || null;
+}
 function nomeEtapa(id){ var e = etapaPor(id); return e ? e.nome : '—'; }
 function etapaInicial(){
   return S.etapas.filter(function(e){ return e.tipo === 'inicio'; })[0] || S.etapas[0] || null;
 }
+function ehMovel(){ return window.innerWidth <= 760; }
+
+/* atraso: dias além do prazo da etapa (0 = dentro do prazo ou sem prazo) */
+function atrasoDias(card){
+  var e = etapaPor(card.etapa_id);
+  if(!e || !e.prazo_dias) return 0;
+  var d = dias(card.etapa_desde) - e.prazo_dias;
+  return d > 0 ? d : 0;
+}
+function respEfetivo(card){
+  var e = etapaPor(card.etapa_id);
+  return card.responsavel_nome || (e && e.responsavel_nome) || '';
+}
+
+/* ------------------------- funis virtuais (sem tabela) ------------------- */
+var VIRTUAIS = {
+  '__meus': {
+    id:'__meus', nome:'Minha responsabilidade', cor:'#1E6FB8', icone:'MR',
+    descricao:'Cards aguardando movimentação, de todos os funis'
+  },
+  '__atrasados': {
+    id:'__atrasados', nome:'Atrasados', cor:'#A33A2A', icone:'AT',
+    descricao:'Cards fora do prazo da etapa, de todos os funis'
+  }
+};
+function concluida(etapa){ return !!etapa && (etapa.tipo === 'ganho' || etapa.tipo === 'perda'); }
+
+function cardsAguardando(usuario){
+  var alvo = normal(usuario);
+  return S.cardsTodos.filter(function(c){
+    if(concluida(etapaPor(c.etapa_id))) return false;
+    if(!alvo) return true;
+    return normal(respEfetivo(c)) === alvo;
+  });
+}
+function cardsAtrasados(){
+  return S.cardsTodos.filter(function(c){ return atrasoDias(c) > 0; })
+    .sort(function(a,b){ return atrasoDias(b) - atrasoDias(a); });
+}
+function pessoasComCards(){
+  var mapa = {};
+  cardsAguardando('').forEach(function(c){
+    var n = respEfetivo(c) || 'Sem responsável';
+    mapa[n] = (mapa[n] || 0) + 1;
+  });
+  return mapa;
+}
+
+function agruparPorFunil(lista){
+  return S.funis.map(function(f){
+    var cards = lista.filter(function(c){ return c.funil_id === f.id; });
+    return { id:'g_' + f.id, nome:f.nome, cor:f.cor, sub:'funil', cards:cards };
+  }).filter(function(col){ return col.cards.length; });
+}
+function agruparPorPessoa(lista){
+  var mapa = {};
+  lista.forEach(function(c){
+    var n = respEfetivo(c) || 'Sem responsável';
+    (mapa[n] = mapa[n] || []).push(c);
+  });
+  return Object.keys(mapa).sort().map(function(n){
+    return { id:'p_' + chaveSlug(n), nome:n, cor:'#1E6FB8', sub:'responsável', cards:mapa[n] };
+  });
+}
+
+function colunasVirtuais(){
+  var termo = normal(S.busca);
+  function filtra(lista){
+    if(!termo) return lista;
+    return lista.filter(function(c){
+      return normal(c.titulo + ' ' + respEfetivo(c) + ' ' + texto(c.dados||{})).indexOf(termo) >= 0;
+    });
+  }
+  if(S.virtual === '__atrasados') return agruparPorFunil(filtra(cardsAtrasados()));
+  var lista = filtra(cardsAguardando(S.filtroUsuario));
+  return S.filtroUsuario ? agruparPorFunil(lista) : agruparPorPessoa(lista);
+}
+
+function abrirVirtual(id){
+  var v = VIRTUAIS[id];
+  if(!v) return Promise.resolve();
+  S.virtual = id;
+  S.funil = null;
+  S.etapas = []; S.campos = []; S.regras = []; S.cards = [];
+  if(id === '__meus' && S.filtroUsuario === '') S.filtroUsuario = euSou();
+  renderMenuFunis();
+  renderKanban();
+  return Promise.resolve();
+}
+
+function trocarUsuarioVirtual(v){
+  S.filtroUsuario = v;
+  S.etapaMovel = '';
+  renderKanban();
+}
+
+function renderVirtual(){
+  var v = VIRTUAIS[S.virtual];
+  $('blocoKanban').hidden = false;
+  $('kanbanNome').textContent = v.nome;
+  $('kanbanDesc').textContent = v.descricao;
+  $('btnNovoCard').hidden = true;
+  $('btnSincronizar').hidden = true;
+  $('btnRegrasManual').hidden = true;
+  $('avisoFonte').innerHTML = '';
+
+  var colunas = colunasVirtuais();
+  var total = colunas.reduce(function(a,c){ return a + c.cards.length; }, 0);
+
+  if(S.virtual === '__meus'){
+    var pessoas = pessoasComCards();
+    var nomes = Object.keys(pessoas).sort();
+    $('barraVirtual').innerHTML =
+      '<div class="barra-virtual"><label for="selUsuarioVirtual">Responsável</label>' +
+      '<select id="selUsuarioVirtual">' +
+        '<option value=""' + (S.filtroUsuario ? '' : ' selected') + '>Todos — um card por pessoa</option>' +
+        nomes.map(function(n){
+          return '<option value="' + esc(n) + '"' + (normal(n) === normal(S.filtroUsuario) ? ' selected' : '') + '>' +
+                 esc(n) + ' (' + pessoas[n] + ')</option>';
+        }).join('') +
+      '</select>' +
+      '<span class="resumo"><b>' + total + '</b> aguardando movimentação</span></div>';
+    var sel = $('selUsuarioVirtual');
+    if(sel) sel.addEventListener('change', function(){ trocarUsuarioVirtual(sel.value); });
+  } else {
+    var vencidos = cardsAtrasados().length;
+    $('barraVirtual').innerHTML =
+      '<div class="barra-virtual"><label>Fora do prazo</label>' +
+      '<span style="font-size:12px;color:var(--ink-2)">Só entram cards cuja etapa tem prazo definido no ADM.</span>' +
+      '<span class="resumo"><b>' + vencidos + '</b> card(s) vencido(s)</span></div>';
+  }
+
+  S.colunasAtuais = colunas.map(function(c){ return { id:c.id, nome:c.nome, qtd:c.cards.length }; });
+  var mostrar = colunas;
+  if(ehMovel() && S.etapaMovel){
+    var so = colunas.filter(function(c){ return c.id === S.etapaMovel; });
+    if(so.length) mostrar = so;
+  }
+
+  $('kanban').innerHTML = colunas.length
+    ? mostrar.map(colunaVirtualHTML).join('')
+    : '<div class="vazio-geral">' +
+      (S.virtual === '__meus' ? 'Nenhum card aguardando movimentação aqui.'
+                              : 'Nenhum card fora do prazo. ') + '</div>';
+  ligarKanban();
+  atualizarBarraMovel();
+}
+
+function colunaVirtualHTML(col){
+  var soma = col.cards.reduce(function(a,c){ return a + num(c.valor); }, 0);
+  var atrasados = col.cards.filter(function(c){ return atrasoDias(c) > 0; }).length;
+  return '<div class="col' + (S.virtual === '__atrasados' ? ' col-atraso' : '') + '" ' +
+      'style="--cor:' + esc(col.cor) + '">' +
+    '<div class="col-head">' +
+      '<div class="l1">' +
+        '<span class="nome" title="' + esc(col.nome) + '">' + esc(col.nome) + '</span>' +
+        '<span class="qtd">' + col.cards.length + '</span>' +
+      '</div>' +
+      '<div class="l2">' +
+        '<span class="sub-col">' + esc(col.sub) + '</span>' +
+        (atrasados ? '<span style="color:var(--neg);font-weight:700">&#9888; ' + atrasados + ' atrasado(s)</span>' : '') +
+        (soma ? '<span class="soma">' + esc(moeda(soma)) + '</span>' : '') +
+      '</div>' +
+    '</div>' +
+    '<div class="col-body">' +
+      (col.cards.length ? col.cards.map(function(c){ return cardHTML(c, true); }).join('')
+                        : '<div class="vazio">nenhum card</div>') +
+    '</div>' +
+  '</div>';
+}
 
 function renderKanban(){
+  if(S.virtual) return renderVirtual();
   var f = S.funil;
   if(!f){ $('blocoKanban').hidden = true; atualizarBarraMovel(); return; }
+  $('barraVirtual').innerHTML = '';
   $('blocoKanban').hidden = false;
   $('kanbanNome').textContent = f.nome;
   $('kanbanDesc').textContent = f.descricao || '';
   $('btnNovoCard').hidden = !podeEditar() || !S.etapas.length;
   $('btnSincronizar').hidden = f.fonte === 'manual' || !podeEditar();
+  $('btnRegrasManual').hidden = false;
 
   var fo = cat(f.fonte);
   $('avisoFonte').innerHTML = fo
@@ -1325,17 +1586,26 @@ function renderKanban(){
       '. Cada gravação lá atualiza os campos do card e reavalia as condicionais.</div>'
     : '';
 
-  atualizarBarraMovel();
-
   var box = $('kanban');
   if(!S.etapas.length){
     box.innerHTML = '<div class="vazio-geral">Este funil ainda não tem etapas.' +
       (eAdmin() ? ' Cadastre em <strong>Administração › Funis e etapas</strong>.' : '') + '</div>';
+    S.colunasAtuais = [];
+    atualizarBarraMovel();
     return;
   }
   var termo = normal(S.busca);
-  box.innerHTML = S.etapas.map(function(e){ return colunaHTML(e, termo); }).join('');
+  S.colunasAtuais = S.etapas.map(function(e){
+    return { id:e.id, nome:e.nome, qtd: aplicarFiltro(cardsDaEtapa(e, termo), e).length };
+  });
+  var etapasVis = S.etapas;
+  if(ehMovel() && S.etapaMovel){
+    var so = S.etapas.filter(function(e){ return e.id === S.etapaMovel; });
+    if(so.length) etapasVis = so;
+  }
+  box.innerHTML = etapasVis.map(function(e){ return colunaHTML(e, termo); }).join('');
   ligarKanban();
+  atualizarBarraMovel();
 }
 
 /* ---- barra fixa do celular e busca única para as duas caixas ---- */
@@ -1362,19 +1632,40 @@ function voltarAosFunis(){
     window.scrollTo({ top:0, behavior:'smooth' });
   }
 }
+function escolherEtapaMovel(v){
+  S.etapaMovel = v || '';
+  renderKanban();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
 function atualizarBarraMovel(){
   var barra = $('barraMovel');
   if(!barra) return;
-  var f = S.funil;
+  var v = S.virtual ? VIRTUAIS[S.virtual] : null;
+  var f = S.funil || v;
   barra.classList.toggle('on', !!f);
   var bloco = $('blocoFunis');
   if(bloco) bloco.classList.toggle('escondido-movel', !!f);
   if(!f) return;
+
+  var colunas = S.colunasAtuais || [];
+  var total = colunas.reduce(function(a,c){ return a + c.qtd; }, 0);
   $('bmTitulo').textContent = f.nome;
-  var ativos = S.cards.length;
-  $('bmSub').textContent = S.etapas.length + ' etapas · ' + ativos + (ativos === 1 ? ' card' : ' cards');
-  $('bmSync').style.display = (f.fonte !== 'manual' && podeEditar()) ? '' : 'none';
-  $('bmNovo').style.display = (podeEditar() && S.etapas.length) ? '' : 'none';
+  $('bmSub').textContent = colunas.length + (v ? (colunas.length === 1 ? ' grupo' : ' grupos')
+                                               : (colunas.length === 1 ? ' etapa' : ' etapas')) +
+                           ' · ' + total + (total === 1 ? ' card' : ' cards');
+
+  if(!colunas.some(function(c){ return c.id === S.etapaMovel; })) S.etapaMovel = '';
+  $('bmEtapa').innerHTML =
+    '<option value="">Todas (' + total + ')</option>' +
+    colunas.map(function(c){
+      return '<option value="' + esc(c.id) + '"' + (c.id === S.etapaMovel ? ' selected' : '') + '>' +
+             esc(c.nome) + ' (' + c.qtd + ')</option>';
+    }).join('');
+  $('bmEtapa').style.display = colunas.length ? '' : 'none';
+
+  $('bmSync').style.display = (!v && f.fonte !== 'manual' && podeEditar()) ? '' : 'none';
+  $('bmNovo').style.display = (!v && podeEditar() && S.etapas.length) ? '' : 'none';
 }
 
 function cardsDaEtapa(etapa, termo){
@@ -1519,11 +1810,18 @@ function boxFiltroHTML(e, mostrados, total){
   '</div>';
 }
 
-function cardHTML(c){
+function cardHTML(c, virtual){
   var e = etapaPor(c.etapa_id);
   var d = dias(c.etapa_desde);
-  var atrasado = e && e.prazo_dias && d > e.prazo_dias;
-  var chips = S.campos.filter(function(f){ return f.mostrar_no_card; }).map(function(f){
+  var atraso = atrasoDias(c);
+  var atrasado = atraso > 0;
+  var ctx = '';
+  if(virtual){
+    var fu = funilPor(c.funil_id);
+    ctx = '<span class="chip"><b>Funil:</b> ' + esc(fu ? fu.nome : '—') + '</span>' +
+          '<span class="chip"><b>Etapa:</b> ' + esc(nomeEtapa(c.etapa_id)) + '</span>';
+  }
+  var chips = ctx + camposDoFunil(c.funil_id).filter(function(f){ return f.mostrar_no_card; }).map(function(f){
     var v = (c.dados||{})[f.chave];
     if(v === undefined || v === null || v === '' || v === false) return '';
     if(f.tipo === 'checkbox') v = 'sim';
@@ -1533,12 +1831,17 @@ function cardHTML(c){
     return '<span class="chip"><b>' + esc(f.rotulo) + ':</b> ' + esc(texto(v).slice(0,40)) + '</span>';
   }).join('');
 
-  return '<div class="kcard" data-card="' + esc(c.id) + '" draggable="' + (podeEditar() ? 'true':'false') + '" ' +
+  return '<div class="kcard' + (atrasado ? ' atrasado' : '') + '" data-card="' + esc(c.id) + '" ' +
+      'draggable="' + (podeEditar() && !virtual ? 'true':'false') + '" ' +
       'style="--cor:' + esc((e && e.cor) || '#7C1B29') + '">' +
-    '<div class="tit">' + esc(c.titulo) + '</div>' +
+    '<div class="kc-topo">' +
+      '<div class="tit">' + esc(c.titulo) + '</div>' +
+      (atrasado ? '<span class="selo-atraso" title="' + atraso + ' dia(s) além do prazo da etapa">' +
+                  '&#9888; ' + atraso + 'd</span>' : '') +
+    '</div>' +
     (chips ? '<div class="chips">' + chips + '</div>' : '') +
     '<div class="pe">' +
-      (c.responsavel_nome ? '<span>' + esc(c.responsavel_nome) + '</span>' : '<span>sem responsável</span>') +
+      (respEfetivo(c) ? '<span>' + esc(respEfetivo(c)) + '</span>' : '<span>sem responsável</span>') +
       '<span class="' + (atrasado ? 'alerta' : '') + '">' + d + 'd</span>' +
       (num(c.valor) ? '<span class="val">' + esc(moeda(c.valor)) + '</span>' : '') +
     '</div>' +
@@ -1547,11 +1850,12 @@ function cardHTML(c){
 }
 
 /* botões de liberação rápida da etapa, direto no card */
-function vizinhas(etapaId){
+function vizinhas(card){
+  var lista = etapasDoFunil(card.funil_id);
   var i = -1;
-  S.etapas.forEach(function(e, k){ if(e.id === etapaId) i = k; });
-  return { anterior: i > 0 ? S.etapas[i-1] : null,
-           proxima: (i >= 0 && i < S.etapas.length - 1) ? S.etapas[i+1] : null };
+  lista.forEach(function(e, k){ if(e.id === card.etapa_id) i = k; });
+  return { anterior: i > 0 ? lista[i-1] : null,
+           proxima: (i >= 0 && i < lista.length - 1) ? lista[i+1] : null };
 }
 function souResponsavel(card, etapa){
   var eu = normal(euSou());
@@ -1560,7 +1864,7 @@ function souResponsavel(card, etapa){
 }
 function acoesCardHTML(c, etapa){
   if(!podeEditar()) return '';
-  var v = vizinhas(c.etapa_id);
+  var v = vizinhas(c);
   var meu = souResponsavel(c, etapa) ? ' meu' : '';
   var botoes = '';
   if(v.anterior){
@@ -1581,9 +1885,9 @@ function acoesCardHTML(c, etapa){
 }
 
 function liberarCard(id, dir){
-  var card = S.cards.filter(function(c){ return c.id === id; })[0];
+  var card = S.cardsTodos.filter(function(c){ return c.id === id; })[0];
   if(!card || !podeEditar()) return;
-  var v = vizinhas(card.etapa_id);
+  var v = vizinhas(card);
   var alvo = dir > 0 ? v.proxima : v.anterior;
   if(!alvo) return;
   moverCard(card, alvo.id, 'manual', null).then(function(){
@@ -1886,21 +2190,26 @@ function selectResponsavel(sel, valor){
 }
 
 function abrirCardForm(id){
-  if(!S.funil) return;
-  var card = id ? S.cards.filter(function(c){ return c.id === id; })[0] : null;
+  var card = id ? S.cardsTodos.filter(function(c){ return c.id === id; })[0] : null;
+  var fun = card ? funilPor(card.funil_id) : S.funil;
+  if(!fun) return;
+  S.cardFunil = fun;
+  var etapasF = etapasDoFunil(fun.id);
+  var camposF = camposDoFunil(fun.id);
   S.edit.card = card || null;
-  var manual = S.funil.fonte === 'manual';
+  var manual = fun.fonte === 'manual';
   var editavel = podeEditar();
-  var fo = cat(S.funil.fonte);
+  var fo = cat(fun.fonte);
 
-  $('mdCardTit').textContent = card ? card.titulo : 'Novo card · ' + S.funil.nome;
-  $('mdCardEtapa').textContent = card ? nomeEtapa(card.etapa_id) : (etapaInicial() ? etapaInicial().nome : '');
+  $('mdCardTit').textContent = card ? card.titulo : 'Novo card · ' + fun.nome;
+  $('mdCardEtapa').textContent = card ? nomeEtapa(card.etapa_id)
+                                      : ((etapasDoFunil(fun.id)[0] || {}).nome || '');
   $('cardOrigemTag').textContent = fo ? fo.rotulo : 'card manual';
   $('cardAviso').innerHTML = editavel ? '' :
     '<div class="aviso">Seu acesso é somente leitura: dá para consultar, não para alterar.</div>';
 
   // barra de origem
-  var link = card ? linkOrigem(card) : (S.funil.form_url || null);
+  var link = card ? linkOrigem(card) : (fun.form_url || null);
   $('cardOrigemBar').innerHTML = fo
     ? '<div class="origem-bar"><span class="sel">' +
         (card && card.origem_ref ? 'Registro <strong>' + esc(card.origem_ref) + '</strong> em ' + esc(fo.rotulo)
@@ -1921,8 +2230,8 @@ function abrirCardForm(id){
         '<div class="campo"><label>Valor (R$)</label>' +
           '<input type="number" step="0.01" id="fCardValor" value="' + (card ? num(card.valor) : 0) + '"></div>' +
       '</div>' +
-      (S.campos.length
-        ? S.campos.map(function(f){ return campoFormHTML(f, card ? (card.dados||{})[f.chave] : undefined); }).join('')
+      (camposF.length
+        ? camposF.map(function(f){ return campoFormHTML(f, card ? (card.dados||{})[f.chave] : undefined); }).join('')
         : '<div class="aviso">Este funil não tem campos cadastrados.' +
           (eAdmin() ? ' Cadastre em <strong>Administração › Origem do card</strong>.' : '') + '</div>');
   } else {
@@ -1931,11 +2240,12 @@ function abrirCardForm(id){
   }
 
   // acoes da direita
-  $('fCardEtapa').innerHTML = S.etapas.map(function(e){
-    var sel = card ? (e.id === card.etapa_id) : (etapaInicial() && e.id === etapaInicial().id);
+  var inicialF = etapasF.filter(function(e){ return e.tipo === 'inicio'; })[0] || etapasF[0] || null;
+  $('fCardEtapa').innerHTML = etapasF.map(function(e){
+    var sel = card ? (e.id === card.etapa_id) : (inicialF && e.id === inicialF.id);
     return '<option value="' + esc(e.id) + '"' + (sel ? ' selected' : '') + '>' + esc(e.nome) + '</option>';
   }).join('');
-  var respPadrao = card ? card.responsavel_nome : (etapaInicial() ? etapaInicial().responsavel_nome : '');
+  var respPadrao = card ? card.responsavel_nome : (inicialF ? inicialF.responsavel_nome : '');
   selectResponsavel($('fCardResp'), respPadrao || '');
 
   $('btnAplicarCard').hidden = !editavel || !card;
@@ -1959,7 +2269,9 @@ function abrirCardForm(id){
 
 function dadosOrigemHTML(card){
   var d = card.dados || {};
-  var campos = S.campos.length ? S.campos : (cat(S.funil.fonte) || {campos:[]}).campos.map(function(c){
+  var fun = funilPor(card.funil_id) || S.funil || {};
+  var proprios = camposDoFunil(card.funil_id);
+  var campos = proprios.length ? proprios : (cat(fun.fonte) || {campos:[]}).campos.map(function(c){
     return { chave:c[0], rotulo:c[1], tipo:c[2] };
   });
   var listas = [];
@@ -2021,7 +2333,8 @@ function campoFormHTML(f, valor){
 
 function lerCampos(){
   var dados = {}, faltou = null;
-  S.campos.forEach(function(f){
+  var fun = S.cardFunil || S.funil || {};
+  camposDoFunil(fun.id).forEach(function(f){
     var el = $('fc_' + f.chave);
     if(!el) return;
     var v = f.tipo === 'checkbox' ? el.checked : el.value;
@@ -2033,7 +2346,8 @@ function lerCampos(){
 }
 
 function salvarCard(){
-  if(!podeEditar() || S.funil.fonte !== 'manual') return;
+  var fun = S.cardFunil || S.funil;
+  if(!podeEditar() || !fun || fun.fonte !== 'manual') return;
   var titulo = ($('fCardTitulo') || {}).value;
   titulo = (titulo || '').trim();
   if(!titulo){ toast('Dê um título ao card.', true); return; }
@@ -2043,7 +2357,7 @@ function salvarCard(){
   var card = S.edit.card;
   var etapaId = $('fCardEtapa').value;
   var reg = {
-    funil_id: S.funil.id, etapa_id: etapaId, titulo: titulo, dados: leitura.dados,
+    funil_id: fun.id, etapa_id: etapaId, titulo: titulo, dados: leitura.dados,
     responsavel_nome: $('fCardResp').value || null,
     valor: num(($('fCardValor')||{}).value), atualizado_em: agora()
   };
@@ -2076,7 +2390,7 @@ function salvarCard(){
   p.then(function(res){
     var idx = -1;
     S.cards.forEach(function(c, i){ if(c.id === res.card.id) idx = i; });
-    if(idx >= 0) S.cards[idx] = res.card; else S.cards.push(res.card);
+    if(idx >= 0) S.cards[idx] = res.card; else { S.cards.push(res.card); S.cardsTodos.push(res.card); }
     return avaliarRegras(res.card, res.evento).then(function(passos){
       fechar('mdCard');
       renderKanban();
@@ -2127,12 +2441,14 @@ function comentarCard(){
 function excluirCard(){
   var card = S.edit.card;
   if(!card || !podeEditar()) return;
-  var aviso = S.funil.fonte === 'manual' ? '' :
-    '\n\nO registro em ' + S.funil.fonte + ' continua existindo — se sincronizar de novo, o card volta.';
+  var fun = funilPor(card.funil_id) || S.funil || {};
+  var aviso = fun.fonte === 'manual' ? '' :
+    '\n\nO registro em ' + fun.fonte + ' continua existindo — se sincronizar de novo, o card volta.';
   if(!confirm('Excluir o card "' + card.titulo + '"?' + aviso)) return;
   sb.from('funil_cards').delete().eq('id', card.id).then(function(r){
     if(r.error) throw r.error;
     S.cards = S.cards.filter(function(c){ return c.id !== card.id; });
+    S.cardsTodos = S.cardsTodos.filter(function(c){ return c.id !== card.id; });
     fechar('mdCard'); renderKanban(); carregarTudo(); toast('Card excluído');
   }).catch(function(e){ erroSb(e, 'excluir card'); });
 }
@@ -2262,10 +2578,8 @@ function reordenarEtapa(id, dir){
   Promise.all(lista.map(function(e, k){
     return sb.from('funil_etapas').update({ ordem: k }).eq('id', e.id);
   })).then(function(){ return carregarAdmFunil(S.admFunilId); })
-    .then(function(){
-      renderAdm();
-      if(S.funil && S.funil.id === S.admFunilId) abrirFunil(S.funil.id, true);
-    }).catch(function(e){ erroSb(e, 'reordenar'); });
+    .then(function(){ renderAdm(); })
+    .catch(function(e){ erroSb(e, 'reordenar'); });
 }
 
 function duplicarEtapa(id){
@@ -2286,10 +2600,7 @@ function duplicarEtapa(id){
   sb.from('funil_etapas').insert(copia).select().then(function(r){
     if(r.error) throw r.error;
     return carregarAdmFunil(S.admFunilId);
-  }).then(function(){
-    renderAdm();
-    return carregarTudo();
-  }).then(function(){ toast('Etapa duplicada — ajuste o nome dela'); })
+  }).then(function(){ renderAdm(); toast('Etapa duplicada — ajuste o nome dela'); })
    .catch(function(err){ erroSb(err, 'duplicar etapa'); });
 }
 function duplicarEtapaAtual(){
@@ -2335,10 +2646,7 @@ function salvarFunil(){
     if(r.error) throw r.error;
     var novo = r.data[0];
     fechar('mdFunil');
-    return carregarTudo().then(function(){
-      S.admFunilId = novo.id;
-      return carregarAdmFunil(novo.id);
-    }).then(function(){ renderAdm(); toast('Funil salvo'); });
+    return carregarAdmFunil(novo.id).then(function(){ renderAdm(); toast('Funil salvo'); });
   }).catch(function(e){ erroSb(e, 'salvar funil'); });
 }
 
@@ -2353,6 +2661,7 @@ function excluirFunil(){
     if(S.admFunilId === f.id) S.admFunilId = null;
     return carregarTudo().then(function(){
       if(!S.admFunilId && S.funis.length) return carregarAdmFunil(S.funis[0].id);
+      S.admEtapas = []; S.admCampos = []; S.admRegras = [];
     }).then(function(){ renderAdm(); toast('Funil excluído'); });
   }).catch(function(e){ erroSb(e, 'excluir funil'); });
 }
@@ -2431,10 +2740,7 @@ function salvarEtapa(){
     if(e) delete S.filtros[e.id];
     fechar('mdEtapa');
     return carregarAdmFunil(S.admFunilId);
-  }).then(function(){
-    renderAdm();
-    return carregarTudo();
-  }).then(function(){ toast('Etapa salva'); })
+  }).then(function(){ renderAdm(); toast('Etapa salva'); })
    .catch(function(err){ erroSb(err, 'salvar etapa'); });
 }
 
@@ -2446,10 +2752,7 @@ function excluirEtapa(){
     if(r.error) throw r.error;
     fechar('mdEtapa');
     return carregarAdmFunil(S.admFunilId);
-  }).then(function(){
-    renderAdm();
-    return carregarTudo();
-  }).then(function(){ toast('Etapa excluída'); })
+  }).then(function(){ renderAdm(); toast('Etapa excluída'); })
    .catch(function(err){ erroSb(err, 'excluir etapa'); });
 }
 
@@ -2494,7 +2797,7 @@ function salvarOrigem(){
   };
   sb.from('funis').update(reg).eq('id', f.id).then(function(r){
     if(r.error) throw r.error;
-    return carregarTudo();
+    return carregarAdmFunil(f.id);
   }).then(function(){
     var precisaCampos = cat(fonte) && !(S.admCampos || []).length;
     if(precisaCampos) return carregarCamposDaFonte(true);
@@ -2527,7 +2830,7 @@ function carregarCamposDaFonte(silencioso){
     return carregarAdmFunil(f.id);
   }).then(function(){
     renderAdm();
-    if(S.funil && S.funil.id === f.id) return abrirFunil(f.id, true);
+
   }).then(function(){ toast(novos.length + ' campos de ' + c.rotulo + ' carregados'); })
    .catch(function(e){ erroSb(e, 'carregar campos'); });
 }
@@ -2566,10 +2869,7 @@ function renderAdmCampos(){
     chk.addEventListener('change', function(){
       sb.from('funil_campos').update({ mostrar_no_card: chk.checked }).eq('id', chk.dataset.nocard)
         .then(function(){ return carregarAdmFunil(S.admFunilId); })
-        .then(function(){
-          renderAdmCampos();
-          if(S.funil && S.funil.id === S.admFunilId) return abrirFunil(S.funil.id, true);
-        }).catch(function(e){ erroSb(e, 'atualizar campo'); });
+        .then(function(){ renderAdmCampos(); }).catch(function(e){ erroSb(e, 'atualizar campo'); });
     });
   });
 }
@@ -2583,7 +2883,7 @@ function reordenarCampo(id, dir){
   Promise.all(lista.map(function(c, k){
     return sb.from('funil_campos').update({ ordem: k }).eq('id', c.id);
   })).then(function(){ return carregarAdmFunil(S.admFunilId); })
-    .then(function(){ renderAdm(); if(S.funil && S.funil.id === S.admFunilId) abrirFunil(S.funil.id, true); })
+    .then(function(){ renderAdm(); })
     .catch(function(e){ erroSb(e, 'reordenar campos'); });
 }
 
@@ -2635,7 +2935,6 @@ function salvarCampo(){
     return carregarAdmFunil(S.admFunilId);
   }).then(function(){
     renderAdm();
-    if(S.funil && S.funil.id === S.admFunilId) return abrirFunil(S.funil.id, true);
   }).then(function(){ toast('Campo salvo'); })
    .catch(function(e){ erroSb(e, 'salvar campo'); });
 }
@@ -2650,7 +2949,6 @@ function excluirCampo(){
     return carregarAdmFunil(S.admFunilId);
   }).then(function(){
     renderAdm();
-    if(S.funil && S.funil.id === S.admFunilId) return abrirFunil(S.funil.id, true);
   }).then(function(){ toast('Campo excluído'); })
    .catch(function(e){ erroSb(e, 'excluir campo'); });
 }
@@ -2777,7 +3075,6 @@ function salvarRegra(){
     return carregarAdmFunil(S.admFunilId);
   }).then(function(){
     renderAdm();
-    if(S.funil && S.funil.id === S.admFunilId) return abrirFunil(S.funil.id, true);
   }).then(function(){ toast('Condicional salva'); })
    .catch(function(e){ erroSb(e, 'salvar condicional'); });
 }
@@ -2792,7 +3089,6 @@ function excluirRegra(){
     return carregarAdmFunil(S.admFunilId);
   }).then(function(){
     renderAdm();
-    if(S.funil && S.funil.id === S.admFunilId) return abrirFunil(S.funil.id, true);
   }).then(function(){ toast('Condicional excluída'); })
    .catch(function(e){ erroSb(e, 'excluir condicional'); });
 }
@@ -2829,6 +3125,10 @@ function iniciar(){
   document.addEventListener('keydown', function(ev){
     if(ev.key === 'Escape'){ ['mdFunil','mdEtapa','mdCampo','mdRegra','mdCard'].forEach(fechar); }
   });
+  var eraMovel = ehMovel();
+  window.addEventListener('resize', function(){
+    if(ehMovel() !== eraMovel){ eraMovel = ehMovel(); renderKanban(); }
+  });
   Array.prototype.forEach.call(document.querySelectorAll('.modal'), function(m){
     m.addEventListener('click', function(ev){ if(ev.target === m) m.classList.remove('on'); });
   });
@@ -2845,6 +3145,8 @@ window.buscar = buscar;
 window.toggleBuscaMovel = toggleBuscaMovel;
 window.voltarAosFunis = voltarAosFunis;
 window.liberarCard = liberarCard;
+window.escolherEtapaMovel = escolherEtapaMovel;
+window.trocarUsuarioVirtual = trocarUsuarioVirtual;
 window.rodarRegrasManual = rodarRegrasManual;
 window.sincronizar = sincronizar;
 window.novoCard = novoCard;
