@@ -301,7 +301,31 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
 .aprov-bar .btn{border-color:var(--s2);color:var(--s2);background:var(--card)}
 .aprov-bar .btn:hover{background:rgba(184,128,31,.18)}
 
+/* ---------- botão de tema ---------- */
+.tema-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.1);color:#fff;border-radius:8px;padding:5px 10px;
+  font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.tema-btn:hover{background:rgba(255,255,255,.2)}
+.tema-btn span:first-child{font-size:13px}
+
 /* ---------- seleção em massa ---------- */
+.col-head .sel-col{flex:0 0 auto;width:14px;height:14px;margin:0 2px 0 0;
+  accent-color:var(--cor,var(--wine));cursor:pointer}
+.barra-selecao select{padding:5px 8px;border-radius:7px;border:1px solid rgba(255,255,255,.35);
+  background:transparent;color:var(--bg);font-size:12px;max-width:190px}
+.barra-selecao select option{color:var(--ink);background:var(--card)}
+.barra-selecao .aviso-sel{font-size:11.5px;opacity:.8;max-width:260px}
+
+/* ---------- documentos no card aberto ---------- */
+.docs{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 14px}
+.doc{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:9px;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);
+  font-size:12px;font-weight:600;text-decoration:none}
+.doc:hover{border-color:var(--neg);color:var(--neg)}
+.doc .ico{font-size:16px;color:var(--neg)}
+.doc.vazio{border-style:dashed;color:var(--ink-3);cursor:default}
+.doc.vazio .ico{color:var(--ink-3)}
+.doc.vazio:hover{border-color:var(--line);color:var(--ink-3)}
 .kcard .kc-sel{flex:0 0 auto;width:15px;height:15px;margin:1px 0 0;accent-color:var(--wine);cursor:pointer}
 .barra-selecao{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:9200;
   display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:11px;
@@ -483,6 +507,9 @@ a.kc-btn{text-decoration:none}
     </div>
     <div class="spacer"></div>
     <div id="infoPerm" class="sub"></div>
+    <button class="tema-btn" id="btnTema" onclick="trocarTema()" title="Tema da tela">
+      <span id="temaIco">&#9681;</span><span id="temaTxt">Sistema</span>
+    </button>
   </div>
   <nav class="nav">
     <button id="tabFunis" class="on" onclick="irPara('funis')">Funis</button>
@@ -952,8 +979,13 @@ a.kc-btn{text-decoration:none}
 
 <div class="barra-selecao no-print" id="barraSelecao" hidden>
   <span class="qt"><b id="selQtd">0</b> card(s) selecionado(s)</span>
+  <span id="selMoverBox" hidden>
+    <select id="selMover" title="Mover os selecionados para"></select>
+    <button class="btn sm" onclick="moverSelecionados()">Mover</button>
+  </span>
+  <span id="selMoverAviso" class="aviso-sel" hidden></span>
   <button class="btn sm" onclick="limparSelecao()">Limpar</button>
-  <button class="btn sm danger" onclick="excluirSelecionados()">Excluir selecionados</button>
+  <button class="btn sm danger" onclick="excluirSelecionados()">Excluir</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1167,6 +1199,31 @@ var CATALOGO = {
   }
 };
 function cat(fonte){ return CATALOGO[fonte] || null; }
+
+/* ---------------------------------------------------------------- tema */
+var TEMAS = [
+  { v:'auto',   ico:'\u25D1', txt:'Sistema' },
+  { v:'light',  ico:'\u2600', txt:'Claro'   },
+  { v:'dark',   ico:'\u263E', txt:'Escuro'  }
+];
+function temaSalvo(){
+  try { return localStorage.getItem('funis_tema') || 'auto'; } catch(e){ return 'auto'; }
+}
+function aplicarTema(v){
+  var t = TEMAS.filter(function(x){ return x.v === v; })[0] || TEMAS[0];
+  if(t.v === 'auto') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', t.v);
+  try { localStorage.setItem('funis_tema', t.v); } catch(e){}
+  var ico = $('temaIco'), txt = $('temaTxt');
+  if(ico) ico.innerHTML = t.ico;
+  if(txt) txt.textContent = t.txt;
+}
+function trocarTema(){
+  var atual = temaSalvo();
+  var i = 0;
+  TEMAS.forEach(function(t, k){ if(t.v === atual) i = k; });
+  aplicarTema(TEMAS[(i + 1) % TEMAS.length].v);
+}
 
 /* ------------------------------------------------------------- navegacao */
 function irPara(v){
@@ -1796,6 +1853,9 @@ function colunaVirtualHTML(col){
       'style="--cor:' + esc(col.cor) + '">' +
     '<div class="col-head">' +
       '<div class="l1">' +
+        (podeEditar() ? '<input type="checkbox" class="sel-col" data-selgrupo="' + esc(col.id) + '"' +
+          (col.cards.length && col.cards.every(function(c){ return S.selecao[c.id]; }) ? ' checked' : '') +
+          ' title="Selecionar todos os cards desta coluna">' : '') +
         '<span class="nome" title="' + esc(col.nome) + '">' + esc(col.nome) + '</span>' +
         '<span class="qtd">' + col.cards.length + '</span>' +
       '</div>' +
@@ -1965,6 +2025,9 @@ function colunaHTML(e, termo){
   return '<div class="col" data-etapa="' + esc(e.id) + '" style="--cor:' + esc(e.cor) + '">' +
     '<div class="col-head">' +
       '<div class="l1">' +
+        (podeEditar() ? '<input type="checkbox" class="sel-col" data-selcol="' + esc(e.id) + '"' +
+          (lista.length && lista.every(function(c){ return S.selecao[c.id]; }) ? ' checked' : '') +
+          ' title="Selecionar todos os cards desta etapa">' : '') +
         '<span class="nome" title="' + esc(e.nome) + '">' + esc(e.nome) + '</span>' +
         (e.tipo !== 'normal' ? '<span class="pill ' + esc(e.tipo) + '">' +
             (e.tipo === 'inicio' ? 'entrada' : e.tipo) + '</span>' : '') +
@@ -2195,6 +2258,25 @@ function ligarKanban(){
   Array.prototype.forEach.call(box.querySelectorAll('[data-aprov],[data-assinar]'), function(a){
     a.addEventListener('click', function(ev){ ev.stopPropagation(); });
   });
+  Array.prototype.forEach.call(box.querySelectorAll('[data-selgrupo]'), function(chk){
+    chk.addEventListener('change', function(){
+      var col = colunasVirtuais().filter(function(c){ return c.id === chk.dataset.selgrupo; })[0];
+      (col ? col.cards : []).forEach(function(c){
+        if(chk.checked) S.selecao[c.id] = true; else delete S.selecao[c.id];
+      });
+      renderKanban();
+    });
+  });
+  Array.prototype.forEach.call(box.querySelectorAll('[data-selcol]'), function(chk){
+    chk.addEventListener('change', function(){
+      var etapa = etapaPor(chk.dataset.selcol);
+      var lista = etapa ? aplicarFiltro(cardsDaEtapa(etapa, normal(S.busca)), etapa) : [];
+      lista.forEach(function(c){
+        if(chk.checked) S.selecao[c.id] = true; else delete S.selecao[c.id];
+      });
+      renderKanban();
+    });
+  });
   Array.prototype.forEach.call(box.querySelectorAll('[data-sel]'), function(chk){
     chk.addEventListener('click', function(ev){ ev.stopPropagation(); });
     chk.addEventListener('change', function(){
@@ -2298,6 +2380,60 @@ function atualizarSelecao(){
   if(!barra) return;
   barra.hidden = !ids.length;
   $('selQtd').textContent = ids.length;
+  if(!ids.length) return;
+
+  /* mover em massa: só admin, e só quando todos são do mesmo funil */
+  var cards = ids.map(function(id){
+    return S.cardsTodos.filter(function(c){ return c.id === id; })[0];
+  }).filter(Boolean);
+  var funis = {};
+  cards.forEach(function(c){ funis[c.funil_id] = true; });
+  var chaves = Object.keys(funis);
+  var box = $('selMoverBox'), aviso = $('selMoverAviso');
+
+  if(!eAdmin()){
+    box.hidden = true; aviso.hidden = true;
+    return;
+  }
+  if(chaves.length !== 1){
+    box.hidden = true;
+    aviso.hidden = false;
+    aviso.textContent = 'Para mover em massa, selecione cards de um mesmo funil.';
+    return;
+  }
+  aviso.hidden = true;
+  box.hidden = false;
+  var etapas = etapasDoFunil(chaves[0]);
+  var atual = $('selMover').value;
+  $('selMover').innerHTML = '<option value="">Mover para…</option>' +
+    etapas.map(function(e){
+      return '<option value="' + esc(e.id) + '"' + (e.id === atual ? ' selected' : '') + '>' +
+             esc(e.nome) + '</option>';
+    }).join('');
+}
+
+function moverSelecionados(){
+  if(!eAdmin()) return;
+  var etapaId = $('selMover').value;
+  if(!etapaId){ toast('Escolha a etapa de destino.', true); return; }
+  var ids = idsSelecionados();
+  var cards = ids.map(function(id){
+    return S.cardsTodos.filter(function(c){ return c.id === id; })[0];
+  }).filter(function(c){ return c && c.etapa_id !== etapaId; });
+  if(!cards.length){ toast('Os cards já estão nessa etapa.'); return; }
+  if(!confirm('Mover ' + cards.length + ' card(s) para "' + nomeEtapa(etapaId) + '"?')) return;
+  toast('Movendo ' + cards.length + ' card(s)…');
+  function passo(i){
+    if(i >= cards.length) return Promise.resolve();
+    return moverCard(cards[i], etapaId, 'manual', null).then(function(){ return passo(i + 1); });
+  }
+  passo(0).then(function(){
+    S.selecao = {};
+    return carregarTudo();
+  }).then(function(){
+    atualizarSelecao();
+    toast(cards.length + ' card(s) em ' + nomeEtapa(etapaId));
+  }).catch(function(e){ erroSb(e, 'mover selecionados'); });
 }
 function limparSelecao(){
   S.selecao = {};
@@ -2559,12 +2695,7 @@ function abrirCardForm(id){
   $('mdCardEtapa').textContent = card ? nomeEtapa(card.etapa_id)
                                       : ((etapasDoFunil(fun.id)[0] || {}).nome || '');
   $('cardOrigemTag').textContent = fo ? fo.rotulo : 'card manual';
-  var ap = card ? aprovacaoPendente(card) : null;
-  $('cardAprovacao').innerHTML = ap
-    ? '<div class="aprov-bar"><span class="ico" style="font-size:14px;color:var(--s2)">&#9873;</span>' +
-      '<span class="txt">' + esc(ap.rotulo) + ' — ' + esc(ap.detalhe) + '</span>' +
-      '<a class="btn sm" href="' + esc(ap.link) + '" target="_blank" rel="noopener">Abrir para assinar</a></div>'
-    : '';
+  $('cardAprovacao').innerHTML = card ? painelAssinaturasHTML(card) + documentosHTML(card) : '';
   $('cardAviso').innerHTML = editavel ? '' :
     '<div class="aviso">Seu acesso é somente leitura: dá para consultar, não para alterar.</div>';
 
@@ -2628,6 +2759,55 @@ function abrirCardForm(id){
   abrir('mdCard');
 }
 
+/* assinaturas do registro, uma linha por assinatura, com quem assinou */
+function painelAssinaturasHTML(card){
+  var fun = funilPor(card.funil_id);
+  var lista = assinaturasDaFonte(fun && fun.fonte);
+  if(!lista.length) return '';
+  var d = card.dados || {};
+  var link = linkOrigem(card);
+  var pendente = false;
+  var linhas = lista.map(function(a){
+    var ok = !!a.assinada(d);
+    var rec = !!(a.recusada && a.recusada(d));
+    if(!ok && !rec) pendente = true;
+    var quem = a.por ? a.por(d) : '';
+    var quando = a.em ? a.em(d) : '';
+    var ico = rec ? '&#10007;' : (ok ? '&#10003;' : '&#9873;');
+    var cor = rec ? 'var(--neg)' : (ok ? 'var(--pos)' : 'var(--s2)');
+    return '<div class="dado"><span class="r" style="color:' + cor + ';font-weight:700">' +
+      ico + ' ' + esc(a.rotulo) + '</span><span class="v">' +
+      (rec ? 'recusada' : ok ? ('assinada' + (quem ? ' por ' + esc(quem) : '') +
+                                (quando ? ' em ' + esc(dataBR(quando)) : ''))
+                            : '<span class="vazio">pendente</span>') +
+      '</span></div>';
+  }).join('');
+  return '<div class="aprov-bar" style="display:block">' +
+    '<div class="txt" style="margin-bottom:4px">Assinaturas do formulário</div>' + linhas +
+    (pendente && link
+      ? '<div style="margin-top:9px"><a class="btn sm" href="' + esc(link) + '" target="_blank" rel="noopener">' +
+        'Abrir para assinar</a></div>'
+      : '') +
+  '</div>';
+}
+
+/* PDFs e demais anexos, com ícone, sempre visíveis no card aberto */
+function documentosHTML(card){
+  var campos = camposDoFunil(card.funil_id).filter(function(f){ return f.tipo === 'arquivo'; });
+  if(!campos.length) return '';
+  var d = card.dados || {};
+  return '<div class="pane-tit" style="margin-top:4px">Documentos</div><div class="docs">' +
+    campos.map(function(f){
+      var v = d[f.chave];
+      if(!ehArquivo(f, v)){
+        return '<span class="doc vazio" title="O formulário ainda não enviou este arquivo">' +
+               '<span class="ico">&#128196;</span>' + esc(f.rotulo) + ' — não enviado</span>';
+      }
+      var a = partesArquivo(v); a.rotulo = f.rotulo;
+      return botaoArquivoHTML(a, 'doc');
+    }).join('') + '</div>';
+}
+
 function dadosOrigemHTML(card){
   var d = card.dados || {};
   var fun = funilPor(card.funil_id) || S.funil || {};
@@ -2638,6 +2818,7 @@ function dadosOrigemHTML(card){
   var listas = [];
   var linhas = campos.map(function(f){
     var v = d[f.chave];
+    if(f.tipo === 'arquivo') return '';
     if(f.tipo === 'lista' && Array.isArray(v) && v.length){ listas.push([f.rotulo, v]); return ''; }
     var txt;
     if(v === undefined || v === null || v === '') txt = '<span class="v vazio">—</span>';
@@ -3552,6 +3733,7 @@ function renderContas(){
 /* --------------------------------------------------------------- inicio */
 function iniciar(){
   sb = APP.sb;
+  aplicarTema(temaSalvo());
   var rot = { admin:'Acesso total', editar:'Edição', ver:'Somente leitura' };
   $('infoPerm').textContent = rot[APP.permissao] || '';
   $('linkHub').href = APP.hub;
@@ -3592,6 +3774,8 @@ window.liberarCard = liberarCard;
 window.aprovacaoPendente = aprovacaoPendente;
 window.escolherEtapaMovel = escolherEtapaMovel;
 window.trocarUsuarioVirtual = trocarUsuarioVirtual;
+window.trocarTema = trocarTema;
+window.moverSelecionados = moverSelecionados;
 window.rodarRegrasManual = rodarRegrasManual;
 window.sincronizar = sincronizar;
 window.novoCard = novoCard;
