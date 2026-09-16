@@ -486,6 +486,92 @@ a.kc-btn{text-decoration:none}
 .tl-item .balao{background:var(--card);border:1px solid var(--line);border-radius:9px;
   padding:7px 10px;margin-top:3px;font-size:12.5px;white-space:pre-wrap}
 
+/* ===================== FLUXOGRAMA (substitui o kanban) ===================== */
+.fluxo{position:relative;overflow:auto;padding:10px 16px 28px 10px;
+  background-image:radial-gradient(var(--line-2) 1px,transparent 1px);background-size:20px 20px;
+  background-position:-1px -1px;border:1px solid var(--line);border-radius:12px;background-color:var(--sunk)}
+.fluxo-tela{position:relative;min-height:220px}
+.fluxo-svg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.fluxo-svg path{fill:none;stroke:var(--wine-soft);stroke-width:2}
+.fluxo-svg path.desvio,.fluxo-svg path.retorno{stroke:var(--s2);stroke-dasharray:5 4}
+.fluxo-svg path.retorno{opacity:.65}
+.fluxo-svg text.rot{font:600 10px "Archivo",sans-serif;fill:var(--s2)}
+
+.no{position:absolute;width:250px;background:var(--card);border:1px solid var(--line);
+  border-top:3px solid var(--cor,var(--wine));border-radius:10px;box-shadow:var(--sh);
+  display:flex;flex-direction:column;overflow:hidden}
+.no.drop{border-color:var(--wine-soft);box-shadow:0 0 0 3px rgba(124,27,41,.12)}
+.no.aberto{box-shadow:0 0 0 3px rgba(124,27,41,.20)}
+.no.ramo{border-style:dashed;border-top-style:solid;background:linear-gradient(0deg,var(--card),rgba(184,128,31,.06))}
+.no-head{padding:8px 10px 7px;border-bottom:1px solid var(--line);background:var(--sunk)}
+.no-head .l1{display:flex;align-items:center;gap:6px}
+.no-head .nome{font-size:12.5px;font-weight:700;flex:1;min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.no-head .qtd{font-family:"Archivo Narrow","Archivo",sans-serif;font-size:12px;font-weight:700;
+  background:var(--cor,var(--wine));color:#fff;border-radius:9px;padding:1px 7px;flex:0 0 auto}
+.no-head .sel-col{flex:0 0 auto;width:14px;height:14px;margin:0;accent-color:var(--wine);cursor:pointer}
+.no-head .l2{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:10.5px;
+  color:var(--ink-3);flex-wrap:wrap}
+.no-head .l2 .resp{font-weight:600;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;max-width:120px}
+.no-head .l2 .atr{color:var(--neg);font-weight:700}
+.no-head .l2 .soma{margin-left:auto;font-family:"Archivo Narrow","Archivo",sans-serif;
+  font-weight:700;color:var(--ink-2)}
+.no-head .tag{font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+  border-radius:4px;padding:1px 5px;background:var(--chip);border:1px solid var(--line-2);color:var(--ink-3)}
+.no.ramo .no-head .tag{background:rgba(184,128,31,.14);border-color:rgba(184,128,31,.4);color:var(--s2)}
+.no-body{padding:6px;display:flex;flex-direction:column;gap:5px;min-height:44px}
+.no-body .vazio{font-size:11px;color:var(--ink-3);text-align:center;padding:10px 4px;
+  border:1px dashed var(--line-2);border-radius:7px}
+.no-pe{display:flex;gap:5px;padding:0 6px 7px}
+.no-pe button{flex:1;font-size:10.5px;padding:5px 6px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink-2);border-radius:6px;cursor:pointer;font-weight:600;
+  font-family:inherit}
+.no-pe button:hover{border-color:var(--wine-soft);color:var(--wine)}
+.no-pe button.ativo{border-color:var(--s2);color:var(--s2)}
+
+.mini{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);
+  border-left:3px solid var(--cor,var(--wine));border-radius:7px;padding:6px 8px;cursor:pointer;
+  font-family:inherit}
+.mini:hover{border-color:var(--wine-soft)}
+.mini.arrastando{opacity:.45}
+.mini .m1{display:flex;align-items:center;gap:6px}
+.mini .m1 .t{flex:1;min-width:0;font-size:12px;font-weight:700;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.mini .kc-sel{flex:0 0 auto;width:13px;height:13px;margin:0;accent-color:var(--wine);cursor:pointer}
+.mini .m2{display:flex;align-items:center;gap:6px;margin-top:2px;font-size:10px;color:var(--ink-3)}
+.mini .m2 .r{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px}
+.mini .m2 .val{margin-left:auto;font-family:"Archivo Narrow","Archivo",sans-serif;font-weight:700;
+  color:var(--ink-2)}
+.mini .m2 .doc{color:var(--wine);font-weight:700}
+.mini.atrasado{background:rgba(163,58,42,.10);border-color:rgba(163,58,42,.45)}
+.mini.atrasado .t{color:var(--neg)}
+.mini .sino{color:var(--neg);font-weight:700;font-size:10px;flex:0 0 auto}
+
+/* barra do modo organizar */
+.org-barra{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;
+  background:rgba(184,128,31,.10);border:1px solid rgba(184,128,31,.4);border-radius:9px;
+  padding:8px 12px;font-size:12px;color:var(--ink-2)}
+.org-barra .t{font-weight:700;color:var(--s2)}
+.org-barra .btns{margin-left:auto;display:flex;gap:6px}
+.fluxo.organizando .no{cursor:grab}
+.fluxo.organizando .no-head{background:rgba(184,128,31,.14)}
+.fluxo.organizando .no.movendo{cursor:grabbing;z-index:9;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+.fluxo.organizando .mini{cursor:default;pointer-events:none}
+
+/* painel lateral "ver todos" */
+.painel-etapa{position:fixed;top:0;right:0;bottom:0;width:390px;max-width:94vw;z-index:60;
+  background:var(--bg);border-left:1px solid var(--line);box-shadow:-10px 0 30px rgba(0,0,0,.18);
+  display:flex;flex-direction:column;transform:translateX(102%);transition:transform .16s ease}
+.painel-etapa.on{transform:none}
+.painel-etapa .pcab{display:flex;align-items:center;gap:8px;padding:12px 14px;
+  border-bottom:1px solid var(--line);border-top:3px solid var(--cor,var(--wine));background:var(--sunk)}
+.painel-etapa .pcab h3{font-size:13.5px;font-weight:700;flex:1;min-width:0}
+.painel-etapa .pcab .x{border:1px solid var(--line);background:var(--card);border-radius:7px;
+  width:28px;height:28px;cursor:pointer;color:var(--ink-2);font-size:15px;line-height:1}
+.painel-etapa .pcorpo{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
+.painel-etapa .regras-box,.painel-etapa .filtro-box{margin:0}
+
 @media (max-width:860px){
   .card-split{flex-direction:column;max-height:none}
   .pane-esq{border-right:0;border-bottom:1px solid var(--line)}
@@ -508,6 +594,45 @@ a.kc-btn{text-decoration:none}
   #bmBuscaRow.on{display:block}
   .barra-movel.on{display:flex}
   .escondido-movel{display:none!important}
+
+  /* ---- fluxo vertical: um nó por largura, recolhido, toque para abrir ---- */
+  .fluxo{padding:0;border:0;background:none;overflow:visible}
+  .fluxo-tela{min-height:0}
+  .fluxo-svg{display:none}
+  .fluxo-movel{display:flex;flex-direction:column;gap:0;padding-bottom:8px}
+  .no-m{position:relative;background:var(--card);border:1px solid var(--line);
+    border-left:4px solid var(--cor,var(--wine));border-radius:10px;overflow:hidden;
+    box-shadow:var(--sh)}
+  .no-m + .no-m{margin-top:16px}
+  .no-m::after{content:"";position:absolute;left:16px;bottom:-17px;width:2px;height:18px;
+    background:var(--cor,var(--wine));opacity:.5}
+  .no-m:last-child::after{display:none}
+  .no-m.ramo{margin-left:22px;border-style:dashed;border-left-style:solid;
+    border-left-color:var(--s2)}
+  .no-m.ramo::before{content:"";position:absolute;left:-14px;top:-9px;width:14px;height:22px;
+    border-left:2px dashed var(--s2);border-bottom:2px dashed var(--s2);border-bottom-left-radius:7px}
+  .no-m .nm-head{display:flex;align-items:center;gap:8px;width:100%;padding:11px 12px;
+    background:var(--sunk);border:0;cursor:pointer;text-align:left;font-family:inherit}
+  .no-m .nm-head .nome{flex:1;min-width:0;font-size:13px;font-weight:700;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .no-m .nm-head .qtd{font-family:"Archivo Narrow","Archivo",sans-serif;font-size:12.5px;
+    font-weight:700;background:var(--cor,var(--wine));color:#fff;border-radius:9px;padding:2px 8px}
+  .no-m .nm-head .seta{color:var(--ink-3);font-size:12px;transition:transform .15s}
+  .no-m.aberto .nm-head .seta{transform:rotate(180deg)}
+  .no-m .nm-sub{display:flex;align-items:center;gap:8px;padding:0 12px 9px;font-size:10.5px;
+    color:var(--ink-3);background:var(--sunk);flex-wrap:wrap}
+  .no-m .nm-sub .atr{color:var(--neg);font-weight:700}
+  .no-m .nm-sub .soma{margin-left:auto;font-weight:700;color:var(--ink-2)}
+  .no-m .nm-body{padding:10px;display:flex;flex-direction:column;gap:9px;
+    border-top:1px solid var(--line)}
+  .no-m .nm-body .vazio{font-size:11.5px;color:var(--ink-3);text-align:center;padding:12px 4px;
+    border:1px dashed var(--line-2);border-radius:8px}
+  .no-m .nm-acoes{display:flex;gap:6px;padding:0 10px 10px}
+  .no-m .nm-acoes button{flex:1;font-size:11px;padding:7px 8px;border:1px solid var(--line);
+    background:var(--card);color:var(--ink-2);border-radius:7px;font-weight:600;font-family:inherit}
+  .no-m .nm-acoes button.ativo{border-color:var(--s2);color:var(--s2)}
+  .painel-etapa{width:100%;max-width:100%;border-left:0}
+  .org-barra{display:none}
 
   /* uma coluna por largura de tela, rolando para baixo */
   .kanban{flex-direction:column;overflow-x:visible;gap:14px;padding-bottom:6px}
@@ -597,15 +722,26 @@ a.kc-btn{text-decoration:none}
           <input id="buscaCard" class="busca" type="text" placeholder="Buscar card…" oninput="buscar(this.value)">
           <button class="btn sm" id="btnSincronizar" hidden onclick="sincronizar(false)">Sincronizar</button>
           <button class="btn sm" id="btnRegrasManual" onclick="rodarRegrasManual()">Rodar automações</button>
+          <button class="btn sm" id="btnOrganizar" hidden onclick="alternarOrganizar()">Organizar fluxo</button>
           <button class="btn sm pri" id="btnNovoCard" onclick="novoCard()">Novo card</button>
         </div>
       </div>
       <div class="corpo">
         <div id="avisoFonte"></div>
         <div id="barraVirtual"></div>
+        <div id="orgBarra"></div>
         <div id="kanban" class="kanban"></div>
       </div>
     </div>
+
+    <!-- painel lateral: todos os cards de uma etapa -->
+    <aside class="painel-etapa no-print" id="painelEtapa" hidden>
+      <div class="pcab">
+        <h3 id="peNome">Etapa</h3>
+        <button class="x" onclick="fecharPainelEtapa()" title="Fechar">&times;</button>
+      </div>
+      <div class="pcorpo" id="peCorpo"></div>
+    </aside>
 
   </section>
 
@@ -1075,7 +1211,6 @@ a.kc-btn{text-decoration:none}
 </div>
 
 <div class="toast" id="toast"></div>
-
 <script>
 /* =====================================================================
    Funis — Wendell Global Interlining
@@ -1099,6 +1234,10 @@ var S = {
   contagem: {},           // { funil_id: {etapas:n, cards:n} }
   selecao: {},            // cards marcados para exclusão em massa
   abertas: {},            // etapas com o box de regras aberto
+  expandidas: {},         // celular: nós do fluxo abertos
+  organizando: false,     // modo "organizar fluxo" (admin, no computador)
+  posTemp: {},            // posições arrastadas ainda não salvas
+  painelEtapa: '',        // etapa com o painel "ver todos" aberto
   filtroAberto: {},       // etapas com o filtro aberto
   filtros: {},            // filtro em uso por etapa (comeca no padrao do ADM)
   sincronizando: false,
@@ -1402,6 +1541,10 @@ function abrirFunil(id, semSync){
   if(!f) return Promise.resolve();
   S.virtual = null;
   S.funil = f;
+  if(!S.funil || !S.funilAnterior || S.funilAnterior !== id){
+    S.painelEtapa = ''; S.organizando = false; S.posTemp = {}; S.expandidas = {};
+  }
+  S.funilAnterior = id;
   S.etapas = etapasDoFunil(id);
   S.campos = camposDoFunil(id);
   S.regras = regrasDoFunil(id);
@@ -2035,6 +2178,11 @@ function renderVirtual(){
     if(so.length) mostrar = so;
   }
 
+  S.organizando = false;
+  S.painelEtapa = '';
+  renderOrgBarra();
+  renderPainelEtapa();
+  $('kanban').className = 'kanban';
   $('kanban').innerHTML = colunas.length
     ? mostrar.map(colunaVirtualHTML).join('')
     : '<div class="vazio-geral">' +
@@ -2071,6 +2219,373 @@ function colunaVirtualHTML(col){
   '</div>';
 }
 
+/* ====================== FLUXOGRAMA (no lugar do kanban) ====================== */
+var NO_L = 250;      // largura do nó
+var NO_GX = 56;      // respiro horizontal entre nós da linha principal
+var NO_GY = 150;     // degrau vertical dos desvios
+var GRADE = 10;      // a posição arrastada gruda nesta grade
+var MINI_MAX = 4;    // mini-cards mostrados dentro do nó
+
+/* ordem de leitura: cada etapa principal seguida dos seus desvios */
+function etapasOrdenadas(fid){
+  var out = [];
+  etapasPrincipais(fid).forEach(function(e){
+    out.push(e);
+    ramosDe(e.id).forEach(function(r){ out.push(r); });
+  });
+  etapasDoFunil(fid).forEach(function(e){ if(out.indexOf(e) < 0) out.push(e); });
+  return out;
+}
+
+/* desenho automático: linha principal na horizontal, desvios em degrau abaixo */
+function layoutAuto(fid){
+  var pos = {};
+  var principais = etapasPrincipais(fid);
+  principais.forEach(function(e, i){
+    var x = i * (NO_L + NO_GX);
+    pos[e.id] = { x:x, y:0 };
+    ramosDe(e.id).forEach(function(r, j){
+      pos[r.id] = { x: x + 34, y: (j + 1) * NO_GY + 110 };
+    });
+  });
+  var solto = 0;
+  etapasDoFunil(fid).forEach(function(e){
+    if(pos[e.id]) return;
+    pos[e.id] = { x: solto * (NO_L + NO_GX), y: (principais.length ? 2 : 0) * NO_GY + 200 };
+    solto++;
+  });
+  return pos;
+}
+function posDe(e, auto){
+  if(S.posTemp[e.id]) return S.posTemp[e.id];
+  if(e.pos_x !== null && e.pos_x !== undefined && e.pos_y !== null && e.pos_y !== undefined)
+    return { x:num(e.pos_x), y:num(e.pos_y) };
+  return auto[e.id] || { x:0, y:0 };
+}
+
+/* setas: principal → principal, principal → desvio, desvio → volta ao fluxo */
+function ligacoesDo(fid){
+  var out = [];
+  var principais = etapasPrincipais(fid);
+  principais.forEach(function(e, i){
+    var prox = principais[i+1];
+    if(prox) out.push({ de:e.id, para:prox.id, tipo:'principal' });
+    ramosDe(e.id).forEach(function(r){
+      out.push({ de:e.id, para:r.id, tipo:'desvio' });
+      if(prox) out.push({ de:r.id, para:prox.id, tipo:'retorno' });
+    });
+  });
+  return out;
+}
+
+function autosDa(e){
+  function mv(r){ return acoesDaRegra(r).filter(function(a){ return a.acao === 'mover'; })[0]; }
+  return {
+    sai: S.regras.filter(function(r){
+      var m = mv(r);
+      return r.ativo && m && m.etapa_id !== e.id && (r.etapa_origem_id === e.id || !r.etapa_origem_id);
+    }),
+    chega: S.regras.filter(function(r){ var m = mv(r); return r.ativo && m && m.etapa_id === e.id; })
+  };
+}
+
+/* --------------------------- mini-card do nó --------------------------- */
+function miniHTML(c){
+  var e = etapaPor(c.etapa_id);
+  var atraso = atrasoDias(c);
+  var arqs = arquivosDoCard(c);
+  var podeArrastar = podeEditar() && !S.organizando && fluxoDo(c.funil_id).arrastar !== false;
+  return '<div class="mini' + (atraso > 0 ? ' atrasado' : '') + '" data-card="' + esc(c.id) + '" ' +
+      'draggable="' + (podeArrastar ? 'true' : 'false') + '" ' +
+      'style="--cor:' + esc((e && e.cor) || '#7C1B29') + '" title="' + esc(c.titulo) + '">' +
+    '<div class="m1">' +
+      (podeEditar() ? '<input type="checkbox" class="kc-sel" data-sel="' + esc(c.id) + '"' +
+        (S.selecao[c.id] ? ' checked' : '') + ' title="Selecionar para exclusão em massa">' : '') +
+      '<span class="t">' + esc(c.titulo) + '</span>' +
+      (atraso > 0 ? '<span class="sino" title="' + atraso + ' dia(s) além do prazo da etapa">&#9888; ' +
+        atraso + 'd</span>' : '') +
+    '</div>' +
+    '<div class="m2">' +
+      '<span class="r">' + esc(respEfetivo(c) || 'sem responsável') + '</span>' +
+      '<span>' + dias(c.etapa_desde) + 'd</span>' +
+      (arqs.length ? '<span class="doc" title="' + arqs.length + ' documento(s) no card">&#128196; ' +
+        arqs.length + '</span>' : '') +
+      (num(c.valor) ? '<span class="val">' + esc(moeda(c.valor)) + '</span>' : '') +
+    '</div>' +
+  '</div>';
+}
+
+/* --------------------------- nó do fluxograma --------------------------- */
+function noHTML(e, termo, auto){
+  var todos = cardsDaEtapa(e, termo);
+  var lista = aplicarFiltro(todos, e);
+  var soma = lista.reduce(function(a,c){ return a + num(c.valor); }, 0);
+  var atrasados = lista.filter(function(c){ return atrasoDias(c) > 0; }).length;
+  var ramo = ehRamo(e);
+  var pai = ramo ? etapaPor(e.ramo_de) : null;
+  var p = posDe(e, auto);
+  var mostra = lista.slice(0, MINI_MAX);
+  var resto = lista.length - mostra.length;
+
+  return '<div class="no' + (ramo ? ' ramo' : '') +
+      (S.painelEtapa === e.id ? ' aberto' : '') + '" data-no="' + esc(e.id) + '" ' +
+      'data-etapa="' + esc(e.id) + '" style="left:' + p.x + 'px;top:' + p.y + 'px;--cor:' +
+      esc(ramo ? '#B8801F' : e.cor) + '">' +
+    '<div class="no-head">' +
+      '<div class="l1">' +
+        (podeEditar() && !S.organizando
+          ? '<input type="checkbox" class="sel-col" data-selcol="' + esc(e.id) + '"' +
+            (lista.length && lista.every(function(c){ return S.selecao[c.id]; }) ? ' checked' : '') +
+            ' title="Selecionar todos os cards desta etapa">' : '') +
+        '<span class="nome" title="' + esc(e.nome) + '">' +
+          (ramo ? '&#8627; ' : '') + esc(e.nome) + '</span>' +
+        '<span class="qtd">' + lista.length +
+          (lista.length !== todos.length ? '/' + todos.length : '') + '</span>' +
+      '</div>' +
+      '<div class="l2">' +
+        (ramo ? '<span class="tag">exceção' + (e.ramo_rotulo ? ' · ' + esc(e.ramo_rotulo) : '') + '</span>' : '') +
+        (!ramo && e.tipo !== 'normal' ? '<span class="tag">' +
+          (e.tipo === 'inicio' ? 'entrada' : esc(e.tipo)) + '</span>' : '') +
+        '<span class="resp" title="' + esc(e.responsavel_nome || '') + '">' +
+          esc(e.responsavel_nome || 'sem responsável') + '</span>' +
+        (atrasados ? '<span class="atr" title="cards fora do prazo">&#9888; ' + atrasados + '</span>' : '') +
+        (soma ? '<span class="soma">' + esc(moeda(soma)) + '</span>' : '') +
+      '</div>' +
+      (ramo ? '<div class="l2"><span style="color:var(--s2)">volta ao fluxo depois de ' +
+              esc(pai ? pai.nome : '—') + '</span></div>' : '') +
+    '</div>' +
+    '<div class="no-body" data-drop="' + esc(e.id) + '">' +
+      (mostra.length ? mostra.map(miniHTML).join('')
+                     : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>') +
+    '</div>' +
+    '<div class="no-pe">' +
+      '<button data-vertodos="' + esc(e.id) + '">' +
+        (resto > 0 ? 'Ver todos (' + lista.length + ')' : 'Abrir etapa') + '</button>' +
+      '<button data-vertodos="' + esc(e.id) + '"' + (filtroAtivo(e.id) ? ' class="ativo"' : '') + '>' +
+        'Regras e filtro' + (filtroAtivo(e.id) ? ' &#9679;' : '') + '</button>' +
+    '</div>' +
+  '</div>';
+}
+
+/* ------------------------- nó vertical do celular ------------------------- */
+function noMovelHTML(e, termo, forcar){
+  var todos = cardsDaEtapa(e, termo);
+  var lista = aplicarFiltro(todos, e);
+  var soma = lista.reduce(function(a,c){ return a + num(c.valor); }, 0);
+  var atrasados = lista.filter(function(c){ return atrasoDias(c) > 0; }).length;
+  var ramo = ehRamo(e);
+  var aberto = forcar || !!S.expandidas[e.id];
+  return '<div class="no-m' + (ramo ? ' ramo' : '') + (aberto ? ' aberto' : '') + '" ' +
+      'data-etapa="' + esc(e.id) + '" style="--cor:' + esc(ramo ? '#B8801F' : e.cor) + '">' +
+    '<button class="nm-head" data-expandir="' + esc(e.id) + '">' +
+      '<span class="nome">' + (ramo ? '&#8627; ' : '') + esc(e.nome) + '</span>' +
+      '<span class="qtd">' + lista.length +
+        (lista.length !== todos.length ? '/' + todos.length : '') + '</span>' +
+      '<span class="seta">&#9662;</span>' +
+    '</button>' +
+    '<div class="nm-sub">' +
+      '<span>' + esc(e.responsavel_nome || 'sem responsável') + '</span>' +
+      (ramo ? '<span style="color:var(--s2);font-weight:700">exceção</span>' : '') +
+      (atrasados ? '<span class="atr">&#9888; ' + atrasados + ' atrasado(s)</span>' : '') +
+      (soma ? '<span class="soma">' + esc(moeda(soma)) + '</span>' : '') +
+    '</div>' +
+    (aberto
+      ? '<div class="nm-acoes">' +
+          '<button data-regras="' + esc(e.id) + '">Regras</button>' +
+          '<button data-filtro="' + esc(e.id) + '"' + (filtroAtivo(e.id) ? ' class="ativo"' : '') + '>' +
+            'Filtro' + (filtroAtivo(e.id) ? ' &#9679;' : '') + '</button>' +
+        '</div>' +
+        (S.abertas[e.id] ? boxRegrasHTML(e, autosDa(e)) : '') +
+        (S.filtroAberto[e.id] ? boxFiltroHTML(e, lista.length, todos.length) : '') +
+        '<div class="nm-body" data-drop="' + esc(e.id) + '">' +
+          (lista.length ? lista.map(function(c){ return cardHTML(c, false); }).join('')
+                        : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>') +
+        '</div>'
+      : '') +
+  '</div>';
+}
+
+/* ------------------------------- as setas ------------------------------- */
+function caminhoEntre(a, b, tipo){
+  var ax, ay, bx, by, d;
+  if(tipo === 'retorno' && b.y + b.h < a.y + a.h){
+    /* desvio voltando ao fluxo: sai pela direita e sobe até a base da etapa */
+    ax = a.x + a.w; ay = a.y + 26; bx = b.x + b.w/2; by = b.y + b.h;
+    d = Math.max(30, (ax - bx) / 2 + 40);
+    return 'M' + ax + ',' + ay + ' C' + (ax + d) + ',' + ay + ' ' +
+           bx + ',' + (by + d) + ' ' + bx + ',' + by;
+  }
+  if(b.x > a.x + a.w - 30){                 // alvo à direita
+    ax = a.x + a.w; ay = a.y + 26; bx = b.x; by = b.y + 26;
+    d = Math.max(26, (bx - ax) / 2);
+    return 'M' + ax + ',' + ay + ' C' + (ax+d) + ',' + ay + ' ' + (bx-d) + ',' + by + ' ' + bx + ',' + by;
+  }
+  if(b.x + b.w < a.x + 30){                 // alvo à esquerda
+    ax = a.x; ay = a.y + 26; bx = b.x + b.w; by = b.y + 26;
+    d = Math.max(26, (ax - bx) / 2);
+    return 'M' + ax + ',' + ay + ' C' + (ax-d) + ',' + ay + ' ' + (bx+d) + ',' + by + ' ' + bx + ',' + by;
+  }
+  ax = a.x + a.w/2; ay = a.y + a.h; bx = b.x + b.w/2; by = b.y;   // alvo abaixo
+  if(by < ay){ ay = a.y; by = b.y + b.h; }                        // ou acima
+  d = Math.max(22, Math.abs(by - ay) / 2);
+  return 'M' + ax + ',' + ay + ' C' + ax + ',' + (ay + (by>ay?d:-d)) + ' ' +
+         bx + ',' + (by - (by>ay?d:-d)) + ' ' + bx + ',' + by;
+}
+
+function desenharLigacoes(){
+  var tela = document.querySelector('#kanban .fluxo-tela');
+  if(!tela) return;
+  var svg = tela.querySelector('svg.fluxo-svg');
+  if(!svg) return;
+  var r = {};
+  Array.prototype.forEach.call(tela.querySelectorAll('[data-no]'), function(el){
+    r[el.dataset.no] = { x:el.offsetLeft, y:el.offsetTop, w:el.offsetWidth, h:el.offsetHeight };
+  });
+  var lg = 0, at = 0;
+  Object.keys(r).forEach(function(k){
+    lg = Math.max(lg, r[k].x + r[k].w); at = Math.max(at, r[k].y + r[k].h);
+  });
+  tela.style.width  = (lg + 40) + 'px';
+  tela.style.height = (at + 40) + 'px';
+  svg.setAttribute('width',  lg + 40);
+  svg.setAttribute('height', at + 40);
+  var caminhos = ligacoesDo(S.funil.id).map(function(l){
+    if(!r[l.de] || !r[l.para]) return '';
+    return '<path class="' + l.tipo + '" d="' + caminhoEntre(r[l.de], r[l.para], l.tipo) + '" ' +
+           'marker-end="url(#' + (l.tipo === 'principal' ? 'setaF' : 'setaR') + ')"></path>';
+  }).join('');
+  svg.innerHTML =
+    '<defs>' +
+      '<marker id="setaF" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">' +
+        '<path d="M0,0 L8,4 L0,8 z" fill="var(--wine-soft)" stroke="none"></path></marker>' +
+      '<marker id="setaR" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">' +
+        '<path d="M0,0 L8,4 L0,8 z" fill="var(--s2)" stroke="none"></path></marker>' +
+    '</defs>' + caminhos;
+}
+
+/* ------------------- painel lateral: todos os cards da etapa ------------------- */
+function verTodos(id){ S.painelEtapa = id; renderKanban(); }
+function fecharPainelEtapa(){ S.painelEtapa = ''; renderKanban(); }
+function renderPainelEtapa(){
+  var pnl = $('painelEtapa');
+  if(!pnl) return;
+  var e = S.painelEtapa ? etapaPor(S.painelEtapa) : null;
+  if(!e || S.virtual || !S.funil || e.funil_id !== S.funil.id){
+    S.painelEtapa = ''; pnl.hidden = true; pnl.classList.remove('on'); $('peCorpo').innerHTML = '';
+    return;
+  }
+  pnl.hidden = false;
+  pnl.classList.add('on');
+  pnl.style.setProperty('--cor', ehRamo(e) ? '#B8801F' : e.cor);
+  var termo = normal(S.busca);
+  var todos = cardsDaEtapa(e, termo);
+  var lista = aplicarFiltro(todos, e);
+  $('peNome').textContent = (ehRamo(e) ? '↳ ' : '') + e.nome;
+  $('peCorpo').innerHTML =
+    '<div class="col-acoes">' +
+      '<button class="regras-btn' + (S.abertas[e.id] ? ' aberto' : '') + '" data-regras="' + esc(e.id) + '">' +
+        'Regras<span class="seta">&#9662;</span></button>' +
+      '<button class="filtro-btn' + (filtroAtivo(e.id) ? ' ativo' : '') + '" data-filtro="' + esc(e.id) + '">' +
+        'Filtro' + (filtroAtivo(e.id) ? ' &#9679;' : '') + '</button>' +
+    '</div>' +
+    (S.abertas[e.id] ? boxRegrasHTML(e, autosDa(e)) : '') +
+    (S.filtroAberto[e.id] ? boxFiltroHTML(e, lista.length, todos.length) : '') +
+    (lista.length ? lista.map(function(c){ return cardHTML(c, false); }).join('')
+                  : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>');
+}
+
+/* ---------------------- modo organizar (só administrador) ---------------------- */
+function alternarOrganizar(){
+  if(!eAdmin() || ehMovel() || S.virtual) return;
+  S.organizando = !S.organizando;
+  S.posTemp = {};
+  if(S.organizando) S.painelEtapa = '';
+  renderKanban();
+}
+function renderOrgBarra(){
+  var el = $('orgBarra');
+  if(!el) return;
+  var b = $('btnOrganizar');
+  if(b){
+    b.hidden = !eAdmin() || ehMovel() || !!S.virtual || !S.etapas.length;
+    b.textContent = S.organizando ? 'Sair do organizar' : 'Organizar fluxo';
+  }
+  if(!S.organizando || S.virtual){ el.innerHTML = ''; return; }
+  var mudou = Object.keys(S.posTemp).length;
+  el.innerHTML = '<div class="org-barra">' +
+    '<span class="t">Organizando o fluxo</span>' +
+    '<span>Arraste cada etapa pelo cabeçalho — a posição gruda numa grade de ' + GRADE + 'px.' +
+      (mudou ? ' <strong>' + mudou + ' etapa(s) movida(s).</strong>' : '') + '</span>' +
+    '<span class="btns">' +
+      '<button class="btn sm" onclick="arrumarSozinho()">Arrumar sozinho</button>' +
+      '<button class="btn sm" onclick="alternarOrganizar()">Cancelar</button>' +
+      '<button class="btn sm pri" onclick="salvarPosicoes()">Salvar posições</button>' +
+    '</span></div>';
+}
+function arrumarSozinho(){
+  if(!S.funil) return;
+  var auto = layoutAuto(S.funil.id);
+  S.posTemp = {};
+  etapasDoFunil(S.funil.id).forEach(function(e){
+    if(auto[e.id]) S.posTemp[e.id] = { x:auto[e.id].x, y:auto[e.id].y };
+  });
+  renderKanban();
+  toast('Desenho refeito — clique em Salvar posições para guardar');
+}
+function salvarPosicoes(){
+  var ids = Object.keys(S.posTemp);
+  if(!ids.length){ S.organizando = false; renderKanban(); return toast('Nada mudou de lugar'); }
+  var i = 0;
+  function passo(){
+    if(i >= ids.length){
+      S.organizando = false; S.posTemp = {}; renderKanban();
+      return toast(ids.length + ' etapa(s) com posição salva');
+    }
+    var id = ids[i++], p = S.posTemp[id];
+    var x = Math.round(p.x), y = Math.round(p.y);
+    Promise.resolve(sb.from('funil_etapas').update({ pos_x:x, pos_y:y }).eq('id', id))
+      .then(function(r){
+        if(r && r.error) return erroSb(r.error, 'salvar posição');
+        var e = etapaPor(id);
+        if(e){ e.pos_x = x; e.pos_y = y; }
+        var a = (S.admEtapas || []).filter(function(z){ return z.id === id; })[0];
+        if(a){ a.pos_x = x; a.pos_y = y; }
+        passo();
+      })
+      .catch(function(err){ erroSb(err, 'salvar posição'); passo(); });
+  }
+  passo();
+}
+function ligarArrastoNos(){
+  if(!S.organizando) return;
+  var tela = document.querySelector('#kanban .fluxo-tela');
+  if(!tela) return;
+  Array.prototype.forEach.call(tela.querySelectorAll('[data-no]'), function(el){
+    var cab = el.querySelector('.no-head');
+    if(!cab) return;
+    cab.addEventListener('mousedown', function(ev){
+      ev.preventDefault();
+      var x0 = ev.clientX, y0 = ev.clientY, ox = el.offsetLeft, oy = el.offsetTop;
+      el.classList.add('movendo');
+      function mover(e2){
+        var nx = Math.max(0, Math.round((ox + e2.clientX - x0) / GRADE) * GRADE);
+        var ny = Math.max(0, Math.round((oy + e2.clientY - y0) / GRADE) * GRADE);
+        el.style.left = nx + 'px'; el.style.top = ny + 'px';
+        S.posTemp[el.dataset.no] = { x:nx, y:ny };
+        desenharLigacoes();
+      }
+      function soltar(){
+        el.classList.remove('movendo');
+        document.removeEventListener('mousemove', mover);
+        document.removeEventListener('mouseup', soltar);
+        renderOrgBarra();
+      }
+      document.addEventListener('mousemove', mover);
+      document.addEventListener('mouseup', soltar);
+    });
+  });
+}
+
 function renderKanban(){
   if(S.virtual) return renderVirtual();
   var f = S.funil;
@@ -2098,32 +2613,42 @@ function renderKanban(){
 
   var box = $('kanban');
   if(!S.etapas.length){
+    box.className = 'kanban';
     box.innerHTML = '<div class="vazio-geral">Este funil ainda não tem etapas.' +
       (eAdmin() ? ' Cadastre em <strong>Administração › Funis e etapas</strong>.' : '') + '</div>';
     S.colunasAtuais = [];
+    S.organizando = false;
+    renderOrgBarra();
+    renderPainelEtapa();
     atualizarBarraMovel();
     return;
   }
   var termo = normal(S.busca);
-  var ordenadas = [];
-  etapasPrincipais(f.id).forEach(function(e){
-    ordenadas.push(e);
-    ramosDe(e.id).forEach(function(r){ ordenadas.push(r); });
-  });
-  S.etapas.forEach(function(e){            // desvio órfão (pai apagado) não some
-    if(ordenadas.indexOf(e) < 0) ordenadas.push(e);
-  });
+  var ordenadas = etapasOrdenadas(f.id);
   S.colunasAtuais = ordenadas.map(function(e){
     return { id:e.id, nome:(ehRamo(e) ? '↳ ' : '') + e.nome,
              qtd: aplicarFiltro(cardsDaEtapa(e, termo), e).length };
   });
-  var etapasVis = ordenadas;
-  if(ehMovel() && S.etapaMovel){
-    var so = ordenadas.filter(function(e){ return e.id === S.etapaMovel; });
-    if(so.length) etapasVis = so;
+
+  if(ehMovel()){
+    S.organizando = false;
+    var so = S.etapaMovel ? ordenadas.filter(function(e){ return e.id === S.etapaMovel; }) : [];
+    var visiveis = so.length ? so : ordenadas;
+    box.className = 'fluxo-movel';
+    box.innerHTML = visiveis.map(function(e){
+      return noMovelHTML(e, termo, so.length === 1);
+    }).join('');
+  } else {
+    var auto = layoutAuto(f.id);
+    box.className = 'fluxo' + (S.organizando ? ' organizando' : '');
+    box.innerHTML = '<div class="fluxo-tela"><svg class="fluxo-svg"></svg>' +
+      ordenadas.map(function(e){ return noHTML(e, termo, auto); }).join('') + '</div>';
   }
-  box.innerHTML = etapasVis.map(function(e){ return colunaHTML(e, termo); }).join('');
+
+  renderOrgBarra();
+  renderPainelEtapa();
   ligarKanban();
+  if(!ehMovel()){ desenharLigacoes(); ligarArrastoNos(); }
   atualizarBarraMovel();
   atualizarSelecao();
 }
@@ -2220,64 +2745,6 @@ function aplicarFiltro(lista, etapa){
 function filtroAtivo(etapaId){
   var f = S.filtros[etapaId] || {};
   return !!(f.responsavel || (f.campo && f.operador) || f.ordenar);
-}
-
-function colunaHTML(e, termo){
-  var todos = cardsDaEtapa(e, termo);
-  var lista = aplicarFiltro(todos, e);
-  var soma = lista.reduce(function(a,c){ return a + num(c.valor); }, 0);
-  var aberto = !!S.abertas[e.id];
-  var filtroOn = !!S.filtroAberto[e.id];
-  var autos = {
-    sai: S.regras.filter(function(r){
-      var mv = acoesDaRegra(r).filter(function(a){ return a.acao === 'mover'; })[0];
-      return r.ativo && mv && mv.etapa_id !== e.id &&
-             (r.etapa_origem_id === e.id || !r.etapa_origem_id);
-    }),
-    chega: S.regras.filter(function(r){
-      var mv = acoesDaRegra(r).filter(function(a){ return a.acao === 'mover'; })[0];
-      return r.ativo && mv && mv.etapa_id === e.id;
-    })
-  };
-
-  var ramo = ehRamo(e);
-  var pai = ramo ? etapaPor(e.ramo_de) : null;
-  return '<div class="col' + (ramo ? ' col-ramo' : '') + '" data-etapa="' + esc(e.id) + '" ' +
-      'style="--cor:' + esc(ramo ? '#B8801F' : e.cor) + '">' +
-    '<div class="col-head">' +
-      (ramo ? '<div class="l2" style="margin:0 0 5px"><span class="ramo-tag">&#8627; exceção</span>' +
-              '<span class="de">de ' + esc(pai ? pai.nome : '—') + '</span></div>' : '') +
-      '<div class="l1">' +
-        (podeEditar() ? '<input type="checkbox" class="sel-col" data-selcol="' + esc(e.id) + '"' +
-          (lista.length && lista.every(function(c){ return S.selecao[c.id]; }) ? ' checked' : '') +
-          ' title="Selecionar todos os cards desta etapa">' : '') +
-        '<span class="nome" title="' + esc(e.nome) + '">' + esc(e.nome) + '</span>' +
-        (e.tipo !== 'normal' && !ramo ? '<span class="pill ' + esc(e.tipo) + '">' +
-            (e.tipo === 'inicio' ? 'entrada' : e.tipo) + '</span>' : '') +
-        (ramo && e.ramo_rotulo ? '<span class="pill">' + esc(e.ramo_rotulo) + '</span>' : '') +
-        '<span class="qtd">' + lista.length + (lista.length !== todos.length ? '/' + todos.length : '') + '</span>' +
-      '</div>' +
-      '<div class="l2">' +
-        (e.responsavel_nome
-          ? '<span class="resp"><span class="ini">' + esc(iniciais(e.responsavel_nome)) + '</span>' +
-            esc(e.responsavel_nome) + '</span>'
-          : '<span style="color:var(--neg);font-weight:600">sem responsável</span>') +
-        (soma ? '<span class="soma">' + esc(moeda(soma)) + '</span>' : '') +
-      '</div>' +
-      '<div class="col-acoes">' +
-        '<button class="regras-btn' + (aberto ? ' aberto' : '') + '" data-regras="' + esc(e.id) + '">' +
-          'Regras<span class="seta">&#9662;</span></button>' +
-        '<button class="filtro-btn' + (filtroAtivo(e.id) ? ' ativo' : '') + '" data-filtro="' + esc(e.id) + '">' +
-          'Filtro' + (filtroAtivo(e.id) ? ' &#9679;' : '') + '</button>' +
-      '</div>' +
-    '</div>' +
-    (aberto ? boxRegrasHTML(e, autos) : '') +
-    (filtroOn ? boxFiltroHTML(e, lista.length, todos.length) : '') +
-    '<div class="col-body" data-drop="' + esc(e.id) + '">' +
-      (lista.length ? lista.map(function(c){ return cardHTML(c, false); }).join('')
-                    : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>') +
-    '</div>' +
-  '</div>';
 }
 
 function boxRegrasHTML(e, autos){
@@ -2490,7 +2957,12 @@ function liberarCard(id, dir){
 }
 
 function ligarKanban(){
-  var box = $('kanban');
+  ligarEscopo($('kanban'));
+  if(S.painelEtapa) ligarEscopo($('peCorpo'));
+}
+
+function ligarEscopo(box){
+  if(!box) return;
 
   Array.prototype.forEach.call(box.querySelectorAll('[data-aprov],[data-assinar]'), function(a){
     a.addEventListener('click', function(ev){ ev.stopPropagation(); });
@@ -2532,6 +3004,17 @@ function ligarKanban(){
   Array.prototype.forEach.call(box.querySelectorAll('[data-volta]'), function(b){
     b.addEventListener('click', function(ev){
       ev.stopPropagation(); liberarCard(b.dataset.volta, -1);
+    });
+  });
+
+  Array.prototype.forEach.call(box.querySelectorAll('[data-vertodos]'), function(b){
+    b.addEventListener('click', function(ev){ ev.stopPropagation(); verTodos(b.dataset.vertodos); });
+  });
+  Array.prototype.forEach.call(box.querySelectorAll('[data-expandir]'), function(b){
+    b.addEventListener('click', function(){
+      var id = b.dataset.expandir;
+      S.expandidas[id] = !S.expandidas[id];
+      renderKanban();
     });
   });
 
@@ -4207,7 +4690,11 @@ function iniciar(){
   ligarSyncAutomatico();
 
   document.addEventListener('keydown', function(ev){
-    if(ev.key === 'Escape'){ ['mdFunil','mdEtapa','mdCampo','mdRegra','mdCard'].forEach(fechar); }
+    if(ev.key !== 'Escape') return;
+    if(document.querySelector('.modal.on')){
+      ['mdFunil','mdEtapa','mdCampo','mdRegra','mdCard'].forEach(fechar);
+    } else if(S.painelEtapa){ fecharPainelEtapa(); }
+    else if(S.organizando){ alternarOrganizar(); }
   });
   var eraMovel = ehMovel();
   window.addEventListener('resize', function(){
@@ -4219,6 +4706,11 @@ function iniciar(){
 }
 
 /* funcoes usadas pelos atributos onclick do HTML */
+window.alternarOrganizar = alternarOrganizar;
+window.arrumarSozinho = arrumarSozinho;
+window.salvarPosicoes = salvarPosicoes;
+window.verTodos = verTodos;
+window.fecharPainelEtapa = fecharPainelEtapa;
 window.irPara = irPara;
 window.admAba = admAba;
 window.admTrocarFunil = admTrocarFunil;
