@@ -272,6 +272,40 @@ button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
 .kcard.atrasado:hover{border-color:var(--neg)}
 .col.col-atraso .col-head{border-top-color:var(--neg)}
 
+/* ---------- bifurcação: etapa de exceção fora da linha ---------- */
+.col.col-ramo{margin-top:30px;border-style:dashed;border-color:var(--s2);position:relative}
+.col.col-ramo::before{content:"";position:absolute;left:-14px;top:-17px;width:14px;height:30px;
+  border-left:2px dashed var(--s2);border-bottom:2px dashed var(--s2);border-bottom-left-radius:9px}
+.col.col-ramo .col-head{border-top-style:dashed;background:rgba(184,128,31,.07)}
+.col.col-ramo .col-head .nome{color:var(--s2)}
+.ramo-tag{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--s2);border:1px solid var(--s2);
+  border-radius:4px;padding:0 5px}
+.col.col-ramo .col-head .l2 .de{color:var(--s2);font-weight:600}
+.kcard.em-ramo{border-left-color:var(--s2)}
+.kcard .chip.excecao{background:rgba(184,128,31,.12);border-color:rgba(184,128,31,.4);color:var(--s2);font-weight:700}
+
+/* ---------- caixa de regras de fluxo no ADM ---------- */
+.fluxo-box{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--sunk);
+  margin-bottom:12px}
+.fluxo-box .tit{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--wine);margin-bottom:9px}
+.fluxo-box .check{margin-bottom:8px}
+.fluxo-resumo{font-size:11.5px;color:var(--ink-2);display:flex;flex-wrap:wrap;gap:5px}
+.fluxo-resumo .p{background:var(--chip);border:1px solid var(--line-2);border-radius:5px;padding:1px 7px}
+
+/* ---------- ações da automação ---------- */
+.acao-linha{display:flex;gap:7px;align-items:center;margin-bottom:7px;flex-wrap:wrap}
+.acao-linha select,.acao-linha input{padding:6px 8px;border:1px solid var(--line);border-radius:7px;
+  background:var(--card);color:var(--ink)}
+.acao-linha .tipo{flex:0 0 150px}
+.acao-linha .val{flex:1;min-width:150px}
+.acao-linha .x{border:1px solid var(--line);background:var(--card);border-radius:7px;
+  width:28px;height:30px;cursor:pointer;color:var(--neg)}
+.regra-item .acoes-txt{font-size:11.5px;color:var(--ink-2);margin-top:4px}
+.regra-item .acoes-txt code{background:var(--chip);border-radius:4px;padding:1px 5px;
+  font-family:"Archivo Narrow","Archivo",sans-serif}
+
 /* ---------- funis virtuais ---------- */
 .funil-card.virtual{border-style:dashed}
 .funil-card.virtual .tag-virt{color:var(--cor,var(--wine));border-color:var(--cor,var(--wine))}
@@ -478,6 +512,8 @@ a.kc-btn{text-decoration:none}
   /* uma coluna por largura de tela, rolando para baixo */
   .kanban{flex-direction:column;overflow-x:visible;gap:14px;padding-bottom:6px}
   .col{flex:1 1 auto;width:100%;max-width:100%}
+  .col.col-ramo{margin-top:6px;margin-left:20px;width:calc(100% - 20px)}
+  .col.col-ramo::before{left:-14px;top:-8px;height:24px}
   .col-body{max-height:none;overflow:visible;padding:10px 10px 12px}
   .kcard{padding:11px 12px}
   .kcard .tit{font-size:13.5px}
@@ -560,7 +596,7 @@ a.kc-btn{text-decoration:none}
         <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <input id="buscaCard" class="busca" type="text" placeholder="Buscar card…" oninput="buscar(this.value)">
           <button class="btn sm" id="btnSincronizar" hidden onclick="sincronizar(false)">Sincronizar</button>
-          <button class="btn sm" id="btnRegrasManual" onclick="rodarRegrasManual()">Rodar condicionais</button>
+          <button class="btn sm" id="btnRegrasManual" onclick="rodarRegrasManual()">Rodar automações</button>
           <button class="btn sm pri" id="btnNovoCard" onclick="novoCard()">Novo card</button>
         </div>
       </div>
@@ -579,7 +615,7 @@ a.kc-btn{text-decoration:none}
     <div class="subnav">
       <button id="sub-funis"  class="on" onclick="admAba('funis')">Funis e etapas</button>
       <button id="sub-campos" onclick="admAba('campos')">Origem do card</button>
-      <button id="sub-regras" onclick="admAba('regras')">Condicionais</button>
+      <button id="sub-regras" onclick="admAba('regras')">Automações</button>
       <button id="sub-acesso" onclick="admAba('acesso')">Acesso</button>
     </div>
 
@@ -678,14 +714,15 @@ a.kc-btn{text-decoration:none}
     <div id="adm-regras" hidden>
       <div class="bloco">
         <div class="cab">
-          <h2>Condicionais</h2>
-          <span class="dica">Quando as condições baterem, o card anda sozinho para a etapa de destino.</span>
+          <h2>Automações</h2>
+          <span class="dica">Um gatilho, as condições e o que fazer com o card.</span>
           <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
             <select id="selFunilRegras" class="busca" onchange="admTrocarFunil(this.value)"></select>
-            <button class="btn sm pri" onclick="abrirRegraForm()">Nova condicional</button>
+            <button class="btn sm pri" onclick="abrirRegraForm()">Nova automação</button>
           </div>
         </div>
         <div class="corpo">
+          <div id="avisoFluxoAuto"></div>
           <div id="admRegrasLista"></div>
         </div>
       </div>
@@ -744,7 +781,37 @@ a.kc-btn{text-decoration:none}
         <input type="number" id="fFunilOrdem" value="0"></div>
     </div>
     <label class="check"><input type="checkbox" id="fFunilAtivo" checked> Funil ativo</label>
-    <div class="aviso" style="margin-top:14px">A origem dos cards (o HTML do formulário e a tabela)
+
+    <div class="fluxo-box" style="margin-top:14px">
+      <div class="tit">Fluxo do card neste funil</div>
+      <div class="linha">
+        <div class="campo"><label>Avançar etapa</label>
+          <select id="fFluxoAvancar">
+            <option value="0">Não permite avançar à mão</option>
+            <option value="1" selected>Uma etapa por vez</option>
+            <option value="2">Até duas etapas</option>
+            <option value="3">Até três etapas</option>
+            <option value="-1">Livre — qualquer etapa à frente</option>
+          </select></div>
+        <div class="campo"><label>Voltar etapa</label>
+          <select id="fFluxoVoltar">
+            <option value="0">Não permite voltar</option>
+            <option value="1" selected>Uma etapa por vez</option>
+            <option value="2">Até duas etapas</option>
+            <option value="-1">Livre — qualquer etapa atrás</option>
+          </select></div>
+      </div>
+      <label class="check"><input type="checkbox" id="fFluxoAutomacao" checked>
+        Aceita automações (regras podem mover e alterar o card)</label>
+      <label class="check"><input type="checkbox" id="fFluxoArrastar" checked>
+        Permite arrastar o card entre as colunas</label>
+      <label class="check"><input type="checkbox" id="fFluxoRamos" checked>
+        Aceita desvio para etapa de exceção (bifurcação)</label>
+      <label class="check"><input type="checkbox" id="fFluxoMotivo">
+        Pedir motivo quando o card voltar de etapa</label>
+    </div>
+
+    <div class="aviso">A origem dos cards (o HTML do formulário e a tabela)
       é definida na aba <strong>Origem do card</strong>.</div>
   </div>
   <div class="modal-pe">
@@ -788,6 +855,17 @@ a.kc-btn{text-decoration:none}
     <div class="campo"><label>Responsável pela etapa</label>
       <select id="fEtapaResp"></select>
       <span class="ajuda">Lista vem das contas da Central de Acesso.</span></div>
+
+    <div class="linha">
+      <div class="campo"><label>Lugar no fluxo</label>
+        <select id="fEtapaRamoDe" onchange="ramoMudou()">
+          <option value="">Linha principal do funil</option>
+        </select>
+        <span class="ajuda">Escolhendo uma etapa, esta vira um desvio pendurado nela.</span></div>
+      <div class="campo" id="boxRamoRotulo" hidden><label>Rótulo do desvio</label>
+        <input type="text" id="fEtapaRamoRotulo" placeholder="Ex.: Pendência cadastral">
+        <span class="ajuda">Aparece no topo da coluna de exceção.</span></div>
+    </div>
     <div class="campo"><label>Regras da etapa</label>
       <textarea id="fEtapaRegras" placeholder="O que precisa acontecer nesta etapa. Este texto é o que aparece no botão recolhido do kanban."></textarea></div>
 
@@ -909,19 +987,22 @@ a.kc-btn{text-decoration:none}
     <div class="linha">
       <div class="campo" style="flex:2"><label>Nome da condicional</label>
         <input type="text" id="fRegraNome" placeholder="Ex.: Pedido aprovado 2/2 vai para Faturamento"></div>
-      <div class="campo"><label>Quando avaliar</label>
-        <select id="fRegraGatilho">
+      <div class="campo"><label>Gatilho</label>
+        <select id="fRegraGatilho" onchange="gatilhoMudou()">
           <option value="salvar">Sempre que o registro mudar</option>
-          <option value="criar">Só quando o card entra no funil</option>
-          <option value="manual">Só no botão "Rodar condicionais"</option>
+          <option value="criar">Quando o card entra no funil</option>
+          <option value="entrada">Quando o card chega numa etapa</option>
+          <option value="prazo">Quando o card passa do prazo</option>
+          <option value="manual">Só no botão "Rodar automações"</option>
         </select></div>
     </div>
     <div class="linha">
       <div class="campo"><label>Etapa de origem</label>
         <select id="fRegraOrigem"></select>
         <span class="ajuda">"Qualquer etapa" avalia o card onde ele estiver.</span></div>
-      <div class="campo"><label>Mover para</label>
-        <select id="fRegraDestino"></select></div>
+      <div class="campo" id="boxRegraPrazo" hidden><label>Dias parado</label>
+        <input type="number" id="fRegraPrazo" placeholder="prazo da etapa">
+        <span class="ajuda">Vazio = usa o prazo definido na etapa.</span></div>
       <div class="campo" style="max-width:150px"><label>Combinação</label>
         <select id="fRegraLogica">
           <option value="E">Todas as condições</option>
@@ -932,6 +1013,11 @@ a.kc-btn{text-decoration:none}
       <span class="ajuda" id="ajudaCondicoes"></span></div>
     <div id="condLista"></div>
     <button class="btn sm" onclick="addCondicao()">+ Adicionar condição</button>
+
+    <div class="campo" style="margin:16px 0 6px"><label>O que fazer</label>
+      <span class="ajuda">As ações rodam na ordem em que estiverem aqui.</span></div>
+    <div id="acaoLista"></div>
+    <button class="btn sm" onclick="addAcao()">+ Adicionar ação</button>
     <label class="check" style="margin-top:14px"><input type="checkbox" id="fRegraAtivo" checked> Condicional ativa</label>
   </div>
   <div class="modal-pe">
@@ -1417,6 +1503,7 @@ function sincronizar(silencioso){
   }).then(function(res){
     S.sincronizando = false;
     S.ultimoSync = new Date();
+    rodarRegrasDePrazo();
     renderKanban();
     if(res && (res.novos || res.atualizados)){
       toast(res.novos + ' novo(s), ' + res.atualizados + ' atualizado(s) de ' + c.rotulo);
@@ -1726,6 +1813,90 @@ function etapaInicial(){
 }
 function ehMovel(){ return window.innerWidth <= 760; }
 
+/* ---------------- regras de fluxo do card (por funil) ---------------- */
+var FLUXO_PADRAO = { automacao:true, avancar:1, voltar:1, arrastar:true, motivo_voltar:false, ramos:true };
+function fluxoDo(funilId){
+  var f = funilPor(funilId);
+  return Object.assign({}, FLUXO_PADRAO, (f && f.fluxo) || {});
+}
+function textoLimite(n, verbo){
+  if(n === 0) return 'não ' + verbo;
+  if(n < 0)   return verbo + ' livre';
+  return verbo + ' até ' + n + (n === 1 ? ' etapa' : ' etapas');
+}
+function resumoFluxo(fx){
+  return [textoLimite(fx.avancar, 'avança'), textoLimite(fx.voltar, 'volta'),
+          fx.automacao ? 'automações ligadas' : 'automações desligadas',
+          fx.arrastar ? 'arrasta card' : 'sem arrastar',
+          fx.ramos ? 'aceita desvio' : 'sem desvio'];
+}
+
+/* ---------------- linha principal x desvios (bifurcação) ---------------- */
+function ehRamo(etapa){ return !!(etapa && etapa.ramo_de); }
+function etapasPrincipais(fid){
+  return etapasDoFunil(fid).filter(function(e){ return !e.ramo_de; });
+}
+function ramosDe(etapaId){
+  return S.etapasTodas.filter(function(e){ return e.ramo_de === etapaId; })
+    .sort(function(a,b){ return (a.ordem||0) - (b.ordem||0); });
+}
+/* etapa "âncora" de um card: ele mesmo, ou o pai quando está num desvio */
+function etapaNoFluxo(etapa){
+  if(!etapa) return null;
+  return ehRamo(etapa) ? (etapaPor(etapa.ramo_de) || etapa) : etapa;
+}
+function indicePrincipal(etapa){
+  var base = etapaNoFluxo(etapa);
+  if(!base) return -1;
+  var lista = etapasPrincipais(base.funil_id);
+  var i = -1;
+  lista.forEach(function(e, k){ if(e.id === base.id) i = k; });
+  return i;
+}
+
+/* o movimento cabe nas regras do funil? */
+function movimentoPermitido(card, destinoId){
+  var fx = fluxoDo(card.funil_id);
+  var de = etapaPor(card.etapa_id), para = etapaPor(destinoId);
+  if(!para) return { ok:false, motivo:'etapa não encontrada' };
+  if(para.id === card.etapa_id) return { ok:false, motivo:'o card já está nesta etapa' };
+
+  if(ehRamo(para) || ehRamo(de)){
+    if(!fx.ramos) return { ok:false, motivo:'este funil não aceita desvio de fluxo' };
+    return { ok:true, desvio:true };
+  }
+  var d = indicePrincipal(para) - indicePrincipal(de);
+  if(d > 0){
+    if(fx.avancar === 0) return { ok:false, motivo:'este funil não permite avançar etapa à mão' };
+    if(fx.avancar > 0 && d > fx.avancar)
+      return { ok:false, motivo:'só dá para avançar ' + fx.avancar + ' etapa(s) por vez' };
+    return { ok:true };
+  }
+  if(fx.voltar === 0) return { ok:false, motivo:'este funil não permite voltar etapa' };
+  if(fx.voltar > 0 && -d > fx.voltar)
+    return { ok:false, motivo:'só dá para voltar ' + fx.voltar + ' etapa(s) por vez' };
+  return { ok:true, voltando:true };
+}
+
+/* pede o motivo quando o funil exige, na volta de etapa */
+function motivoSeNecessario(card, destinoId, aval){
+  var fx = fluxoDo(card.funil_id);
+  if(!fx.motivo_voltar || !aval || !aval.voltando) return '';
+  var m = prompt('Por que este card está voltando para "' + nomeEtapa(destinoId) + '"?');
+  return (m || '').trim();
+}
+
+/* tenta mover respeitando o fluxo; devolve Promise(bool) */
+function moverComRegra(card, destinoId, origem, regraNome){
+  var aval = movimentoPermitido(card, destinoId);
+  if(!aval.ok){ toast(aval.motivo, true); return Promise.resolve(false); }
+  var motivo = motivoSeNecessario(card, destinoId, aval);
+  if(motivo === null) return Promise.resolve(false);
+  return moverCard(card, destinoId, origem, regraNome, motivo).then(function(){
+    return avaliarRegras(card, 'entrada');
+  }).then(function(){ return true; });
+}
+
 /* atraso: dias além do prazo da etapa (0 = dentro do prazo ou sem prazo) */
 function atrasoDias(card){
   var e = etapaPor(card.etapa_id);
@@ -1934,12 +2105,21 @@ function renderKanban(){
     return;
   }
   var termo = normal(S.busca);
-  S.colunasAtuais = S.etapas.map(function(e){
-    return { id:e.id, nome:e.nome, qtd: aplicarFiltro(cardsDaEtapa(e, termo), e).length };
+  var ordenadas = [];
+  etapasPrincipais(f.id).forEach(function(e){
+    ordenadas.push(e);
+    ramosDe(e.id).forEach(function(r){ ordenadas.push(r); });
   });
-  var etapasVis = S.etapas;
+  S.etapas.forEach(function(e){            // desvio órfão (pai apagado) não some
+    if(ordenadas.indexOf(e) < 0) ordenadas.push(e);
+  });
+  S.colunasAtuais = ordenadas.map(function(e){
+    return { id:e.id, nome:(ehRamo(e) ? '↳ ' : '') + e.nome,
+             qtd: aplicarFiltro(cardsDaEtapa(e, termo), e).length };
+  });
+  var etapasVis = ordenadas;
   if(ehMovel() && S.etapaMovel){
-    var so = S.etapas.filter(function(e){ return e.id === S.etapaMovel; });
+    var so = ordenadas.filter(function(e){ return e.id === S.etapaMovel; });
     if(so.length) etapasVis = so;
   }
   box.innerHTML = etapasVis.map(function(e){ return colunaHTML(e, termo); }).join('');
@@ -2050,21 +2230,31 @@ function colunaHTML(e, termo){
   var filtroOn = !!S.filtroAberto[e.id];
   var autos = {
     sai: S.regras.filter(function(r){
-      return r.ativo && r.etapa_destino_id !== e.id &&
+      var mv = acoesDaRegra(r).filter(function(a){ return a.acao === 'mover'; })[0];
+      return r.ativo && mv && mv.etapa_id !== e.id &&
              (r.etapa_origem_id === e.id || !r.etapa_origem_id);
     }),
-    chega: S.regras.filter(function(r){ return r.ativo && r.etapa_destino_id === e.id; })
+    chega: S.regras.filter(function(r){
+      var mv = acoesDaRegra(r).filter(function(a){ return a.acao === 'mover'; })[0];
+      return r.ativo && mv && mv.etapa_id === e.id;
+    })
   };
 
-  return '<div class="col" data-etapa="' + esc(e.id) + '" style="--cor:' + esc(e.cor) + '">' +
+  var ramo = ehRamo(e);
+  var pai = ramo ? etapaPor(e.ramo_de) : null;
+  return '<div class="col' + (ramo ? ' col-ramo' : '') + '" data-etapa="' + esc(e.id) + '" ' +
+      'style="--cor:' + esc(ramo ? '#B8801F' : e.cor) + '">' +
     '<div class="col-head">' +
+      (ramo ? '<div class="l2" style="margin:0 0 5px"><span class="ramo-tag">&#8627; exceção</span>' +
+              '<span class="de">de ' + esc(pai ? pai.nome : '—') + '</span></div>' : '') +
       '<div class="l1">' +
         (podeEditar() ? '<input type="checkbox" class="sel-col" data-selcol="' + esc(e.id) + '"' +
           (lista.length && lista.every(function(c){ return S.selecao[c.id]; }) ? ' checked' : '') +
           ' title="Selecionar todos os cards desta etapa">' : '') +
         '<span class="nome" title="' + esc(e.nome) + '">' + esc(e.nome) + '</span>' +
-        (e.tipo !== 'normal' ? '<span class="pill ' + esc(e.tipo) + '">' +
+        (e.tipo !== 'normal' && !ramo ? '<span class="pill ' + esc(e.tipo) + '">' +
             (e.tipo === 'inicio' ? 'entrada' : e.tipo) + '</span>' : '') +
+        (ramo && e.ramo_rotulo ? '<span class="pill">' + esc(e.ramo_rotulo) + '</span>' : '') +
         '<span class="qtd">' + lista.length + (lista.length !== todos.length ? '/' + todos.length : '') + '</span>' +
       '</div>' +
       '<div class="l2">' +
@@ -2095,7 +2285,8 @@ function boxRegrasHTML(e, autos){
     if(!arr.length) return '';
     return '<div class="auto"><h5>' + titulo + '</h5><ul>' +
       arr.map(function(r){ return '<li>' + condicoesEmTexto(r) +
-        (modo === 'sai' ? ' <span class="seta-fluxo">&rarr;</span> <code>' + esc(nomeEtapaQualquer(r.etapa_destino_id)) + '</code>'
+        (modo === 'sai' ? ' <span class="seta-fluxo">&rarr;</span> <code>' +
+            esc(nomeEtapaQualquer((acoesDaRegra(r).filter(function(a){ return a.acao === 'mover'; })[0]||{}).etapa_id)) + '</code>'
                         : ' <span style="color:var(--ink-3)">(vindo de <code>' +
                           esc(r.etapa_origem_id ? nomeEtapaQualquer(r.etapa_origem_id) : 'qualquer etapa') + '</code>)</span>') +
         '</li>'; }).join('') + '</ul></div>';
@@ -2106,6 +2297,10 @@ function boxRegrasHTML(e, autos){
     (e.prazo_dias ? '<div style="margin-top:8px"><strong>Prazo:</strong> ' + e.prazo_dias + ' dias na etapa.</div>' : '') +
     (e.responsavel_nome ? '<div style="margin-top:6px"><strong>Responsável:</strong> ' + esc(e.responsavel_nome) + '</div>' : '') +
     '<div style="margin-top:6px"><strong>Saída:</strong> ' + esc(movimentoTexto(e)) + '</div>' +
+    (ehRamo(e) ? '<div style="margin-top:4px"><strong>Desvio de:</strong> ' +
+        esc(nomeEtapa(e.ramo_de)) + ' — ao liberar, o card volta para o fluxo</div>' : '') +
+    '<div style="margin-top:4px;color:var(--ink-3)">Fluxo do funil: ' +
+      esc(resumoFluxo(fluxoDo(e.funil_id)).join(' · ')) + '</div>' +
     lista('Movimentação automática — sai daqui quando', autos.sai, 'sai') +
     lista('Movimentação automática — chega aqui quando', autos.chega, 'chega') +
   '</div>';
@@ -2159,11 +2354,11 @@ function cardHTML(c, virtual){
   var d = dias(c.etapa_desde);
   var atraso = atrasoDias(c);
   var atrasado = atraso > 0;
-  var ctx = '';
+  var ctx = ehRamo(e) ? '<span class="chip excecao">&#8627; exceção</span>' : '';
   if(virtual){
     var fu = funilPor(c.funil_id);
-    ctx = '<span class="chip"><b>Funil:</b> ' + esc(fu ? fu.nome : '—') + '</span>' +
-          '<span class="chip"><b>Etapa:</b> ' + esc(nomeEtapa(c.etapa_id)) + '</span>';
+    ctx += '<span class="chip"><b>Funil:</b> ' + esc(fu ? fu.nome : '—') + '</span>' +
+           '<span class="chip"><b>Etapa:</b> ' + esc(nomeEtapa(c.etapa_id)) + '</span>';
   }
   var chips = ctx + camposDoFunil(c.funil_id).filter(function(f){ return f.mostrar_no_card; }).map(function(f){
     var v = (c.dados||{})[f.chave];
@@ -2176,8 +2371,9 @@ function cardHTML(c, virtual){
     return '<span class="chip"><b>' + esc(f.rotulo) + ':</b> ' + esc(texto(v).slice(0,40)) + '</span>';
   }).join('');
 
-  return '<div class="kcard' + (atrasado ? ' atrasado' : '') + '" data-card="' + esc(c.id) + '" ' +
-      'draggable="' + (podeEditar() && !virtual ? 'true':'false') + '" ' +
+  var podeArrastar = podeEditar() && !virtual && fluxoDo(c.funil_id).arrastar !== false;
+  return '<div class="kcard' + (atrasado ? ' atrasado' : '') + (ehRamo(e) ? ' em-ramo' : '') +
+      '" data-card="' + esc(c.id) + '" draggable="' + (podeArrastar ? 'true':'false') + '" ' +
       'style="--cor:' + esc((e && e.cor) || '#7C1B29') + '">' +
     '<div class="kc-topo">' +
       (podeEditar() ? '<input type="checkbox" class="kc-sel" data-sel="' + esc(c.id) + '"' +
@@ -2219,9 +2415,15 @@ function ligarArquivos(escopo){
 
 /* botões de liberação rápida da etapa, direto no card */
 function vizinhas(card){
-  var lista = etapasDoFunil(card.funil_id);
-  var i = -1;
-  lista.forEach(function(e, k){ if(e.id === card.etapa_id) i = k; });
+  var etapa = etapaPor(card.etapa_id);
+  var lista = etapasPrincipais(card.funil_id);
+  var i = indicePrincipal(etapa);
+  if(ehRamo(etapa)){
+    /* no desvio: volta é a etapa de onde ele saiu, seguir é retomar o fluxo */
+    return { anterior: etapaPor(etapa.ramo_de),
+             proxima: (i >= 0 && i < lista.length - 1) ? lista[i+1] : null,
+             voltandoAoFluxo: true };
+  }
   return { anterior: i > 0 ? lista[i-1] : null,
            proxima: (i >= 0 && i < lista.length - 1) ? lista[i+1] : null };
 }
@@ -2280,7 +2482,8 @@ function liberarCard(id, dir){
   var v = vizinhas(card);
   var alvo = dir > 0 ? v.proxima : v.anterior;
   if(!alvo) return;
-  moverCard(card, alvo.id, 'manual', null).then(function(){
+  moverComRegra(card, alvo.id, 'manual', null).then(function(ok){
+    if(!ok) return;
     renderKanban();
     toast((dir > 0 ? 'Liberado para ' : 'Devolvido para ') + alvo.nome);
   });
@@ -2392,9 +2595,10 @@ function ligarKanban(){
       ev.preventDefault(); col.classList.remove('drop');
       if(!podeEditar()) return;
       var id = ev.dataTransfer.getData('text/plain');
-      var card = S.cards.filter(function(c){ return c.id === id; })[0];
+      var card = S.cardsTodos.filter(function(c){ return c.id === id; })[0];
       if(!card || card.etapa_id === zona.dataset.drop) return;
-      moverCard(card, zona.dataset.drop, 'manual', null).then(function(){
+      moverComRegra(card, zona.dataset.drop, 'manual', null).then(function(ok){
+        if(!ok) return;
         renderKanban();
         toast('Card movido para ' + nomeEtapa(zona.dataset.drop));
       });
@@ -2455,11 +2659,18 @@ function moverSelecionados(){
     return S.cardsTodos.filter(function(c){ return c.id === id; })[0];
   }).filter(function(c){ return c && c.etapa_id !== etapaId; });
   if(!cards.length){ toast('Os cards já estão nessa etapa.'); return; }
-  if(!confirm('Mover ' + cards.length + ' card(s) para "' + nomeEtapa(etapaId) + '"?')) return;
+  var fora = cards.filter(function(c){ return !movimentoPermitido(c, etapaId).ok; });
+  var aviso = fora.length
+    ? '\n\n' + fora.length + ' deles ficam fora da regra de fluxo do funil — como administrador, ' +
+      'você pode mover assim mesmo.'
+    : '';
+  if(!confirm('Mover ' + cards.length + ' card(s) para "' + nomeEtapa(etapaId) + '"?' + aviso)) return;
   toast('Movendo ' + cards.length + ' card(s)…');
   function passo(i){
     if(i >= cards.length) return Promise.resolve();
-    return moverCard(cards[i], etapaId, 'manual', null).then(function(){ return passo(i + 1); });
+    return moverCard(cards[i], etapaId, 'manual', null).then(function(){
+      return avaliarRegras(cards[i], 'entrada');
+    }).then(function(){ return passo(i + 1); });
   }
   passo(0).then(function(){
     S.selecao = {};
@@ -2498,7 +2709,7 @@ function excluirSelecionados(){
 }
 
 /* ------------------------------------------------------ mover e historico */
-function moverCard(card, etapaId, origem, regraNome){
+function moverCard(card, etapaId, origem, regraNome, motivo){
   var de = nomeEtapa(card.etapa_id), para = nomeEtapa(etapaId), t = agora();
   return sb.from('funil_cards')
     .update({ etapa_id: etapaId, etapa_desde: t, atualizado_em: t })
@@ -2508,7 +2719,9 @@ function moverCard(card, etapaId, origem, regraNome){
       card.etapa_id = etapaId; card.etapa_desde = t;
       return sb.from('funil_historico').insert({
         card_id: card.id, etapa_de: de, etapa_para: para,
-        origem: origem, regra_nome: regraNome || null, usuario: euSou()
+        origem: origem, regra_nome: regraNome || null,
+        detalhe: motivo ? 'Motivo: ' + motivo : null,
+        usuario: origem === 'regra' ? ('automação: ' + (regraNome || '')) : euSou()
       });
     })
     .catch(function(e){ erroSb(e, 'mover card'); });
@@ -2608,33 +2821,108 @@ function testarCondicao(card, c){
 
 function regraBate(card, regra){
   var conds = regra.condicoes || [];
-  if(!conds.length) return false;
+  /* gatilhos de etapa e de prazo podem valer sem condição nenhuma */
+  if(!conds.length && regra.gatilho !== 'entrada' && regra.gatilho !== 'prazo') return false;
   if(regra.etapa_origem_id && regra.etapa_origem_id !== card.etapa_id) return false;
-  if(regra.etapa_destino_id === card.etapa_id) return false;
+  var mover = acoesDaRegra(regra).filter(function(a){ return a.acao === 'mover'; })[0];
+  if(mover && mover.etapa_id === card.etapa_id) return false;
+  if(!conds.length) return true;
   if(regra.logica === 'OU'){
     return conds.some(function(c){ return testarCondicao(card, c); });
   }
   return conds.every(function(c){ return testarCondicao(card, c); });
 }
 
+/* ------------------------------ automações ---------------------------- */
+var ACOES = [
+  { v:'mover',       t:'Mover o card para a etapa', campo:'etapa' },
+  { v:'responsavel', t:'Definir o responsável',      campo:'pessoa' },
+  { v:'comentar',    t:'Escrever um comentário',     campo:'texto' }
+];
+function acoesDaRegra(r){
+  if(r.acoes && r.acoes.length) return r.acoes;
+  return r.etapa_destino_id ? [{ acao:'mover', etapa_id: r.etapa_destino_id }] : [];
+}
+function descreverAcoes(r){
+  var lista = acoesDaRegra(r);
+  if(!lista.length) return '<em>sem ação</em>';
+  return lista.map(function(a){
+    if(a.acao === 'mover')       return 'mover para <code>' + esc(nomeEtapaQualquer(a.etapa_id)) + '</code>';
+    if(a.acao === 'responsavel') return 'responsável passa a ser <code>' + esc(a.valor || '—') + '</code>';
+    if(a.acao === 'comentar')    return 'comentar <code>' + esc((a.valor || '').slice(0,40)) + '</code>';
+    return esc(a.acao);
+  }).join(' · ');
+}
+
+/* limiar de dias do gatilho "prazo" */
+function prazoDaRegra(card, regra){
+  if(regra.prazo_dias) return num(regra.prazo_dias);
+  var e = etapaPor(card.etapa_id);
+  return (e && e.prazo_dias) ? num(e.prazo_dias) : 0;
+}
+
+function executarAcoes(card, regra){
+  var lista = acoesDaRegra(regra);
+  var feitos = [];
+  function passo(i){
+    if(i >= lista.length) return Promise.resolve(feitos);
+    var a = lista[i] || {};
+    if(a.acao === 'mover' && a.etapa_id && a.etapa_id !== card.etapa_id){
+      return moverCard(card, a.etapa_id, 'regra', regra.nome).then(function(){
+        feitos.push({ tipo:'mover', etapa:a.etapa_id, nome: nomeEtapa(a.etapa_id), regra: regra.nome });
+        return passo(i+1);
+      });
+    }
+    if(a.acao === 'responsavel' && a.valor && a.valor !== card.responsavel_nome){
+      return sb.from('funil_cards').update({ responsavel_nome: a.valor, atualizado_em: agora() })
+        .eq('id', card.id).then(function(){
+          card.responsavel_nome = a.valor;
+          feitos.push({ tipo:'responsavel', valor:a.valor, regra: regra.nome });
+          return registrar(card.id, 'edicao', 'Automação "' + regra.nome + '": responsável passou a ser ' + a.valor);
+        }).then(function(){ return passo(i+1); });
+    }
+    if(a.acao === 'comentar' && a.valor){
+      return sb.from('funil_historico').insert({
+        card_id: card.id, origem:'comentario', detalhe: a.valor,
+        usuario: 'automação: ' + regra.nome
+      }).then(function(){
+        feitos.push({ tipo:'comentar', regra: regra.nome });
+        return passo(i+1);
+      }, function(){ return passo(i+1); });
+    }
+    return passo(i+1);
+  }
+  return passo(0);
+}
+
 function avaliarRegras(card, evento){
-  var aplicaveis = S.regras.filter(function(r){
+  var fx = fluxoDo(card.funil_id);
+  if(!fx.automacao) return Promise.resolve([]);
+
+  var aplicaveis = (S.regras.length ? S.regras : regrasDoFunil(card.funil_id)).filter(function(r){
     if(!r.ativo) return false;
-    if(evento === 'manual') return true;
-    if(r.gatilho === 'manual') return false;
-    if(r.gatilho === 'criar')  return evento === 'criar';
+    if(r.gatilho === 'prazo')   return (evento === 'prazo' || evento === 'manual') &&
+                                       dias(card.etapa_desde) >= prazoDaRegra(card, r) &&
+                                       prazoDaRegra(card, r) > 0;
+    if(r.gatilho === 'entrada') return evento === 'entrada' || evento === 'manual';
+    if(evento === 'manual')     return true;
+    if(evento === 'entrada' || evento === 'prazo') return false;
+    if(r.gatilho === 'manual')  return false;
+    if(r.gatilho === 'criar')   return evento === 'criar';
     return evento === 'criar' || evento === 'salvar';
   }).sort(function(a,b){ return (a.ordem||0) - (b.ordem||0); });
 
-  var passos = [];
+  var passos = [], usadas = {};
   function proximo(n){
     if(n >= 5) return Promise.resolve(passos);
-    var regra = aplicaveis.filter(function(r){ return regraBate(card, r); })[0];
+    var regra = aplicaveis.filter(function(r){
+      return !usadas[r.id] && regraBate(card, r);
+    })[0];
     if(!regra) return Promise.resolve(passos);
-    var destino = regra.etapa_destino_id;
-    if(passos.some(function(p){ return p.etapa === destino; })) return Promise.resolve(passos);
-    return moverCard(card, destino, 'regra', regra.nome).then(function(){
-      passos.push({ etapa: destino, regra: regra.nome, nome: nomeEtapa(destino) });
+    usadas[regra.id] = true;
+    return executarAcoes(card, regra).then(function(feitos){
+      feitos.forEach(function(f){ if(f.tipo === 'mover') passos.push({
+        etapa:f.etapa, nome:f.nome, regra:f.regra }); });
       return proximo(n + 1);
     });
   }
@@ -2644,6 +2932,9 @@ function avaliarRegras(card, evento){
 function rodarRegrasManual(){
   if(!S.funil) return;
   if(!podeEditar()){ toast('Seu acesso é somente leitura.', true); return; }
+  if(!fluxoDo(S.funil.id).automacao){
+    toast('As automações estão desligadas no fluxo deste funil.', true); return;
+  }
   var fila = S.cards.slice();
   var movidos = 0;
   function proximo(i){
@@ -2653,12 +2944,28 @@ function rodarRegrasManual(){
       return proximo(i + 1);
     });
   }
-  toast('Avaliando condicionais…');
+  toast('Rodando automações…');
   proximo(0).then(function(){
     renderKanban();
     toast(movidos ? movidos + (movidos === 1 ? ' card movido' : ' cards movidos')
-                  : 'Nenhum card se encaixou nas condicionais');
+                  : 'Nenhum card se encaixou nas automações');
   });
+}
+
+/* automações de prazo, rodadas junto com a sincronização automática */
+function rodarRegrasDePrazo(){
+  if(!S.funil || !podeEditar() || !fluxoDo(S.funil.id).automacao) return Promise.resolve(0);
+  var temPrazo = (S.regras || []).some(function(r){ return r.ativo && r.gatilho === 'prazo'; });
+  if(!temPrazo) return Promise.resolve(0);
+  var fila = S.cards.slice(), n = 0;
+  function passo(i){
+    if(i >= fila.length) return Promise.resolve(n);
+    return avaliarRegras(fila[i], 'prazo').then(function(ps){
+      if(ps.length) n++;
+      return passo(i+1);
+    });
+  }
+  return passo(0);
 }
 
 function condicoesEmTexto(r){
@@ -2672,12 +2979,14 @@ function condicoesEmTexto(r){
 }
 
 function descreverRegra(r, curto){
-  var junta = condicoesEmTexto(r);
   var origem = r.etapa_origem_id ? nomeEtapaQualquer(r.etapa_origem_id) : 'qualquer etapa';
-  var destino = nomeEtapaQualquer(r.etapa_destino_id);
+  var temCond = (r.condicoes || []).length;
+  var quando = r.gatilho === 'prazo'
+    ? 'parado mais de ' + (r.prazo_dias || 'o prazo da etapa') + (r.prazo_dias ? ' dia(s)' : '')
+    : (temCond ? 'se ' + condicoesEmTexto(r) : 'sempre');
   return (curto ? '' : '<strong>' + esc(r.nome) + '</strong> — ') +
-         'em <code>' + esc(origem) + '</code>, se ' + junta +
-         ' <span class="seta-fluxo">&rarr;</span> <code>' + esc(destino) + '</code>';
+         'em <code>' + esc(origem) + '</code>, ' + quando +
+         (temCond && r.gatilho === 'prazo' ? ' e ' + condicoesEmTexto(r) : '');
 }
 function nomeEtapaQualquer(id){
   var todas = (S.etapas || []).concat(S.admEtapas || []);
@@ -2998,7 +3307,7 @@ function aplicarEtapaResp(){
       }));
   }
   Promise.all(tarefas).then(function(){
-    if(etapaId !== card.etapa_id) return moverCard(card, etapaId, 'manual', null);
+    if(etapaId !== card.etapa_id) return moverComRegra(card, etapaId, 'manual', null);
   }).then(function(){
     $('mdCardEtapa').textContent = nomeEtapa(card.etapa_id);
     renderKanban();
@@ -3093,6 +3402,8 @@ function renderAdmFunis(){
       '<td><strong>' + esc(f.nome) + '</strong></td>' +
       '<td>' + (fo ? '<span class="pill">' + esc(fo.rotulo) + '</span>' :
                      '<span style="color:var(--ink-3)">manual</span>') + '</td>' +
+      '<td><div class="fluxo-resumo">' + resumoFluxo(Object.assign({}, FLUXO_PADRAO, f.fluxo || {}))
+            .map(function(t){ return '<span class="p">' + esc(t) + '</span>'; }).join('') + '</div></td>' +
       '<td class="num">' + c.etapas + '</td>' +
       '<td class="num">' + c.cards + '</td>' +
       '<td><span class="pill ' + (f.ativo ? 'on' : 'off') + '">' + (f.ativo ? 'ativo' : 'inativo') + '</span></td>' +
@@ -3122,8 +3433,12 @@ function renderAdmEtapas(){
     return '<tr>' +
       '<td><button class="btn sm" data-sobe="' + esc(e.id) + '"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button> ' +
           '<button class="btn sm" data-desce="' + esc(e.id) + '"' + (i === etapas.length-1 ? ' disabled' : '') + '>&darr;</button></td>' +
-      '<td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + esc(e.cor) + ';margin-right:6px"></span>' +
-          '<strong>' + esc(e.nome) + '</strong></td>' +
+      '<td>' + (e.ramo_de ? '<span style="color:var(--s2);margin-right:4px">&#8627;</span>' :
+          '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + esc(e.cor) + ';margin-right:6px"></span>') +
+          '<strong>' + esc(e.nome) + '</strong>' +
+          (e.ramo_de ? '<div style="font-size:10.5px;color:var(--s2)">exceção de ' +
+              esc(nomeEtapaQualquer(e.ramo_de)) + (e.ramo_rotulo ? ' · ' + esc(e.ramo_rotulo) : '') + '</div>' : '') +
+          '</td>' +
       '<td><span class="pill ' + esc(e.tipo) + '">' + esc(tipos[e.tipo] || e.tipo) + '</span></td>' +
       '<td>' + (e.responsavel_nome ? esc(e.responsavel_nome) : '<span style="color:var(--neg)">definir</span>') + '</td>' +
       '<td style="color:var(--ink-2);max-width:230px;font-size:11.5px">' + esc(movimentoTexto(e)) + '</td>' +
@@ -3176,6 +3491,8 @@ function duplicarEtapa(id){
     regras: e.regras,
     prazo_dias: e.prazo_dias,
     movimento: e.movimento || 'manual',
+    ramo_de: e.ramo_de,
+    ramo_rotulo: e.ramo_rotulo,
     assinatura_chave: e.assinatura_chave,
     assinatura_quem: e.assinatura_quem || 'qualquer',
     assinatura_pessoa: e.assinatura_pessoa,
@@ -3206,6 +3523,13 @@ function abrirFunilForm(id){
   $('fFunilIcone').value = f ? f.icone : 'FN';
   $('fFunilOrdem').value = f ? f.ordem : (S.funis.length * 10);
   $('fFunilAtivo').checked = f ? f.ativo : true;
+  var fx = Object.assign({}, FLUXO_PADRAO, (f && f.fluxo) || {});
+  $('fFluxoAvancar').value   = String(fx.avancar);
+  $('fFluxoVoltar').value    = String(fx.voltar);
+  $('fFluxoAutomacao').checked = fx.automacao !== false;
+  $('fFluxoArrastar').checked  = fx.arrastar !== false;
+  $('fFluxoRamos').checked     = fx.ramos !== false;
+  $('fFluxoMotivo').checked    = !!fx.motivo_voltar;
   $('btnExcluirFunil').hidden = !f;
   abrir('mdFunil');
 }
@@ -3220,6 +3544,14 @@ function salvarFunil(){
     icone: ($('fFunilIcone').value.trim() || 'FN').toUpperCase().slice(0,3),
     ordem: parseInt($('fFunilOrdem').value, 10) || 0,
     ativo: $('fFunilAtivo').checked,
+    fluxo: {
+      avancar:  parseInt($('fFluxoAvancar').value, 10),
+      voltar:   parseInt($('fFluxoVoltar').value, 10),
+      automacao: $('fFluxoAutomacao').checked,
+      arrastar:  $('fFluxoArrastar').checked,
+      ramos:     $('fFluxoRamos').checked,
+      motivo_voltar: $('fFluxoMotivo').checked
+    },
     atualizado_em: agora()
   };
   var f = S.edit.funil;
@@ -3268,6 +3600,23 @@ function preencherFiltroEtapa(filtro){
   $('fEtapaFiltroDirecao').value = filtro.direcao || 'asc';
 }
 
+function ramoMudou(){
+  $('boxRamoRotulo').hidden = !$('fEtapaRamoDe').value;
+}
+function preencherRamoDe(etapa){
+  var lista = etapasPrincipais(S.admFunilId).filter(function(e){
+    return !etapa || e.id !== etapa.id;      // não pode pendurar em si mesma
+  });
+  var atual = etapa ? (etapa.ramo_de || '') : '';
+  $('fEtapaRamoDe').innerHTML = '<option value="">Linha principal do funil</option>' +
+    lista.map(function(e){
+      return '<option value="' + esc(e.id) + '"' + (e.id === atual ? ' selected' : '') + '>' +
+             'Desvio de: ' + esc(e.nome) + '</option>';
+    }).join('');
+  $('fEtapaRamoRotulo').value = etapa ? (etapa.ramo_rotulo || '') : '';
+  ramoMudou();
+}
+
 function movimentoMudou(){
   var mov = $('fEtapaMovimento').value;
   $('boxAssinatura').hidden = mov !== 'assinatura';
@@ -3308,6 +3657,7 @@ function abrirEtapaForm(id){
   $('fEtapaRegras').value = e ? (e.regras || '') : '';
   selectResponsavel($('fEtapaResp'), e ? (e.responsavel_nome || '') : '');
   $('fEtapaMovimento').value = (e && e.movimento) || 'manual';
+  preencherRamoDe(e);
   preencherAssinaturas(e);
   movimentoMudou();
   preencherFiltroEtapa(e ? e.filtro : null);
@@ -3345,6 +3695,8 @@ function salvarEtapa(){
     responsavel_email: conta ? conta.email : (S.edit.etapa && S.edit.etapa.responsavel_nome === resp
       ? S.edit.etapa.responsavel_email : null),
     regras: $('fEtapaRegras').value.trim() || null,
+    ramo_de: $('fEtapaRamoDe').value || null,
+    ramo_rotulo: $('fEtapaRamoDe').value ? ($('fEtapaRamoRotulo').value.trim() || null) : null,
     movimento: $('fEtapaMovimento').value,
     assinatura_chave: $('fEtapaMovimento').value === 'assinatura'
       ? ($('fEtapaAssinatura').value || null) : null,
@@ -3579,8 +3931,13 @@ function excluirCampo(){
 /* ---- condicionais ---- */
 function renderAdmRegras(){
   var regras = S.admRegras || [];
+  var fxAdm = fluxoDo(S.admFunilId);
+  $('avisoFluxoAuto').innerHTML = fxAdm.automacao ? '' :
+    '<div class="aviso erro">As automações deste funil estão <strong>desligadas</strong> no fluxo do card. ' +
+    'Nada aqui vai rodar até religar em <strong>Funis e etapas › Editar funil</strong>.</div>';
   $('admRegrasLista').innerHTML = regras.length ? regras.map(function(r){
-    var gat = { salvar:'sempre que mudar', criar:'ao entrar', manual:'manual' }[r.gatilho] || r.gatilho;
+    var gat = { salvar:'sempre que mudar', criar:'ao entrar no funil', entrada:'ao chegar na etapa',
+                prazo:'ao passar do prazo', manual:'manual' }[r.gatilho] || r.gatilho;
     return '<div class="regra-item">' +
       '<div class="l1">' +
         '<span class="nome">' + esc(r.nome) + '</span>' +
@@ -3589,9 +3946,10 @@ function renderAdmRegras(){
         '<button class="btn sm" data-editr="' + esc(r.id) + '">Editar</button>' +
       '</div>' +
       '<div class="fluxo">' + descreverRegra(r, true) + '</div>' +
+      '<div class="acoes-txt">&#8594; ' + descreverAcoes(r) + '</div>' +
     '</div>';
-  }).join('') : '<div class="vazio-geral">Nenhuma condicional neste funil. ' +
-      'Elas leem os campos do formulário de origem e movem o card sozinho.</div>';
+  }).join('') : '<div class="vazio-geral">Nenhuma automação neste funil. ' +
+      'Elas leem os campos do formulário de origem e agem sozinhas no card.</div>';
 
   Array.prototype.forEach.call($('admRegrasLista').querySelectorAll('[data-editr]'), function(b){
     b.addEventListener('click', function(){ abrirRegraForm(b.dataset.editr); });
@@ -3648,45 +4006,115 @@ function lerCondicoes(){
   });
 }
 
+function gatilhoMudou(){
+  var g = $('fRegraGatilho').value;
+  $('boxRegraPrazo').hidden = g !== 'prazo';
+  $('ajudaCondicoes').textContent = (g === 'entrada' || g === 'prazo')
+    ? 'Neste gatilho as condições são opcionais — sem nenhuma, vale para todo card.'
+    : (function(){
+        var f = admFunil(); var c = cat(f && f.fonte);
+        return c ? 'Campos vindos de ' + c.rotulo + ' — cada gravação lá reavalia esta automação.'
+                 : 'Campos do formulário deste funil.';
+      })();
+}
+
+function acaoLinhaHTML(a){
+  a = a || { acao:'mover' };
+  var etapas = S.admEtapas || [];
+  return '<div class="acao-linha">' +
+    '<select class="tipo">' + ACOES.map(function(x){
+      return '<option value="' + x.v + '"' + (x.v === a.acao ? ' selected' : '') + '>' + esc(x.t) + '</option>';
+    }).join('') + '</select>' +
+    '<select class="val-etapa"' + (a.acao === 'mover' ? '' : ' hidden') + '>' +
+      etapas.map(function(e){
+        return '<option value="' + esc(e.id) + '"' + (e.id === a.etapa_id ? ' selected' : '') + '>' +
+               (e.ramo_de ? '↳ ' : '') + esc(e.nome) + '</option>';
+      }).join('') + '</select>' +
+    '<select class="val-pessoa"' + (a.acao === 'responsavel' ? '' : ' hidden') + '></select>' +
+    '<input class="val val-texto" type="text" placeholder="texto do comentário" ' +
+      'value="' + esc(a.acao === 'comentar' ? (a.valor || '') : '') + '"' +
+      (a.acao === 'comentar' ? '' : ' hidden') + '>' +
+    '<button class="x" title="remover">&times;</button>' +
+  '</div>';
+}
+
+function addAcao(a){
+  var div = document.createElement('div');
+  div.innerHTML = acaoLinhaHTML(a);
+  var linha = div.firstChild;
+  selectResponsavel(linha.querySelector('.val-pessoa'),
+                    (a && a.acao === 'responsavel') ? (a.valor || '') : '');
+  function ajustar(){
+    var t = linha.querySelector('.tipo').value;
+    linha.querySelector('.val-etapa').hidden  = t !== 'mover';
+    linha.querySelector('.val-pessoa').hidden = t !== 'responsavel';
+    linha.querySelector('.val-texto').hidden  = t !== 'comentar';
+  }
+  linha.querySelector('.tipo').addEventListener('change', ajustar);
+  linha.querySelector('.x').addEventListener('click', function(){ linha.remove(); });
+  $('acaoLista').appendChild(linha);
+  ajustar();
+}
+
+function lerAcoes(){
+  return Array.prototype.map.call($('acaoLista').querySelectorAll('.acao-linha'), function(l){
+    var t = l.querySelector('.tipo').value;
+    if(t === 'mover')       return { acao:'mover', etapa_id: l.querySelector('.val-etapa').value };
+    if(t === 'responsavel') return { acao:'responsavel', valor: l.querySelector('.val-pessoa').value };
+    return { acao:'comentar', valor: l.querySelector('.val-texto').value };
+  }).filter(function(a){
+    return a.acao === 'mover' ? !!a.etapa_id : !!a.valor;
+  });
+}
+
 function abrirRegraForm(id){
   if(!S.admFunilId){ toast('Escolha um funil primeiro.', true); return; }
   if(!(S.admEtapas || []).length){ toast('Cadastre as etapas antes das condicionais.', true); return; }
-  var f = admFunil();
-  var c = cat(f && f.fonte);
-  $('ajudaCondicoes').textContent = c
-    ? 'Campos vindos de ' + c.rotulo + ' — cada gravação lá reavalia esta condicional.'
-    : 'Campos do formulário deste funil.';
   var r = id ? (S.admRegras || []).filter(function(x){ return x.id === id; })[0] : null;
   S.edit.regra = r || null;
-  $('mdRegraTit').textContent = r ? 'Editar condicional' : 'Nova condicional';
+  $('mdRegraTit').textContent = r ? 'Editar automação' : 'Nova automação';
   $('fRegraNome').value = r ? r.nome : '';
   $('fRegraGatilho').value = r ? r.gatilho : 'salvar';
+  $('fRegraPrazo').value = r && r.prazo_dias ? r.prazo_dias : '';
   $('fRegraLogica').value = r ? r.logica : 'E';
   $('fRegraAtivo').checked = r ? r.ativo : true;
   opcoesEtapas($('fRegraOrigem'), r ? (r.etapa_origem_id || '') : '', true);
-  opcoesEtapas($('fRegraDestino'), r ? r.etapa_destino_id : (S.admEtapas[0] || {}).id, false);
   $('condLista').innerHTML = '';
   ((r && r.condicoes) || []).forEach(addCondicao);
   if(!r) addCondicao();
+  $('acaoLista').innerHTML = '';
+  acoesDaRegra(r || {}).forEach(addAcao);
+  if(!r) addAcao({ acao:'mover', etapa_id: (S.admEtapas[1] || S.admEtapas[0] || {}).id });
+  gatilhoMudou();
   $('btnExcluirRegra').hidden = !r;
   abrir('mdRegra');
 }
 
 function salvarRegra(){
   var nome = $('fRegraNome').value.trim();
-  if(!nome){ toast('Dê um nome à condicional.', true); return; }
+  if(!nome){ toast('Dê um nome à automação.', true); return; }
+  var gatilho = $('fRegraGatilho').value;
   var conds = lerCondicoes().filter(function(c){ return c.campo; });
-  if(!conds.length){ toast('Adicione ao menos uma condição.', true); return; }
-  var destino = $('fRegraDestino').value;
-  if(!destino){ toast('Escolha a etapa de destino.', true); return; }
+  if(!conds.length && gatilho !== 'entrada' && gatilho !== 'prazo'){
+    toast('Adicione ao menos uma condição.', true); return;
+  }
+  var acoes = lerAcoes();
+  if(!acoes.length){ toast('Adicione ao menos uma ação.', true); return; }
   var origem = $('fRegraOrigem').value || null;
-  if(origem && origem === destino){ toast('Origem e destino não podem ser a mesma etapa.', true); return; }
+  var mover = acoes.filter(function(a){ return a.acao === 'mover'; })[0];
+  if(origem && mover && origem === mover.etapa_id){
+    toast('Origem e destino não podem ser a mesma etapa.', true); return;
+  }
 
   var reg = {
     funil_id: S.admFunilId, nome: nome,
-    etapa_origem_id: origem, etapa_destino_id: destino,
+    etapa_origem_id: origem,
+    etapa_destino_id: mover ? mover.etapa_id : null,
+    acoes: acoes,
+    prazo_dias: gatilho === 'prazo' && $('fRegraPrazo').value !== ''
+      ? parseInt($('fRegraPrazo').value, 10) : null,
     logica: $('fRegraLogica').value, condicoes: conds,
-    gatilho: $('fRegraGatilho').value, ativo: $('fRegraAtivo').checked,
+    gatilho: gatilho, ativo: $('fRegraAtivo').checked,
     ordem: S.edit.regra ? S.edit.regra.ordem : (S.admRegras || []).length
   };
   var r = S.edit.regra;
@@ -3800,6 +4228,9 @@ window.limparForaDoHub = limparForaDoHub;
 window.limparSelecao = limparSelecao;
 window.movimentoMudou = movimentoMudou;
 window.quemAssinaMudou = quemAssinaMudou;
+window.ramoMudou = ramoMudou;
+window.gatilhoMudou = gatilhoMudou;
+window.addAcao = addAcao;
 window.excluirSelecionados = excluirSelecionados;
 window.renderKanban = renderKanban;
 window.buscar = buscar;
