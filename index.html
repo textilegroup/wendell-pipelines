@@ -398,11 +398,11 @@ a.kc-btn{text-decoration:none}
 /* ---------- barra fixa do funil no celular ---------- */
 .barra-movel{display:none}
 .barra-movel.on{
-  align-items:center;gap:8px;padding:7px 10px;margin:-14px -12px 12px;
+  align-items:center;gap:6px;padding:7px 9px;margin:-14px -12px 12px;
   background:linear-gradient(100deg,var(--wine-deep) 0%,var(--wine) 62%,var(--wine-deep) 100%);
   color:#fff;position:sticky;top:34px;z-index:60;box-shadow:var(--shadow)}
-.barra-movel .bm-tit{flex:1;min-width:0;font-size:13px;font-weight:700;line-height:1.15}
-.barra-movel select{max-width:42%;min-width:110px;padding:6px 7px;border-radius:8px;
+.barra-movel .bm-tit{flex:1;min-width:62px;font-size:12.5px;font-weight:700;line-height:1.15}
+.barra-movel select{max-width:34%;min-width:86px;padding:6px 6px;border-radius:8px;
   border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;
   font-size:11.5px;font-weight:600}
 .barra-movel select option{color:var(--ink);background:var(--card)}
@@ -411,8 +411,9 @@ a.kc-btn{text-decoration:none}
 .barra-movel .bm-sub{font-size:9.5px;opacity:.75;font-weight:600;
   letter-spacing:.07em;text-transform:uppercase}
 .barra-movel button{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.1);
-  color:#fff;border-radius:8px;min-width:32px;height:30px;padding:0 9px;font-size:14px;
-  font-weight:700;cursor:pointer;display:grid;place-items:center}
+  color:#fff;border-radius:8px;min-width:30px;height:30px;padding:0 6px;font-size:14px;
+  font-weight:700;cursor:pointer;display:grid;place-items:center;flex:0 0 auto}
+#bmFluxo{font-size:15px}
 .barra-movel button.pri{background:#fff;color:var(--wine-deep);border-color:#fff}
 
 /* ---------- reposicionamento de funis ---------- */
@@ -520,7 +521,14 @@ a.kc-btn{text-decoration:none}
 .no-head .tag{font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
   border-radius:4px;padding:1px 5px;background:var(--chip);border:1px solid var(--line-2);color:var(--ink-3)}
 .no.ramo .no-head .tag{background:rgba(184,128,31,.14);border-color:rgba(184,128,31,.4);color:var(--s2)}
-.no-body{padding:6px;display:flex;flex-direction:column;gap:5px;min-height:44px}
+.no-body{padding:6px;display:flex;flex-direction:column;gap:5px;min-height:44px;
+  max-height:212px;overflow-y:auto;scrollbar-width:thin;
+  scrollbar-color:var(--line-2) transparent}
+.no-body::-webkit-scrollbar{width:8px}
+.no-body::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:8px;
+  border:2px solid var(--card)}
+.no-body::-webkit-scrollbar-track{background:transparent}
+.no-body.rolando{box-shadow:inset 0 -10px 10px -10px rgba(0,0,0,.18)}
 .no-body .vazio{font-size:11px;color:var(--ink-3);text-align:center;padding:10px 4px;
   border:1px dashed var(--line-2);border-radius:7px}
 .no-pe{display:flex;gap:5px;padding:0 6px 7px}
@@ -543,7 +551,18 @@ a.kc-btn{text-decoration:none}
 .mini .m2 .r{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px}
 .mini .m2 .val{margin-left:auto;font-family:"Archivo Narrow","Archivo",sans-serif;font-weight:700;
   color:var(--ink-2)}
-.mini .m2 .doc{color:var(--wine);font-weight:700}
+.mini .m2 .doc{color:var(--neg);font-weight:700;text-decoration:none;font-size:12px;
+  line-height:1;padding:0 1px;flex:0 0 auto}
+.mini .m2 .doc:hover{opacity:.7}
+.mini .kc-acoes{margin-top:6px}
+.mini .kc-acoes .kc-btn{min-height:30px;font-size:11px;padding:5px 8px}
+.mini .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.mini .chip{background:var(--chip);border:1px solid var(--line-2);border-radius:5px;
+  padding:1px 5px;font-size:9.5px;color:var(--ink-2);max-width:100%;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini .chip b{color:var(--ink-3);font-weight:700}
+.mini .chip.excecao{background:rgba(184,128,31,.12);border-color:rgba(184,128,31,.4);
+  color:var(--s2);font-weight:700}
 .mini.atrasado{background:rgba(163,58,42,.10);border-color:rgba(163,58,42,.45)}
 .mini.atrasado .t{color:var(--neg)}
 .mini .sino{color:var(--neg);font-weight:700;font-size:10px;flex:0 0 auto}
@@ -571,6 +590,9 @@ a.kc-btn{text-decoration:none}
   width:28px;height:28px;cursor:pointer;color:var(--ink-2);font-size:15px;line-height:1}
 .painel-etapa .pcorpo{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
 .painel-etapa .regras-box,.painel-etapa .filtro-box{margin:0}
+
+/* a consulta do fluxo só existe no celular */
+.fluxo-consulta{display:none}
 
 @media (max-width:860px){
   .card-split{flex-direction:column;max-height:none}
@@ -623,8 +645,13 @@ a.kc-btn{text-decoration:none}
     color:var(--ink-3);background:var(--sunk);flex-wrap:wrap}
   .no-m .nm-sub .atr{color:var(--neg);font-weight:700}
   .no-m .nm-sub .soma{margin-left:auto;font-weight:700;color:var(--ink-2)}
-  .no-m .nm-body{padding:10px;display:flex;flex-direction:column;gap:9px;
-    border-top:1px solid var(--line)}
+  .no-m .nm-body{padding:9px;display:flex;flex-direction:column;gap:7px;
+    border-top:1px solid var(--line);max-height:none;overflow:visible}
+  .no-m .nm-body .mini{padding:8px 10px}
+  .no-m .nm-body .mini .m1 .t{font-size:12.5px}
+  .no-m .nm-body .mini .m2{font-size:10.5px;margin-top:3px}
+  .no-m .nm-body .mini .kc-acoes .kc-btn{min-height:34px;font-size:11.5px}
+  .no-body{max-height:none}
   .no-m .nm-body .vazio{font-size:11.5px;color:var(--ink-3);text-align:center;padding:12px 4px;
     border:1px dashed var(--line-2);border-radius:8px}
   .no-m .nm-acoes{display:flex;gap:6px;padding:0 10px 10px}
@@ -633,6 +660,49 @@ a.kc-btn{text-decoration:none}
   .no-m .nm-acoes button.ativo{border-color:var(--s2);color:var(--s2)}
   .painel-etapa{width:100%;max-width:100%;border-left:0}
   .org-barra{display:none}
+
+  /* ---- consulta do fluxo em tela cheia ---- */
+  .fluxo-consulta{position:fixed;inset:0;z-index:70;background:var(--bg);
+    display:none;flex-direction:column}
+  .fluxo-consulta.on{display:flex}
+  .fluxo-consulta .fc-cab{display:flex;align-items:center;gap:10px;padding:13px 14px;
+    background:var(--wine);color:#fff}
+  .fluxo-consulta .fc-cab h3{flex:1;min-width:0;font-size:14px;font-weight:700;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fluxo-consulta .fc-cab .sub{font-size:10px;opacity:.75;display:block;font-weight:600;
+    letter-spacing:.04em;text-transform:uppercase}
+  .fluxo-consulta .fc-cab .x{border:1px solid rgba(255,255,255,.35);background:transparent;
+    color:#fff;border-radius:8px;width:34px;height:34px;font-size:18px;line-height:1;
+    flex:0 0 auto}
+  .fluxo-consulta .fc-corpo{flex:1;overflow:auto;padding:16px 14px 30px}
+  .fc-no{position:relative;background:var(--card);border:1px solid var(--line);
+    border-left:4px solid var(--cor,var(--wine));border-radius:10px;padding:10px 12px;
+    box-shadow:var(--sh);width:100%;text-align:left;font-family:inherit;display:block}
+  .fc-no .l1{display:flex;align-items:center;gap:8px}
+  .fc-no .l1 .nome{flex:1;min-width:0;font-size:13px;font-weight:700;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fc-no .l1 .qtd{font-family:"Archivo Narrow","Archivo",sans-serif;font-size:12.5px;
+    font-weight:700;background:var(--cor,var(--wine));color:#fff;border-radius:9px;padding:2px 8px}
+  .fc-no .l2{display:flex;align-items:center;gap:8px;margin-top:4px;font-size:10.5px;
+    color:var(--ink-3);flex-wrap:wrap}
+  .fc-no .l2 .atr{color:var(--neg);font-weight:700}
+  .fc-no .l2 .soma{margin-left:auto;font-weight:700;color:var(--ink-2)}
+  .fc-no .tag{font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+    border-radius:4px;padding:1px 5px;background:rgba(184,128,31,.14);
+    border:1px solid rgba(184,128,31,.4);color:var(--s2)}
+  .fc-no.ramo{border-style:dashed;border-left-style:solid;border-left-color:var(--s2)}
+  .fc-seta{display:flex;align-items:center;justify-content:center;height:26px;
+    color:var(--wine-soft);font-size:15px;line-height:1}
+  .fc-linha{position:relative}
+  .fc-ramo{margin:0 0 0 26px;position:relative}
+  .fc-ramo::before{content:"";position:absolute;left:-16px;top:-14px;width:16px;height:32px;
+    border-left:2px dashed var(--s2);border-bottom:2px dashed var(--s2);
+    border-bottom-left-radius:8px}
+  .fc-ramo .fc-volta{font-size:10px;color:var(--s2);font-weight:600;padding:5px 2px 0 2px;
+    display:flex;align-items:center;gap:5px}
+  .fc-espaco{height:12px}
+  .fc-rodape{margin-top:18px;font-size:11px;color:var(--ink-3);text-align:center;
+    border-top:1px dashed var(--line-2);padding-top:12px}
 
   /* uma coluna por largura de tela, rolando para baixo */
   .kanban{flex-direction:column;overflow-x:visible;gap:14px;padding-bottom:6px}
@@ -691,6 +761,7 @@ a.kc-btn{text-decoration:none}
         <div class="bm-sub" id="bmSub"></div>
       </div>
       <select id="bmEtapa" title="Etapa" onchange="escolherEtapaMovel(this.value)"></select>
+      <button id="bmFluxo" onclick="abrirConsultaFluxo()" title="Ver o fluxo das etapas">&#8916;</button>
       <button id="bmBuscaBtn" onclick="toggleBuscaMovel()" title="Buscar">&#9906;</button>
       <button id="bmSync" onclick="sincronizar(false)" title="Sincronizar">&#8635;</button>
       <button class="pri" id="bmNovo" onclick="novoCard()" title="Novo card">+</button>
@@ -732,6 +803,15 @@ a.kc-btn{text-decoration:none}
         <div id="orgBarra"></div>
         <div id="kanban" class="kanban"></div>
       </div>
+    </div>
+
+    <!-- celular: consulta do fluxo em tela cheia -->
+    <div class="fluxo-consulta no-print" id="fluxoConsulta">
+      <div class="fc-cab">
+        <h3><span class="sub">Fluxo das etapas</span><span id="fcTitulo">Funil</span></h3>
+        <button class="x" onclick="fecharConsultaFluxo()" title="Fechar">&times;</button>
+      </div>
+      <div class="fc-corpo" id="fcCorpo"></div>
     </div>
 
     <!-- painel lateral: todos os cards de uma etapa -->
@@ -1238,6 +1318,7 @@ var S = {
   organizando: false,     // modo "organizar fluxo" (admin, no computador)
   posTemp: {},            // posições arrastadas ainda não salvas
   painelEtapa: '',        // etapa com o painel "ver todos" aberto
+  consultaFluxo: false,   // celular: tela cheia com o desenho do fluxo
   filtroAberto: {},       // etapas com o filtro aberto
   filtros: {},            // filtro em uso por etapa (comeca no padrao do ADM)
   sincronizando: false,
@@ -1543,6 +1624,7 @@ function abrirFunil(id, semSync){
   S.funil = f;
   if(!S.funil || !S.funilAnterior || S.funilAnterior !== id){
     S.painelEtapa = ''; S.organizando = false; S.posTemp = {}; S.expandidas = {};
+    S.consultaFluxo = false;
   }
   S.funilAnterior = id;
   S.etapas = etapasDoFunil(id);
@@ -2180,8 +2262,10 @@ function renderVirtual(){
 
   S.organizando = false;
   S.painelEtapa = '';
+  S.consultaFluxo = false;
   renderOrgBarra();
   renderPainelEtapa();
+  renderConsultaFluxo();
   $('kanban').className = 'kanban';
   $('kanban').innerHTML = colunas.length
     ? mostrar.map(colunaVirtualHTML).join('')
@@ -2224,7 +2308,6 @@ var NO_L = 250;      // largura do nó
 var NO_GX = 56;      // respiro horizontal entre nós da linha principal
 var NO_GY = 150;     // degrau vertical dos desvios
 var GRADE = 10;      // a posição arrastada gruda nesta grade
-var MINI_MAX = 4;    // mini-cards mostrados dentro do nó
 
 /* ordem de leitura: cada etapa principal seguida dos seus desvios */
 function etapasOrdenadas(fid){
@@ -2290,11 +2373,20 @@ function autosDa(e){
 }
 
 /* --------------------------- mini-card do nó --------------------------- */
-function miniHTML(c){
+/* ícone de PDF enxuto: só o símbolo, o nome fica no title */
+function arquivosMiniHTML(card){
+  return arquivosDoCard(card).map(function(a){
+    return '<a class="doc" href="' + esc(a.url || '#') + '"' +
+      (a.url ? ' target="_blank" rel="noopener"' : '') + ' data-arq="1"' +
+      (a.caminho ? ' data-bucket="' + esc(a.bucket) + '" data-caminho="' + esc(a.caminho) + '"' : '') +
+      ' title="' + esc(a.rotulo) + '">&#128196;</a>';
+  }).join('');
+}
+function miniHTML(c, movel){
   var e = etapaPor(c.etapa_id);
   var atraso = atrasoDias(c);
-  var arqs = arquivosDoCard(c);
-  var podeArrastar = podeEditar() && !S.organizando && fluxoDo(c.funil_id).arrastar !== false;
+  var podeArrastar = podeEditar() && !S.organizando && !movel &&
+                     fluxoDo(c.funil_id).arrastar !== false;
   return '<div class="mini' + (atraso > 0 ? ' atrasado' : '') + '" data-card="' + esc(c.id) + '" ' +
       'draggable="' + (podeArrastar ? 'true' : 'false') + '" ' +
       'style="--cor:' + esc((e && e.cor) || '#7C1B29') + '" title="' + esc(c.titulo) + '">' +
@@ -2308,10 +2400,11 @@ function miniHTML(c){
     '<div class="m2">' +
       '<span class="r">' + esc(respEfetivo(c) || 'sem responsável') + '</span>' +
       '<span>' + dias(c.etapa_desde) + 'd</span>' +
-      (arqs.length ? '<span class="doc" title="' + arqs.length + ' documento(s) no card">&#128196; ' +
-        arqs.length + '</span>' : '') +
+      arquivosMiniHTML(c) +
       (num(c.valor) ? '<span class="val">' + esc(moeda(c.valor)) + '</span>' : '') +
     '</div>' +
+    (movel && ehRamo(e) ? '<div class="chips"><span class="chip excecao">&#8627; exceção</span></div>' : '') +
+    (movel ? acoesCardHTML(c, e) : '') +
   '</div>';
 }
 
@@ -2324,8 +2417,6 @@ function noHTML(e, termo, auto){
   var ramo = ehRamo(e);
   var pai = ramo ? etapaPor(e.ramo_de) : null;
   var p = posDe(e, auto);
-  var mostra = lista.slice(0, MINI_MAX);
-  var resto = lista.length - mostra.length;
 
   return '<div class="no' + (ramo ? ' ramo' : '') +
       (S.painelEtapa === e.id ? ' aberto' : '') + '" data-no="' + esc(e.id) + '" ' +
@@ -2355,12 +2446,12 @@ function noHTML(e, termo, auto){
               esc(pai ? pai.nome : '—') + '</span></div>' : '') +
     '</div>' +
     '<div class="no-body" data-drop="' + esc(e.id) + '">' +
-      (mostra.length ? mostra.map(miniHTML).join('')
-                     : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>') +
+      (lista.length ? lista.map(function(c){ return miniHTML(c, false); }).join('')
+                    : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>') +
     '</div>' +
     '<div class="no-pe">' +
       '<button data-vertodos="' + esc(e.id) + '">' +
-        (resto > 0 ? 'Ver todos (' + lista.length + ')' : 'Abrir etapa') + '</button>' +
+        'Abrir etapa' + (lista.length ? ' (' + lista.length + ')' : '') + '</button>' +
       '<button data-vertodos="' + esc(e.id) + '"' + (filtroAtivo(e.id) ? ' class="ativo"' : '') + '>' +
         'Regras e filtro' + (filtroAtivo(e.id) ? ' &#9679;' : '') + '</button>' +
     '</div>' +
@@ -2398,7 +2489,7 @@ function noMovelHTML(e, termo, forcar){
         (S.abertas[e.id] ? boxRegrasHTML(e, autosDa(e)) : '') +
         (S.filtroAberto[e.id] ? boxFiltroHTML(e, lista.length, todos.length) : '') +
         '<div class="nm-body" data-drop="' + esc(e.id) + '">' +
-          (lista.length ? lista.map(function(c){ return cardHTML(c, false); }).join('')
+          (lista.length ? lista.map(function(c){ return miniHTML(c, true); }).join('')
                         : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>') +
         '</div>'
       : '') +
@@ -2492,6 +2583,89 @@ function renderPainelEtapa(){
     (S.filtroAberto[e.id] ? boxFiltroHTML(e, lista.length, todos.length) : '') +
     (lista.length ? lista.map(function(c){ return cardHTML(c, false); }).join('')
                   : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>');
+}
+
+/* ------------ celular: consulta do fluxo em tela cheia (só leitura) ------------ */
+function abrirConsultaFluxo(){
+  if(!S.funil || S.virtual) return;
+  S.consultaFluxo = true;
+  renderConsultaFluxo();
+}
+function fecharConsultaFluxo(){
+  S.consultaFluxo = false;
+  renderConsultaFluxo();
+}
+function irParaEtapaDoFluxo(id){
+  S.consultaFluxo = false;
+  S.expandidas[id] = true;
+  escolherEtapaMovel(id);
+  renderConsultaFluxo();
+}
+function fcNoHTML(e, termo){
+  var todos = cardsDaEtapa(e, termo);
+  var lista = aplicarFiltro(todos, e);
+  var soma = lista.reduce(function(a,c){ return a + num(c.valor); }, 0);
+  var atrasados = lista.filter(function(c){ return atrasoDias(c) > 0; }).length;
+  var ramo = ehRamo(e);
+  return '<button class="fc-no' + (ramo ? ' ramo' : '') + '" data-fcno="' + esc(e.id) + '" ' +
+      'style="--cor:' + esc(ramo ? '#B8801F' : e.cor) + '">' +
+    '<span class="l1">' +
+      '<span class="nome">' + (ramo ? '&#8627; ' : '') + esc(e.nome) + '</span>' +
+      '<span class="qtd">' + lista.length +
+        (lista.length !== todos.length ? '/' + todos.length : '') + '</span>' +
+    '</span>' +
+    '<span class="l2">' +
+      (ramo ? '<span class="tag">exceção' + (e.ramo_rotulo ? ' · ' + esc(e.ramo_rotulo) : '') + '</span>' : '') +
+      (!ramo && e.tipo !== 'normal'
+        ? '<span class="tag" style="background:var(--chip);border-color:var(--line-2);color:var(--ink-3)">' +
+          (e.tipo === 'inicio' ? 'entrada' : esc(e.tipo)) + '</span>' : '') +
+      '<span>' + esc(e.responsavel_nome || 'sem responsável') + '</span>' +
+      (e.prazo_dias ? '<span>prazo ' + e.prazo_dias + 'd</span>' : '') +
+      (atrasados ? '<span class="atr">&#9888; ' + atrasados + '</span>' : '') +
+      (soma ? '<span class="soma">' + esc(moeda(soma)) + '</span>' : '') +
+    '</span>' +
+  '</button>';
+}
+function renderConsultaFluxo(){
+  var tela = $('fluxoConsulta');
+  if(!tela) return;
+  var ligar = !!(S.consultaFluxo && S.funil && !S.virtual && ehMovel());
+  tela.classList.toggle('on', ligar);
+  document.body.style.overflow = ligar ? 'hidden' : '';
+  var btn = $('bmFluxo');
+  if(btn) btn.style.display = (S.funil && !S.virtual && S.etapas.length) ? '' : 'none';
+  if(!ligar){ $('fcCorpo').innerHTML = ''; return; }
+
+  var termo = normal(S.busca);
+  var principais = etapasPrincipais(S.funil.id);
+  var soltas = etapasDoFunil(S.funil.id).filter(function(e){
+    return !e.ramo_de && principais.indexOf(e) < 0;
+  });
+  $('fcTitulo').textContent = S.funil.nome;
+
+  var corpo = principais.map(function(e, i){
+    var ramos = ramosDe(e.id);
+    return fcNoHTML(e, termo) +
+      (ramos.length
+        ? ramos.map(function(r){
+            return '<div class="fc-espaco"></div><div class="fc-ramo">' + fcNoHTML(r, termo) +
+              '<div class="fc-volta">&#8623; volta ao fluxo em ' +
+              esc(principais[i+1] ? principais[i+1].nome : 'nenhuma etapa seguinte') + '</div></div>';
+          }).join('')
+        : '') +
+      (i < principais.length - 1 ? '<div class="fc-seta">&#9660;</div>' : '');
+  }).join('');
+
+  if(soltas.length){
+    corpo += '<div class="fc-espaco"></div>' +
+      soltas.map(function(e){ return fcNoHTML(e, termo); }).join('<div class="fc-espaco"></div>');
+  }
+  corpo += '<div class="fc-rodape">Toque numa etapa para abri-la na lista.</div>';
+  $('fcCorpo').innerHTML = corpo;
+
+  Array.prototype.forEach.call($('fcCorpo').querySelectorAll('[data-fcno]'), function(b){
+    b.addEventListener('click', function(){ irParaEtapaDoFluxo(b.dataset.fcno); });
+  });
 }
 
 /* ---------------------- modo organizar (só administrador) ---------------------- */
@@ -2618,8 +2792,10 @@ function renderKanban(){
       (eAdmin() ? ' Cadastre em <strong>Administração › Funis e etapas</strong>.' : '') + '</div>';
     S.colunasAtuais = [];
     S.organizando = false;
+    S.consultaFluxo = false;
     renderOrgBarra();
     renderPainelEtapa();
+    renderConsultaFluxo();
     atualizarBarraMovel();
     return;
   }
@@ -2647,6 +2823,7 @@ function renderKanban(){
 
   renderOrgBarra();
   renderPainelEtapa();
+  renderConsultaFluxo();
   ligarKanban();
   if(!ehMovel()){ desenharLigacoes(); ligarArrastoNos(); }
   atualizarBarraMovel();
@@ -4693,7 +4870,8 @@ function iniciar(){
     if(ev.key !== 'Escape') return;
     if(document.querySelector('.modal.on')){
       ['mdFunil','mdEtapa','mdCampo','mdRegra','mdCard'].forEach(fechar);
-    } else if(S.painelEtapa){ fecharPainelEtapa(); }
+    } else if(S.consultaFluxo){ fecharConsultaFluxo(); }
+    else if(S.painelEtapa){ fecharPainelEtapa(); }
     else if(S.organizando){ alternarOrganizar(); }
   });
   var eraMovel = ehMovel();
@@ -4706,6 +4884,8 @@ function iniciar(){
 }
 
 /* funcoes usadas pelos atributos onclick do HTML */
+window.abrirConsultaFluxo = abrirConsultaFluxo;
+window.fecharConsultaFluxo = fecharConsultaFluxo;
 window.alternarOrganizar = alternarOrganizar;
 window.arrumarSozinho = arrumarSozinho;
 window.salvarPosicoes = salvarPosicoes;
