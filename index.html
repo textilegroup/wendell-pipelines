@@ -448,6 +448,29 @@ a.kc-btn{text-decoration:none}
 .pane-tit{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
   color:var(--wine);margin-bottom:10px;display:flex;align-items:center;gap:8px}
 .pane-tit .ct{margin-left:auto;color:var(--ink-3);font-weight:600;letter-spacing:0;text-transform:none}
+/* ---------- chat do card ---------- */
+.pane-abas{display:flex;gap:4px;margin-bottom:10px;border-bottom:1px solid var(--line)}
+.pane-aba{font:700 10.5px Archivo,sans-serif;letter-spacing:.09em;text-transform:uppercase;
+  border:1px solid transparent;border-bottom:0;background:transparent;color:var(--ink-3);
+  padding:6px 10px;border-radius:8px 8px 0 0;cursor:pointer;margin-bottom:-1px;
+  display:flex;align-items:center;gap:6px}
+.pane-aba[aria-selected="true"]{background:var(--card);border-color:var(--line);
+  color:var(--wine);box-shadow:inset 0 2px 0 var(--wine)}
+.pane-aba[disabled]{opacity:.45;cursor:not-allowed}
+.aba-selo{min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:var(--wine);
+  color:#fff;font:700 9.5px Archivo,sans-serif;display:grid;place-items:center;letter-spacing:0}
+#paneChat{display:flex;flex-direction:column;gap:8px}
+#paneChat iframe{width:100%;height:min(52vh,430px);border:1px solid var(--line);
+  border-radius:10px;background:var(--card)}
+.chat-barra{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink-3)}
+.chat-barra a{margin-left:auto}
+.kc-chat{border:1px solid var(--line);background:var(--card);color:var(--ink-3);
+  border-radius:7px;font:600 10.5px Archivo,sans-serif;padding:2px 7px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:4px;line-height:1.5}
+.kc-chat:hover{border-color:var(--wine-soft);color:var(--wine)}
+.kc-chat.tem{border-color:var(--wine);background:var(--wine);color:var(--wine-txt,#fff)}
+.mini .m2 .kc-chat{padding:0 5px;font-size:10px;gap:3px}
+.kcard .pe .kc-chat{margin-left:2px}
 .dado{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--line-2);font-size:12.5px}
 .dado .r{flex:0 0 40%;color:var(--ink-3);font-size:11.5px}
 .dado .v{flex:1;min-width:0;word-break:break-word}
@@ -582,12 +605,12 @@ a.kc-btn{text-decoration:none}
 /* com o painel aberto, a página encolhe: a gaveta nunca cobre o fluxo */
 body.com-painel .wrap{padding-right:404px}
 body.com-painel .barra-selecao{right:400px}
-.painel-etapa{position:fixed;top:0;right:0;bottom:0;width:390px;max-width:94vw;z-index:60;
+.painel-etapa{position:fixed;top:0;right:0;bottom:0;width:390px;max-width:94vw;z-index:9100;
   background:var(--bg);border-left:1px solid var(--line);box-shadow:-10px 0 30px rgba(0,0,0,.18);
   display:flex;flex-direction:column;transform:translateX(102%);transition:transform .16s ease}
 .painel-etapa.on{transform:none}
 .painel-etapa .pcab{display:flex;align-items:center;gap:10px;padding:12px 14px;
-  border-bottom:4px solid var(--cor,var(--wine));
+  border-bottom:4px solid var(--cor,var(--wine));flex:0 0 auto;
   background:linear-gradient(100deg,var(--wine-deep) 0%,var(--wine) 70%);color:#fff}
 .painel-etapa .pcab h3{font-size:13.5px;font-weight:700;flex:1;min-width:0;color:#fff;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -599,6 +622,10 @@ body.com-painel .barra-selecao{right:400px}
 .painel-etapa .pcab .x:hover{background:rgba(255,255,255,.26)}
 .painel-etapa .pcorpo{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
 .painel-etapa .regras-box,.painel-etapa .filtro-box{margin:0}
+.pe-fechar{margin-top:6px;padding:11px 12px;border:1px solid var(--line);border-radius:9px;
+  background:var(--sunk);color:var(--ink-2);font-family:inherit;font-size:12px;font-weight:700;
+  cursor:pointer;width:100%}
+.pe-fechar:hover{border-color:var(--wine-soft);color:var(--wine);background:var(--chip)}
 
 /* a consulta do fluxo só existe no celular */
 .fluxo-consulta{display:none}
@@ -675,7 +702,7 @@ body.com-painel .barra-selecao{right:400px}
   .org-barra{display:none}
 
   /* ---- consulta do fluxo em tela cheia ---- */
-  .fluxo-consulta{position:fixed;inset:0;z-index:70;background:var(--bg);
+  .fluxo-consulta{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9100;background:var(--bg);
     display:none;flex-direction:column}
   .fluxo-consulta.on{display:flex}
   .fluxo-consulta .fc-cab{display:flex;align-items:center;gap:10px;padding:13px 14px;
@@ -1273,17 +1300,26 @@ body.com-painel .barra-selecao{right:400px}
       <div id="cardDados"></div>
     </div>
     <div class="pane-dir">
-      <div class="pane-tit">Linha do tempo no funil</div>
-      <div class="tl-acoes">
-        <select id="fCardEtapa" title="Etapa"></select>
-        <select id="fCardResp" title="Responsável"></select>
-        <button class="btn sm pri" id="btnAplicarCard" onclick="aplicarEtapaResp()">Aplicar</button>
+      <div class="pane-abas">
+        <button class="pane-aba" id="abaTl" aria-selected="true"
+                onclick="verAbaCard('tl')">Linha do tempo</button>
+        <button class="pane-aba" id="abaChat" aria-selected="false"
+                onclick="verAbaCard('chat')">Chat
+          <span class="aba-selo" id="abaChatSelo" hidden></span></button>
       </div>
-      <div class="tl-coment">
-        <textarea id="fCardComentario" placeholder="Escrever um comentário…"></textarea>
-        <button class="btn sm" id="btnComentar" onclick="comentarCard()">Enviar</button>
+      <div id="paneTl">
+        <div class="tl-acoes">
+          <select id="fCardEtapa" title="Etapa"></select>
+          <select id="fCardResp" title="Responsável"></select>
+          <button class="btn sm pri" id="btnAplicarCard" onclick="aplicarEtapaResp()">Aplicar</button>
+        </div>
+        <div class="tl-coment">
+          <textarea id="fCardComentario" placeholder="Escrever um comentário…"></textarea>
+          <button class="btn sm" id="btnComentar" onclick="comentarCard()">Enviar</button>
+        </div>
+        <div id="cardTimeline"></div>
       </div>
-      <div id="cardTimeline"></div>
+      <div id="paneChat" hidden></div>
     </div>
   </div>
   <div class="modal-pe">
@@ -1336,6 +1372,8 @@ var S = {
   filtroAberto: {},       // etapas com o filtro aberto
   filtros: {},            // filtro em uso por etapa (comeca no padrao do ADM)
   sincronizando: false,
+  chatCtx: {},            // { card_id: {conversa_id, total, nao_lidas} }
+  chatAba: 'tl',          // aba aberta no painel direito do card
   busca: '',
   edit: { funil:null, etapa:null, campo:null, regra:null, card:null }
 };
@@ -1413,6 +1451,87 @@ function fechar(id){ $(id).classList.remove('on'); }
 function podeEditar(){ return !!(window.APP && APP.podeEditar()); }
 function eAdmin(){ return !!(window.APP && APP.eAdmin()); }
 function euSou(){ return (window.APP && APP.usuario && APP.usuario.nome) || ''; }
+
+/* ------------------------------------------------------------------ chat
+   Cada card ganha um endereço de bate-papo próprio. Quem cria a conversa é
+   o banco (chat_abrir_card), que já põe dentro o responsável e o criador do
+   card; aqui só abrimos a tela embutida e mostramos o selo de não lidas.   */
+var CHAT_URL = 'https://textilegroup.github.io/wendell-chat/';
+var CHAT_TIPO = 'funil_card';
+
+function chatLigado(){ return !!CHAT_URL; }
+
+function chatDoCard(id){ return S.chatCtx[id] || null; }
+
+function chatSeloHTML(c){
+  if(!chatLigado()) return '';
+  var i = chatDoCard(c.id);
+  var n = i ? (i.nao_lidas || 0) : 0;
+  var t = i ? (i.total || 0) : 0;
+  var rot = n ? n : (t ? t : '');
+  return '<button class="kc-chat' + (n ? ' tem' : '') + '" data-chat="' + esc(c.id) + '" ' +
+    'title="' + (n ? n + ' mensagem(ns) não lida(s)' : t ? t + ' mensagem(ns)' : 'Abrir o chat deste card') +
+    '">&#128172;' + (rot ? '<b>' + rot + '</b>' : '') + '</button>';
+}
+
+/* conta mensagens e não lidas dos cards que estão na tela */
+function atualizarSelosChat(){
+  if(!chatLigado() || !S.cardsTodos.length) return Promise.resolve();
+  var ids = S.cardsTodos.map(function(c){ return c.id; });
+  return sb.rpc('chat_resumo_contexto', { p_tipo: CHAT_TIPO, p_ids: ids })
+    .then(function(r){
+      if(r.error) return;                      /* chat ainda não liberado: segue sem selo */
+      S.chatCtx = r.data || {};
+      if(!modalAberto()) renderKanban();
+    })
+    .catch(function(){ /* silencioso de propósito */ });
+}
+
+function verAbaCard(qual){
+  S.chatAba = qual;
+  $('abaTl').setAttribute('aria-selected', qual === 'tl' ? 'true' : 'false');
+  $('abaChat').setAttribute('aria-selected', qual === 'chat' ? 'true' : 'false');
+  $('paneTl').hidden = qual !== 'tl';
+  $('paneChat').hidden = qual !== 'chat';
+  if(qual === 'chat') montarChatDoCard();
+}
+
+/* abre (criando na primeira vez) a conversa do card dentro do modal */
+function montarChatDoCard(){
+  var card = S.edit.card;
+  var box = $('paneChat');
+  if(!card){ box.innerHTML = '<div class="aviso">Salve o card primeiro; o chat nasce junto com ele.</div>'; return; }
+  if(box.dataset.card === card.id) return;     /* já montado para este card */
+  box.dataset.card = card.id;
+  box.innerHTML = '<div class="carregando">Abrindo a conversa…</div>';
+
+  var ref = location.href.split('#')[0].split('?')[0] + '?funil=' + encodeURIComponent(card.funil_id) +
+            '&card=' + encodeURIComponent(card.id);
+  sb.rpc('chat_abrir_card', { p_card_id: card.id, p_ref: ref }).then(function(r){
+    if(r.error) throw r.error;
+    var conv = r.data;
+    var src = CHAT_URL + (CHAT_URL.indexOf('?') >= 0 ? '&' : '?') +
+              'c=' + encodeURIComponent(conv) + '&modo=embed';
+    box.innerHTML =
+      '<div class="chat-barra"><span>Conversa deste card · quem entra aqui passa a receber as mensagens</span>' +
+      '<a class="btn sm" href="' + esc(CHAT_URL + '?c=' + conv) + '" target="_blank" rel="noopener">' +
+      'Abrir em tela cheia</a></div>' +
+      '<iframe src="' + esc(src) + '" title="Chat do card" loading="lazy"></iframe>';
+    if(S.chatCtx[card.id]) S.chatCtx[card.id].nao_lidas = 0;
+    atualizarSeloAba(card.id);
+  }).catch(function(e){
+    box.dataset.card = '';
+    box.innerHTML = '<div class="aviso">Não consegui abrir o chat deste card. ' +
+      esc((e && e.message) || '') + '</div>';
+  });
+}
+
+function atualizarSeloAba(cardId){
+  var i = chatDoCard(cardId), n = i ? (i.nao_lidas || 0) : 0;
+  var s = $('abaChatSelo');
+  if(!s) return;
+  s.hidden = !n; s.textContent = n || '';
+}
 
 /* ============================ CATÁLOGO DAS FONTES ====================== */
 var CATALOGO = {
@@ -1609,7 +1728,8 @@ function carregarTudo(){
     } else if(S.funis.length === 1){
       return abrirFunil(S.funis[0].id);
     }
-  }).catch(function(e){ erroSb(e, 'carregar funis'); });
+  }).then(function(){ return atualizarSelosChat(); })
+    .catch(function(e){ erroSb(e, 'carregar funis'); });
 }
 
 /* recortes por funil, tirados do carregamento geral */
@@ -2416,6 +2536,7 @@ function miniHTML(c, movel){
       '<span>' + dias(c.etapa_desde) + 'd</span>' +
       arquivosMiniHTML(c) +
       (num(c.valor) ? '<span class="val">' + esc(moeda(c.valor)) + '</span>' : '') +
+      chatSeloHTML(c) +
     '</div>' +
     (movel && ehRamo(e) ? '<div class="chips"><span class="chip excecao">&#8627; exceção</span></div>' : '') +
     (movel ? acoesCardHTML(c, e) : '') +
@@ -2569,6 +2690,28 @@ function desenharLigacoes(){
 }
 
 /* ------------------- painel lateral: todos os cards da etapa ------------------- */
+/* a Central de Acesso injeta uma barra fixa no topo; medimos até onde ela vai
+   para que nada nosso (nem o cabeçalho da gaveta) nasça escondido embaixo dela */
+function topoFixo(){
+  var h = 0;
+  Array.prototype.forEach.call(document.body.children, function(el){
+    if(el.id === 'painelEtapa' || el.id === 'fluxoConsulta') return;
+    var cs;
+    try { cs = window.getComputedStyle(el); } catch(err){ return; }
+    if(cs.position !== 'fixed' || cs.display === 'none' || cs.visibility === 'hidden') return;
+    var r = el.getBoundingClientRect();
+    if(r.height <= 0 || r.height > 160 || r.top > 4 || r.width < window.innerWidth * 0.5) return;
+    h = Math.max(h, r.bottom);
+  });
+  return Math.round(h);
+}
+function ajustarTopoFlutuante(){
+  var topo = topoFixo();
+  ['painelEtapa','fluxoConsulta'].forEach(function(id){
+    var el = $(id);
+    if(el) el.style.top = topo + 'px';
+  });
+}
 function verTodos(id){ S.painelEtapa = id; renderKanban(); }
 function fecharPainelEtapa(){ S.painelEtapa = ''; renderKanban(); }
 function renderPainelEtapa(){
@@ -2583,6 +2726,7 @@ function renderPainelEtapa(){
   pnl.hidden = false;
   pnl.classList.add('on');
   document.body.classList.add('com-painel');
+  ajustarTopoFlutuante();
   pnl.style.setProperty('--cor', ehRamo(e) ? '#B8801F' : e.cor);
   var termo = normal(S.busca);
   var todos = cardsDaEtapa(e, termo);
@@ -2598,7 +2742,8 @@ function renderPainelEtapa(){
     (S.abertas[e.id] ? boxRegrasHTML(e, autosDa(e)) : '') +
     (S.filtroAberto[e.id] ? boxFiltroHTML(e, lista.length, todos.length) : '') +
     (lista.length ? lista.map(function(c){ return cardHTML(c, false); }).join('')
-                  : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>');
+                  : '<div class="vazio">' + (todos.length ? 'nada no filtro' : 'nenhum card') + '</div>') +
+    '<button class="pe-fechar" onclick="fecharPainelEtapa()">Fechar esta etapa</button>';
 }
 
 /* ------------ celular: consulta do fluxo em tela cheia (só leitura) ------------ */
@@ -2648,6 +2793,7 @@ function renderConsultaFluxo(){
   var ligar = !!(S.consultaFluxo && S.funil && !S.virtual && ehMovel());
   tela.classList.toggle('on', ligar);
   document.body.style.overflow = ligar ? 'hidden' : '';
+  if(ligar) ajustarTopoFlutuante();
   var btn = $('bmFluxo');
   if(btn) btn.style.display = (S.funil && !S.virtual && S.etapas.length) ? '' : 'none';
   if(!ligar){ $('fcCorpo').innerHTML = ''; return; }
@@ -3048,6 +3194,7 @@ function cardHTML(c, virtual){
       (respEfetivo(c) ? '<span>' + esc(respEfetivo(c)) + '</span>' : '<span>sem responsável</span>') +
       '<span class="' + (atrasado ? 'alerta' : '') + '">' + d + 'd</span>' +
       (num(c.valor) ? '<span class="val">' + esc(moeda(c.valor)) + '</span>' : '') +
+      chatSeloHTML(c) +
     '</div>' +
     acoesCardHTML(c, e) +
   '</div>';
@@ -3188,6 +3335,14 @@ function ligarEscopo(box){
     });
   });
   ligarArquivos(box);
+
+  Array.prototype.forEach.call(box.querySelectorAll('[data-chat]'), function(b){
+    b.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      abrirCardForm(b.dataset.chat);
+      verAbaCard('chat');
+    });
+  });
 
   Array.prototype.forEach.call(box.querySelectorAll('[data-liberar]'), function(b){
     b.addEventListener('click', function(ev){
@@ -3775,6 +3930,14 @@ function abrirCardForm(id){
   $('cardTimeline').innerHTML = card ? '<div class="carregando">Carregando…</div>'
     : '<div class="ajuda" style="color:var(--ink-3)">A linha do tempo começa quando o card é criado.</div>';
   if(card) carregarHistorico(card.id);
+
+  // painel da direita volta para a linha do tempo; o chat monta ao clicar
+  $('paneChat').dataset.card = '';
+  $('paneChat').innerHTML = '';
+  $('abaChat').disabled = !card || !chatLigado();
+  atualizarSeloAba(card ? card.id : '');
+  verAbaCard('tl');
+
   abrir('mdCard');
 }
 
@@ -4879,8 +5042,23 @@ function iniciar(){
     $('tabAdm').hidden = false;
     $('btnNovoFunilAtalho').hidden = false;
   }
-  carregarContas().then(carregarTudo);
+  carregarContas().then(carregarTudo).then(function(){
+    // veio de um link do chat: ?funil=…&card=… abre o card direto
+    var q = new URLSearchParams(location.search);
+    var alvo = q.get('card');
+    if(!alvo) return;
+    var c = S.cardsTodos.filter(function(x){ return x.id === alvo; })[0];
+    if(!c) return;
+    return Promise.resolve(abrirFunil(c.funil_id, true)).then(function(){
+      abrirCardForm(alvo);
+      if(q.get('aba') === 'chat') verAbaCard('chat');
+    });
+  });
   ligarSyncAutomatico();
+  // selos de mensagens não lidas nos cards
+  setInterval(function(){
+    if(!document.hidden && !modalAberto()) atualizarSelosChat();
+  }, 45000);
 
   document.addEventListener('keydown', function(ev){
     if(ev.key !== 'Escape') return;
@@ -4892,8 +5070,10 @@ function iniciar(){
   });
   var eraMovel = ehMovel();
   window.addEventListener('resize', function(){
+    ajustarTopoFlutuante();
     if(ehMovel() !== eraMovel){ eraMovel = ehMovel(); renderKanban(); }
   });
+  setTimeout(ajustarTopoFlutuante, 400);   /* a barra do hub pode entrar depois */
   Array.prototype.forEach.call(document.querySelectorAll('.modal'), function(m){
     m.addEventListener('click', function(ev){ if(ev.target === m) m.classList.remove('on'); });
   });
@@ -4958,6 +5138,8 @@ window.salvarCard = salvarCard;
 window.excluirCard = excluirCard;
 window.aplicarEtapaResp = aplicarEtapaResp;
 window.comentarCard = comentarCard;
+window.verAbaCard = verAbaCard;
+window.atualizarSelosChat = atualizarSelosChat;
 window.fechar = fechar;
 /* expostos para teste do motor de condicionais */
 window.__motor = { testarCondicao: testarCondicao, regraBate: regraBate, valorDoCard: valorDoCard };
